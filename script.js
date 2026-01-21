@@ -692,6 +692,21 @@ function renderProducts(filter='all',search='',page=null){
     `;
     grid.appendChild(card);
 
+    // Evento para botón Agregar: si tiene variantes, abrir modal; si no, agregar directo
+    const addBtn = card.querySelector('.add');
+    if (addBtn && !outOfStock) {
+      addBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (p.variants && p.variants.options && p.variants.options.length > 0) {
+          showModal(p);
+          modal.setAttribute('aria-hidden', 'false');
+        } else {
+          addToCart(p, 1);
+          openCart();
+        }
+      });
+    }
+
 
     if(hasMultipleImages){
       const img = card.querySelector('img');
@@ -795,6 +810,21 @@ function renderBestSellers(count=6){
       <button class="add" data-id="${p.id}" ${isOutOfStock ? 'disabled aria-disabled="true"' : ''}>${isOutOfStock ? 'Agotado' : 'Agregar'}</button>
     `;
     container.appendChild(card);
+
+    // Evento para botón Agregar: si tiene variantes, abrir modal; si no, agregar directo
+    const addBtn = card.querySelector('.add');
+    if (addBtn && !isOutOfStock) {
+      addBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (p.variants && p.variants.options && p.variants.options.length > 0) {
+          showModal(p);
+          modal.setAttribute('aria-hidden', 'false');
+        } else {
+          addToCart(p, 1);
+          openCart();
+        }
+      });
+    }
 
 
     if(hasMultipleImages){
