@@ -890,13 +890,7 @@ document.addEventListener('click',(e)=>{
     if(e.target && e.target.matches && e.target.matches('.add') && e.target.dataset && e.target.dataset.id){
       const id = parseInt(e.target.dataset.id);
       const p = products.find(x=>x.id===id);
-      if(p && !p.outOfStock){
-        if(p.variants){
-          showModal(p);
-        }else{
-          addToCart(p,1);
-        }
-      }
+      if(p && !p.outOfStock){ addToCart(p,1); }
       return;
     }
 
