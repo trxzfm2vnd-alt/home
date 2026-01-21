@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cuenta - Sophie</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .login-container{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#f3e5f5 0%,#fce4ec 100%);padding:20px}
+      .login-box{background:#fff;padding:48px;border-radius:24px;box-shadow:0 20px 60px rgba(82,44,60,0.18);max-width:520px;width:100%}
+      .login-logo{text-align:center;margin-bottom:24px}
+      .login-logo svg{filter:drop-shadow(0 2px 4px rgba(0,0,0,0.1))}
+      .login-logo h1{font-family:Playfair Display,serif;color:#5a2032;margin:16px 0 6px;font-size:2.2rem;letter-spacing:-0.5px}
+      .login-logo p{color:#7a6a75;margin:0;font-size:1rem;font-weight:500}
+      .tabs{display:flex;gap:10px;margin:20px 0 16px;background:#f8f5f7;padding:6px;border-radius:12px}
+      .tab-btn{flex:1;padding:12px 16px;border-radius:10px;border:none;background:transparent;font-weight:800;color:#6b2840;cursor:pointer;transition:all .25s;font-size:0.95rem}
+      .tab-btn.active{background:#fff;color:#5a8dee;box-shadow:0 4px 12px rgba(90,139,238,0.15)}
+      .form-group{margin-bottom:16px}
+      .form-group label{display:block;margin-bottom:8px;font-weight:700;color:#5a2032;font-size:0.95rem}
+      .form-group input,.form-group select{width:100%;padding:12px 14px;border:2px solid #e3cfe0;border-radius:10px;font-family:Montserrat,sans-serif;font-size:1rem;background:#fff;transition:all 0.2s}
+      .form-group input::placeholder,.form-group select::placeholder{color:#b8a8b8}
+      .form-group input:hover,.form-group select:hover{border-color:#d946a6;background:#fafbfc}
+      .form-group input:focus,.form-group select:focus{outline:none;border-color:#d946a6;box-shadow:0 0 0 3px rgba(217,70,166,0.15);background:#fff}
+      .form-group select{cursor:pointer;color:#333}
+      .form-group select option{padding:8px;background:#fff}
+      .helper{font-size:0.88rem;color:#7a6a75;margin-top:6px;font-style:italic}
+      .btn-login{width:100%;padding:16px 20px;background:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%);color:white;border:none;border-radius:14px;font-weight:800;font-size:1.1rem;cursor:pointer;transition:all 0.3s ease;margin-top:10px;box-shadow:0 10px 25px rgba(102,126,234,0.3),0 4px 10px rgba(118,75,162,0.2);position:relative;overflow:hidden;letter-spacing:0.8px;text-transform:uppercase;background-size:200% 200%;animation:gradientShift 3s ease infinite}
+      @keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+      .btn-login:hover{box-shadow:0 15px 35px rgba(102,126,234,0.45),0 8px 15px rgba(118,75,162,0.3),0 0 20px rgba(240,147,251,0.2);transform:translateY(-4px) scale(1.03)}
+      .btn-login:active{transform:translateY(-1px) scale(0.98);box-shadow:0 5px 15px rgba(102,126,234,0.35)}
+      .btn-login::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);transition:left 0.6s}
+      .btn-login:hover::before{left:100%}
+      .btn-login::after{content:'→';margin-left:8px;font-size:1.2rem;transition:transform 0.3s}
+      .btn-login:hover::after{transform:translateX(5px)}
+      .btn-back{display:block;text-align:center;margin-top:20px;color:#6b2840;text-decoration:none;font-weight:700;font-size:0.95rem;transition:all 0.2s}
+      .btn-back:hover{color:#d946a6;text-decoration:underline}
+      .error-message{background:#ffebee;color:#c62828;padding:14px 16px;border-radius:10px;margin-bottom:16px;display:none;font-size:0.92rem;border:1px solid #ef9a9a;border-left:4px solid #c62828}
+      .error-message.show{display:block;animation:slideDown 0.3s ease}
+      .success{background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;border-left-color:#2e7d32}
+      .hidden{display:none}
+      .hint-star{color:#d946a6;font-weight:800;margin-left:4px;cursor:help;border-bottom:1.5px dotted #d946a6;font-size:0.9rem}
+      @keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+      .checkbox-group{display:flex;align-items:center;gap:12px;padding:8px 0}
+      .checkbox-group input[type="checkbox"]{width:20px;height:20px;min-width:20px;cursor:pointer;accent-color:#d946a6;border-radius:6px}
+      .checkbox-group label{cursor:pointer;flex:1;user-select:none}
+      .shipping-box{margin-top:20px;padding:20px;border:1px solid #e9d5ff;border-radius:14px;background:linear-gradient(135deg,#f7f1fc 0%,#fff8fa 100%);box-shadow:0 4px 16px rgba(217,70,166,0.08)}
+      .shipping-box h4{margin:0 0 16px 0;color:#5a2032;font-size:1.1rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+      .shipping-row{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+      .shipping-box textarea{width:100%;padding:12px 14px;border:2px solid #e3cfe0;border-radius:10px;font-family:Montserrat,sans-serif;font-size:0.95rem;min-height:80px;resize:vertical}
+      .shipping-box textarea:focus{outline:none;border-color:#d946a6;box-shadow:0 0 0 3px rgba(217,70,166,0.15)}
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="login-box">
+        <div class="login-logo">
+          <svg width="64" height="64" viewBox="0 0 32 32">
+            <defs>
+              <linearGradient id="giftGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ff6b9d;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#d946a6;stop-opacity:1" />
+              </linearGradient>
+              <linearGradient id="ribbonGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#ffed4e;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <rect x="4" y="10" width="24" height="16" rx="2" fill="url(#giftGradient)" />
+            <path d="M 4 10 Q 16 4 28 10" fill="#ff8ab3" />
+            <rect x="14" y="4" width="4" height="22" fill="url(#ribbonGradient)" />
+            <rect x="4" y="14" width="24" height="3" fill="url(#ribbonGradient)" />
+            <circle cx="16" cy="8" r="3" fill="#ffd700" />
+            <ellipse cx="8" cy="14" rx="2" ry="3" fill="rgba(255,255,255,0.4)" />
+          </svg>
+          <h1>Sophie</h1>
+          <p>Inicia sesión o crea tu cuenta</p>
+        </div>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="login">Iniciar sesión</button>
+          <button class="tab-btn" data-tab="register">Crear cuenta</button>
+        </div>
+
+        <div id="message" class="error-message"></div>
+
+        <form id="form-login">
+          <div class="form-group">
+            <label for="login-email">Correo</label>
+            <input type="email" id="login-email" name="email" autocomplete="email" required placeholder="nombre@correo.com">
+          </div>
+          <div class="form-group">
+            <label for="login-password">Contraseña</label>
+            <div style="position:relative">
+              <input type="password" id="login-password" name="password" minlength="4" required placeholder="Tu contraseña" autocomplete="current-password" style="padding-right:40px">
+              <button type="button" id="toggle-login-password" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:#999;padding:5px;opacity:0.6;transition:opacity 0.2s" title="Mostrar contraseña" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='0.6'">👁</button>
+            </div>
+          </div>
+          <button type="submit" class="btn-login">Ingresar</button>
+        </form>
+
+        <form id="form-register" class="hidden">
+          <div class="form-group">
+            <label for="reg-name">Nombre</label>
+            <input type="text" id="reg-name" name="name" autocomplete="name" required placeholder="Tu nombre">
+          </div>
+          <div class="form-group">
+            <label for="reg-lastname">Apellidos</label>
+            <input type="text" id="reg-lastname" name="lastname" autocomplete="family-name" required placeholder="Tus apellidos">
+          </div>
+          <div class="form-group">
+            <label for="reg-email">Correo</label>
+            <input type="email" id="reg-email" name="email" autocomplete="email" required placeholder="nombre@correo.com">
+          </div>
+          <div class="form-group">
+            <label for="reg-password">Contraseña <span class="hint-star" title="Debe tener al menos 10 caracteres e incluir 1 mayúscula, 1 minúscula y 1 caracter especial">*</span></label>
+            <div style="position:relative">
+              <input type="password" id="reg-password" name="password" minlength="10" required placeholder="Tu contraseña" autocomplete="new-password" style="padding-right:40px">
+              <button type="button" id="toggle-reg-password" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:#999;padding:5px;opacity:0.6;transition:opacity 0.2s" title="Mostrar contraseña" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='0.6'">👁</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="reg-password-2">Confirmar contraseña</label>
+            <div style="position:relative">
+              <input type="password" id="reg-password-2" name="password2" minlength="10" required placeholder="Repite la contraseña" autocomplete="new-password" style="padding-right:40px">
+              <button type="button" id="toggle-reg-password-2" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:#999;padding:5px;opacity:0.6;transition:opacity 0.2s" title="Mostrar contraseña" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='0.6'">👁</button>
+            </div>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <input type="checkbox" id="reg-save-address" />
+            <label for="reg-save-address" style="margin:0;font-weight:700;color:#5a2032">Guardar dirección de envío para futuras compras</label>
+          </div>
+
+          <div id="reg-shipping-box" class="shipping-box hidden">
+            <h4>Dirección de envío</h4>
+            <div class="form-group">
+              <label for="reg-phone">Teléfono</label>
+              <input type="tel" id="reg-phone" name="phone" placeholder="8888-8888" autocomplete="tel">
+            </div>
+            <div class="shipping-row">
+              <div class="form-group">
+                <label for="reg-provincia">Provincia</label>
+                <select id="reg-provincia">
+                  <option value="" selected>Selecciona provincia</option>
+                  <option>San José</option>
+                  <option>Alajuela</option>
+                  <option>Cartago</option>
+                  <option>Heredia</option>
+                  <option>Guanacaste</option>
+                  <option>Puntarenas</option>
+                  <option>Limón</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="reg-canton">Cantón</label>
+                <select id="reg-canton">
+                  <option value="" selected>Selecciona cantón</option>
+                </select>
+              </div>
+            </div>
+            <div class="shipping-row">
+              <div class="form-group">
+                <label for="reg-distrito">Distrito</label>
+                <input id="reg-distrito" placeholder="Distrito" autocomplete="address-level3">
+              </div>
+              <div class="form-group">
+                <label for="reg-zip">Código postal (opcional)</label>
+                <input id="reg-zip" placeholder="Ej: 10101" autocomplete="postal-code">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="reg-address">Dirección exacta</label>
+              <textarea id="reg-address" placeholder="Casa, referencias, barrio, etc." autocomplete="street-address"></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-login">Crear cuenta</button>
+        </form>
+
+        <a href="index.html" class="btn-back">← Volver a la tienda</a>
+      </div>
+    </div>
+
+    <script>
+      const messageBox = document.getElementById('message');
+      const loginForm = document.getElementById('form-login');
+      const registerForm = document.getElementById('form-register');
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      const saveAddressToggle = document.getElementById('reg-save-address');
+      const shippingBox = document.getElementById('reg-shipping-box');
+      const regProvinciaSel = document.getElementById('reg-provincia');
+      const regCantonSel = document.getElementById('reg-canton');
+      const toggleLoginPasswordBtn = document.getElementById('toggle-login-password');
+      const loginPasswordInput = document.getElementById('login-password');
+      const toggleRegPasswordBtn = document.getElementById('toggle-reg-password');
+      const regPasswordInput = document.getElementById('reg-password');
+      const toggleRegPassword2Btn = document.getElementById('toggle-reg-password-2');
+      const regPassword2Input = document.getElementById('reg-password-2');
+
+      // Toggle para mostrar/ocultar contraseña en login
+      if(toggleLoginPasswordBtn){
+        toggleLoginPasswordBtn.addEventListener('click', function(){
+          if(loginPasswordInput.type === 'password'){
+            loginPasswordInput.type = 'text';
+            toggleLoginPasswordBtn.textContent = '🙈';
+            toggleLoginPasswordBtn.title = 'Ocultar contraseña';
+          } else {
+            loginPasswordInput.type = 'password';
+            toggleLoginPasswordBtn.textContent = '👁';
+            toggleLoginPasswordBtn.title = 'Mostrar contraseña';
+          }
+        });
+      }
+
+      // Toggle para contraseña del registro
+      if(toggleRegPasswordBtn){
+        toggleRegPasswordBtn.addEventListener('click', function(){
+          if(regPasswordInput.type === 'password'){
+            regPasswordInput.type = 'text';
+            toggleRegPasswordBtn.textContent = '🙈';
+            toggleRegPasswordBtn.title = 'Ocultar contraseña';
+          } else {
+            regPasswordInput.type = 'password';
+            toggleRegPasswordBtn.textContent = '👁';
+            toggleRegPasswordBtn.title = 'Mostrar contraseña';
+          }
+        });
+      }
+
+      // Toggle para confirmar contraseña del registro
+      if(toggleRegPassword2Btn){
+        toggleRegPassword2Btn.addEventListener('click', function(){
+          if(regPassword2Input.type === 'password'){
+            regPassword2Input.type = 'text';
+            toggleRegPassword2Btn.textContent = '🙈';
+            toggleRegPassword2Btn.title = 'Ocultar contraseña';
+          } else {
+            regPassword2Input.type = 'password';
+            toggleRegPassword2Btn.textContent = '👁';
+            toggleRegPassword2Btn.title = 'Mostrar contraseña';
+          }
+        });
+      }
+
+      function loadAccounts(){
+        try{ return JSON.parse(localStorage.getItem('user_accounts')||'[]'); }
+        catch(e){ return []; }
+      }
+
+      function saveAccounts(list){
+        localStorage.setItem('user_accounts', JSON.stringify(list));
+      }
+
+      function isStrongPassword(pass){
+        return pass.length >= 10 && /[A-Z]/.test(pass) && /[a-z]/.test(pass) && /[^A-Za-z0-9]/.test(pass);
+      }
+
+      function setSession(user){
+        const session = { name:user.name, lastName:user.lastName||'', email:user.email, loginAt:Date.now(), shipping:user.shipping || null };
+        localStorage.setItem('user_session', JSON.stringify(session));
+      }
+
+      function showMessage(text, type='error'){
+        messageBox.textContent = text;
+        messageBox.classList.toggle('show', true);
+        messageBox.classList.toggle('success', type==='success');
+        setTimeout(()=>{ messageBox.classList.remove('show'); messageBox.classList.remove('success'); }, 3200);
+      }
+
+      // Redirige si ya hay sesión
+      try{
+        const existing = localStorage.getItem('user_session');
+        if(existing){ window.location.href = 'index.html'; }
+      }catch(e){ /* ignore */ }
+
+      tabButtons.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          tabButtons.forEach(b=>b.classList.remove('active'));
+          btn.classList.add('active');
+          const tab = btn.dataset.tab;
+          if(tab === 'login'){
+            loginForm.classList.remove('hidden');
+            registerForm.classList.add('hidden');
+            messageBox.classList.remove('show');
+          } else {
+            registerForm.classList.remove('hidden');
+            loginForm.classList.add('hidden');
+            messageBox.classList.remove('show');
+          }
+        });
+      });
+
+      if(saveAddressToggle){
+        saveAddressToggle.addEventListener('change', ()=>{
+          if(shippingBox){ shippingBox.classList.toggle('hidden', !saveAddressToggle.checked); }
+        });
+      }
+
+      const cantonByProvincia = {
+        "San José": ["San José","Escazú","Desamparados","Puriscal","Tarrazu","Aserrí","Mora","Goicoechea","Santa Ana","Alajuelita","Vázquez de Coronado","Acosta","Tibás","Moravia","Montes de Oca","Turrubares","Dota","Curridabat","Pérez Zeledón","León Cortés"],
+        "Alajuela": ["Alajuela","San Ramón","Grecia","San Mateo","Atenas","Naranjo","Palmares","Poás","Orotina","San Carlos","Zarcero","Sarchí","Upala","Los Chiles","Guatuso","Río Cuarto"],
+        "Cartago": ["Cartago","Paraíso","La Unión","Jiménez","Turrialba","Alvarado","Oreamuno","El Guarco"],
+        "Heredia": ["Heredia","Barva","Santo Domingo","Santa Bárbara","San Rafael","San Isidro","Belén","Flores","San Pablo","Sarapiquí"],
+        "Guanacaste": ["Liberia","Nicoya","Santa Cruz","Bagaces","Carrillo","Cañas","Abangares","Tilarán","Nandayure","La Cruz","Hojancha"],
+        "Puntarenas": ["Puntarenas","Esparza","Buenos Aires","Montes de Oro","Osa","Quepos","Golfito","Coto Brus","Parrita","Corredores","Garabito"],
+        "Limón": ["Limón","Pococí","Siquirres","Talamanca","Matina","Guácimo"]
+      };
+
+      function populateRegCantones(prov){
+        if(!regCantonSel) return;
+        regCantonSel.innerHTML = '<option value="" selected>Selecciona cantón</option>';
+        const list = cantonByProvincia[prov];
+        if(!list) return;
+        list.forEach(c=>{
+          const opt = document.createElement('option');
+          opt.value = c;
+          opt.textContent = c;
+          regCantonSel.appendChild(opt);
+        });
+      }
+
+      if(regProvinciaSel){
+        regProvinciaSel.addEventListener('change', ()=>{
+          populateRegCantones(regProvinciaSel.value);
+        });
+      }
+
+      loginForm.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const email = document.getElementById('login-email').value.trim().toLowerCase();
+        const password = document.getElementById('login-password').value;
+        const accounts = loadAccounts();
+        const user = accounts.find(acc => (acc.email||'').toLowerCase() === email && acc.password === password);
+        if(!user){
+          showMessage('Correo o contraseña incorrectos.');
+          return;
+        }
+        setSession(user);
+        window.location.href = 'index.html';
+      });
+
+      registerForm.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const name = document.getElementById('reg-name').value.trim();
+        const lastName = document.getElementById('reg-lastname').value.trim();
+        const email = document.getElementById('reg-email').value.trim().toLowerCase();
+        const pass1 = document.getElementById('reg-password').value;
+        const pass2 = document.getElementById('reg-password-2').value;
+        const wantsShipping = saveAddressToggle && saveAddressToggle.checked;
+        const phone = document.getElementById('reg-phone') ? document.getElementById('reg-phone').value.trim() : '';
+        const provincia = document.getElementById('reg-provincia') ? document.getElementById('reg-provincia').value : '';
+        const canton = document.getElementById('reg-canton') ? document.getElementById('reg-canton').value : '';
+        const distrito = document.getElementById('reg-distrito') ? document.getElementById('reg-distrito').value.trim() : '';
+        const zip = document.getElementById('reg-zip') ? document.getElementById('reg-zip').value.trim() : '';
+        const address = document.getElementById('reg-address') ? document.getElementById('reg-address').value.trim() : '';
+
+        if(!name || !lastName || !email){
+          showMessage('Completa nombre, apellidos y correo.');
+          return;
+        }
+        if(!isStrongPassword(pass1)){
+          showMessage('La contraseña debe tener mínimo 10 caracteres e incluir al menos 1 mayúscula, 1 minúscula y 1 caracter especial.');
+          return;
+        }
+        if(pass1 !== pass2){
+          showMessage('Las contraseñas no coinciden.');
+          return;
+        }
+        const accounts = loadAccounts();
+        if(accounts.some(acc => (acc.email||'').toLowerCase() === email)){
+          showMessage('Ya existe una cuenta con este correo.');
+          return;
+        }
+        const shipping = wantsShipping ? {
+          phone: phone || '',
+          provincia: provincia || '',
+          canton: canton || '',
+          distrito: distrito || '',
+          zip: zip || '',
+          address: address || ''
+        } : null;
+        const newUser = { name, lastName, email, password: pass1, shipping };
+        accounts.push(newUser);
+        try{ saveAccounts(accounts); }
+        catch(err){ showMessage('No se pudo guardar la cuenta en este navegador.'); return; }
+        setSession(newUser);
+        showMessage('Cuenta creada. Redirigiendo...', 'success');
+        setTimeout(()=> window.location.href = 'index.html', 800);
+      });
+    </script>
+  </body>
+</html>
