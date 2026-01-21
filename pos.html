@@ -310,6 +310,16 @@
       .product-card .stock { color: #6b2840; font-size: 0.9rem; }
     </style>
   </head>
+  <style>
+    @media print {
+      .site-header, .admin-tabs, .nav-overlay, .nav-drawer, .cart-section, .products-section, .pos-header {
+        display: none !important;
+      }
+      body {
+        background: white !important;
+      }
+    }
+  </style>
   <body>
     <header class="site-header">
       <div class="container header-inner">
