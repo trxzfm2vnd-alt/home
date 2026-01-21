@@ -1,0 +1,181 @@
+﻿<!doctype html>
+<html lang="es">
+  <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sophie - Tienda de Regalos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <button id="hamburger" class="hamburger" aria-label="Abrir menú">☰</button>
+        <a href="index.html" class="logo" style="text-decoration:none;cursor:pointer;display:flex;align-items:center;gap:10px">
+          <svg width="32" height="32" viewBox="0 0 32 32" style="flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.1))">
+            <defs>
+              <linearGradient id="giftGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ff6b9d;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#d946a6;stop-opacity:1" />
+              </linearGradient>
+              <linearGradient id="ribbonGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#ffed4e;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <rect x="4" y="10" width="24" height="16" rx="2" fill="url(#giftGradient)" />
+            <path d="M 4 10 Q 16 4 28 10" fill="#ff8ab3" />
+            <rect x="14" y="4" width="4" height="22" fill="url(#ribbonGradient)" />
+            <rect x="4" y="14" width="24" height="3" fill="url(#ribbonGradient)" />
+            <circle cx="16" cy="8" r="3" fill="#ffd700" />
+            <ellipse cx="8" cy="14" rx="2" ry="3" fill="rgba(255,255,255,0.4)" />
+          </svg>
+          <span style="font-size:1.3rem;font-weight:700;color:white">Sophie</span>
+        </a>
+        <button id="account-btn" class="account" type="button" aria-label="Abrir cuenta">👤 Iniciar sesión</button>
+        <div id="account-menu" class="account-menu hidden" aria-hidden="true">
+          <a href="profile.html" class="menu-item">👤 Ver Perfil</a>
+          <button id="logout-btn" class="menu-item logout" type="button">🚪 Cerrar Sesión</button>
+        </div>
+        <div class="cart" id="open-cart" role="button">🛍️ <span id="cart-count">0</span></div>
+      </div>
+    </header>
+
+    <div id="nav-overlay" class="nav-overlay" aria-hidden="true"></div>
+    <aside id="nav-drawer" class="nav-drawer" aria-hidden="true">
+      <div class="nav-drawer-inner">
+        <button id="close-nav" class="close">✕</button>
+        <nav class="nav-drawer-list">
+          <a class="btn" href="index.html">Inicio</a>
+          <button id="nav-products-toggle" class="btn nav-item">Productos ▾</button>
+          <ul id="nav-products-submenu" class="nav-submenu" aria-hidden="true">
+            <li><a class="btn" href="products.html?cat=all">Todos los productos</a></li>
+            <li><a class="btn" href="products.html?cat=peluches">Peluches</a></li>
+            <li><a class="btn" href="products.html?cat=tazas">Tazas</a></li>
+            <li><a class="btn" href="products.html?cat=vasos">Vasos</a></li>
+            <li><a class="btn" href="products.html?cat=mochilas">Mochilas</a></li>
+            <li><a class="btn" href="products.html?cat=papeleria">Papelería</a></li>
+            <li><a class="btn" href="products.html?cat=decoracion">Decoración</a></li>
+            <li><a class="btn" href="products.html?cat=botellas">Botellas</a></li>
+            <li><a class="btn" href="products.html?cat=belleza">Belleza</a></li>
+            <li><a class="btn" href="products.html?cat=bloques">Bloques</a></li>
+          </ul>
+          <a class="btn" id="drawer-account" href="user-login.html" style="border-top:1px solid rgba(230,200,215,0.4);padding-top:12px;color:#6b2840;font-weight:700">👤 Iniciar sesión</a>
+          <a class="btn" href="login.html" style="margin-top:auto;border-top:1px solid rgba(230,200,215,0.4);padding-top:12px;color:#d946a6;font-weight:700">⚙️ Administración</a>
+        </nav>
+      </div>
+    </aside>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-inner">
+          <div class="carousel" id="carousel">
+            <div class="slides">
+              <div class="slide active"><img src="https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=1920&q=80" alt="Regalos creativos"></div>
+              <div class="slide"><img src="https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?w=1920&q=80" alt="Temporada escolar"></div>
+              <div class="slide"><img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=1920&q=80" alt="Día del amor y la amistad"></div>
+            </div>
+            <div class="carousel-controls">
+              <button id="prev-slide" class="carousel-btn">‹</button>
+              <button id="next-slide" class="carousel-btn">›</button>
+            </div>
+            <div class="carousel-dots" id="carousel-dots"></div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <section class="products container">
+      <h2>Más vendidos</h2>
+      <p class="hero-sub">Nuestros productos más populares — seleccionados por ventas.</p>
+      <div style="margin:12px 0" id="best-sellers-grid" class="grid"></div>
+      <div style="margin-top:14px;text-align:center">
+        <a href="products.html" class="btn" style="padding:10px 16px;border-radius:10px">Ver más productos</a>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-grid">
+          <div class="contact-card">
+            <h4>Sophie</h4>
+            <p class="tagline">Regalos, detalles y promociones especiales</p>
+              <div class="contact-row">
+                <ul class="contact-list">
+                  <li>
+                    <span class="icon">
+                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4l-10 6L2 8V4z"/></svg>
+                    </span>
+                    <a href="mailto:tienda@sophieweb.com">tienda@sophieweb.com</a>
+                  </li>
+                  <li>
+                    <span class="icon">
+                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6.6 10.2a15.05 15.05 0 0 0 7.2 7.2l2-2a1 1 0 0 1 1-.2 11.36 11.36 0 0 0 3.6.6 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h2.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .6 3.6 1 1 0 0 1-.2 1l-2 2z"/></svg>
+                    </span>
+                    <a href="tel:+50688561651">+506 8856 1651</a>
+                  </li>
+                  <li>
+                    <span class="icon">
+                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path fill="#25D366" d="M20.52 3.48A11.94 11.94 0 0012 0C5.37 0 .07 4.61 0 11.18 0 13.5.7 15.7 1.95 17.6L0 24l6.66-1.96A11.96 11.96 0 0012 24c6.63 0 11.94-4.61 12-11.18 0-.64-.05-1.27-.12-1.9a11.94 11.94 0 00-1.36-7.44z"/>
+                        <path fill="#FFF" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.472-.149-.672.15-.197.297-.767.967-.94 1.164-.173.198-.347.223-.644.075-.297-.149-1.255-.462-2.39-1.475-.885-.788-1.48-1.761-1.654-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.447-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.074-.149-.672-1.612-.92-2.206-.242-.579-.487-.5-.672-.51l-.572-.01c-.197 0-.498.074-.76.347-.263.273-1 1.047-1 2.549s.98 2.96 1.112 3.168c.134.198 1.92 2.995 4.657 4.2 2.736 1.205 2.736.803 3.23.744.494-.06 1.758-.717 2.006-1.41.247-.693.247-1.286.173-1.41-.074-.124-.272-.198-.57-.347z"/>
+                      </svg>
+                    </span>
+                    <a href="https://wa.me/50688561651" target="_blank">WhatsApp</a>
+                  </li>
+                </ul>
+                <div class="hours">
+                  <strong>Horario:</strong>
+                  <div>Lun - Sab: 8:00 - 18:00</div>
+                  <div>Dom: 9:00 - 17:00</div>
+                </div>
+              </div>
+            <div class="social-links">
+              <a href="https://www.facebook.com/Sophieswebcr" target="_blank">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2.2v-2.9h2.2V9.5c0-2.2 1.3-3.4 3.3-3.4.96 0 1.97.17 1.97.17v2.2h-1.13c-1.12 0-1.46.69-1.46 1.4v1.68h2.5l-.4 2.9h-2.1v7A10 10 0 0 0 22 12z"/></svg>
+                Facebook
+              </a>
+              <a href="https://www.tiktok.com/@.sophie_cr?is_from_webapp=1&sender_device=pc" target="_blank">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2v8.5a4.5 4.5 0 1 0 4.5 4.5V9h3.5V6h-3.5V2z"/></svg>
+                TikTok
+              </a>
+            </div>
+            
+          </div>
+          <div class="footer-map">
+            <iframe title="ubicacion" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d982.4603185929896!2d-84.0534850303826!3d9.947161220329479!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa0e57098902e01%3A0xd79fb989152bcfc2!2sTienda%20Sophie!5e0!3m2!1ses!2scr!4v1768398244176!5m2!1ses!2scr" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <div id="cart-overlay" class="cart-overlay" aria-hidden="true"></div>
+    <aside id="cart-drawer" class="cart-drawer" aria-hidden="true">
+      <div class="cart-drawer-header">
+        <h3>Tu carrito</h3>
+        <button id="close-cart" class="close">✕</button>
+      </div>
+      <div id="cart-items" class="cart-items"></div>
+      <div class="cart-summary">
+        <div class="amounts">
+          <div><strong>Total</strong><strong id="cart-total">₡0</strong></div>
+        </div>
+        <div class="cart-actions">
+          <button id="clear-cart" class="btn">Vaciar carrito</button>
+          <button id="checkout" class="add">Pagar</button>
+        </div>
+      </div>
+    </aside>
+
+    <div id="product-modal" class="modal" aria-hidden="true">
+      <div class="modal-content">
+        <button id="close-modal" class="close">✕</button>
+        <div id="modal-body"></div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
