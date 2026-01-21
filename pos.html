@@ -420,7 +420,7 @@
 
     <!-- Modal de Métodos de Pago -->
     <div id="payment-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;flex-direction:column">
-      <div style="background:white;border-radius:12px;padding:30px;width:90%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 4px 20px rgba(0,0,0,0.3)">
+      <div style="background:white;border-radius:12px;padding:30px;width:90%;max-width:500px;max-height:60vh;overflow-y:auto;box-shadow:0 4px 20px rgba(0,0,0,0.3)">
         <h2 style="color:#5a2032;margin-bottom:20px;text-align:center" id="payment-title">Métodos de Pago</h2>
         
         <!-- Información del apartado si aplica -->
@@ -1199,7 +1199,7 @@
         modal.id = 'apartado-modal';
         modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:2000;display:flex;align-items:center;justify-content:center;';
         
-        var content = '<div style="background:white;padding:30px;border-radius:12px;max-width:500px;width:90%;box-shadow:0 4px 20px rgba(0,0,0,0.3);">';
+        var content = '<div style="background:white;padding:30px;border-radius:12px;max-width:500px;width:90%;max-height:60vh;overflow-y:auto;box-shadow:0 4px 20px rgba(0,0,0,0.3);">';
         content += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-bottom:2px solid #ff9800;padding-bottom:15px;">';
         content += '<h2 style="margin:0;color:#ff9800">Crear Apartado</h2>';
         content += '<button onclick="document.getElementById(\'apartado-modal\').remove();" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#666">✕</button>';
@@ -2802,7 +2802,7 @@
           paymentRows += '<tr><td style="padding:6px;">' + methodName + '</td><td style="padding:6px;text-align:right;">' + formatMoney(p.amount) + '</td></tr>';
         }
         
-        var content = '<div style="background:white;padding:40px;border-radius:8px;max-width:650px;max-height:85vh;overflow-y:auto;font-family:Arial,sans-serif;box-shadow:0 4px 20px rgba(0,0,0,0.3);">';
+        var content = '<div style="background:white;padding:40px;border-radius:8px;max-width:650px;max-height:65vh;overflow-y:auto;font-family:Arial,sans-serif;box-shadow:0 4px 20px rgba(0,0,0,0.3);">';
         
         // Header
         content += '<div style="text-align:center;border-bottom:3px solid #5a2032;padding-bottom:20px;margin-bottom:20px;">';

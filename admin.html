@@ -509,6 +509,7 @@
         }
       }
     </script>
+
     <script>
       // Verificar autenticación y tipo de usuario
       if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
@@ -634,7 +635,10 @@
         
         // Agregar event listeners a los botones
         tbody.querySelectorAll('.btn-edit').forEach(btn => {
-          btn.addEventListener('click', () => editProduct(parseInt(btn.dataset.id)));
+          btn.addEventListener('click', (e) => {
+            console.log('Editar click', btn.dataset.id);
+            editProduct(parseInt(btn.dataset.id));
+          });
         });
         
         
@@ -661,16 +665,17 @@
         const btnCancel = document.getElementById('btn-cancel');
         const form = document.getElementById('product-form');
 
+
         if (btnCancel) {
           btnCancel.addEventListener('click', () => {
-            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
           });
         }
 
         if (modal) {
           modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-              modal.classList.remove('active');
+              modal.setAttribute('aria-hidden', 'true');
             }
           });
         }
@@ -777,6 +782,7 @@
       }
 
       function editProduct(id) {
+        console.log('editProduct called with id:', id);
         const product = productsData.find(p => p.id === id);
         if (!product) return;
 
@@ -807,7 +813,8 @@
           renderVariantsList();
         }
 
-        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+        console.log('Modal aria-hidden set to false:', modal.getAttribute('aria-hidden'));
       }
 
 
@@ -883,7 +890,7 @@
         currentVariants = [];
         renderVariantsList();
 
-        document.getElementById('product-modal').classList.remove('active');
+        document.getElementById('product-modal').setAttribute('aria-hidden', 'true');
         renderProductsTable();
       }
       

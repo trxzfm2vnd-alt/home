@@ -570,20 +570,20 @@
             document.getElementById('inv-inventory-tienda2').value = '0';
             document.getElementById('inv-inventory-tienda3').value = '0';
             document.getElementById('inv-inventory-bodega').value = '0';
-            addProductModal.classList.add('active');
+            addProductModal.setAttribute('aria-hidden', 'false');
           });
         }
 
         if (btnCancelAddProduct) {
           btnCancelAddProduct.addEventListener('click', () => {
-            addProductModal.classList.remove('active');
+            addProductModal.setAttribute('aria-hidden', 'true');
           });
         }
 
         if (addProductModal) {
           addProductModal.addEventListener('click', (e) => {
             if (e.target === addProductModal) {
-              addProductModal.classList.remove('active');
+              addProductModal.setAttribute('aria-hidden', 'true');
             }
           });
         }
@@ -599,14 +599,14 @@
 
         if (btnCancel) {
           btnCancel.addEventListener('click', () => {
-            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
           });
         }
 
         if (modal) {
           modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-              modal.classList.remove('active');
+              modal.setAttribute('aria-hidden', 'true');
             }
           });
         }
@@ -845,15 +845,15 @@
                 </div>
                 <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:10px">
                   <div>
-                    <label style="font-size:0.85rem;color:#666;display:block;margin-bottom:4px">Tienda 1</label>
+                    <label style="font-size:0.85rem;color:#666;display:block;margin-bottom:4px">Sophie Store</label>
                     <input type="number" class="variant-tienda1" data-variant-index="${index}" min="0" value="${inv.tienda1 || 0}" style="width:100%;padding:8px;border:1px solid #e3cfe0;border-radius:6px">
                   </div>
                   <div>
-                    <label style="font-size:0.85rem;color:#666;display:block;margin-bottom:4px">Tienda 2</label>
+                    <label style="font-size:0.85rem;color:#666;display:block;margin-bottom:4px">Sophie Mall</label>
                     <input type="number" class="variant-tienda2" data-variant-index="${index}" min="0" value="${inv.tienda2 || 0}" style="width:100%;padding:8px;border:1px solid #e3cfe0;border-radius:6px">
                   </div>
                   <div>
-                    <label style="font-size:0.85rem;color:#666;display:block;margin-bottom:4px">Tienda 3</label>
+                    <label style="font-size:0.85rem;color:#666;display:block;margin-bottom:4px">Sophie's Ticados</label>
                     <input type="number" class="variant-tienda3" data-variant-index="${index}" min="0" value="${inv.tienda3 || 0}" style="width:100%;padding:8px;border:1px solid #e3cfe0;border-radius:6px">
                   </div>
                   <div>
@@ -873,15 +873,15 @@
               <input type="text" id="adjust-barcode" value="${product.barcode || ''}" placeholder="SOPHIE000000" style="font-family:monospace">
             </div>
             <div class="form-group">
-              <label for="adjust-tienda1">Tienda 1</label>
+              <label for="adjust-tienda1">Sophie Store</label>
               <input type="number" id="adjust-tienda1" min="0" value="${inv.tienda1 || 0}">
             </div>
             <div class="form-group">
-              <label for="adjust-tienda2">Tienda 2</label>
+              <label for="adjust-tienda2">Sophie Mall</label>
               <input type="number" id="adjust-tienda2" min="0" value="${inv.tienda2 || 0}">
             </div>
             <div class="form-group">
-              <label for="adjust-tienda3">Tienda 3</label>
+              <label for="adjust-tienda3">Sophie's Ticados</label>
               <input type="number" id="adjust-tienda3" min="0" value="${inv.tienda3 || 0}">
             </div>
             <div class="form-group">
@@ -891,7 +891,7 @@
           `;
         }
 
-        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
       }
 
       function handleAdjustSubmit(e) {
@@ -950,7 +950,7 @@
           localStorage.setItem('products_data', JSON.stringify(productsData));
         }
 
-        document.getElementById('adjust-modal').classList.remove('active');
+        document.getElementById('adjust-modal').setAttribute('aria-hidden', 'true');
         renderInventoryStats();
         renderInventoryTable();
         alert('Inventario actualizado correctamente ✅');
@@ -1043,7 +1043,7 @@
           localStorage.setItem('products_data', JSON.stringify(productsData));
         }
 
-        document.getElementById('add-product-modal').classList.remove('active');
+        document.getElementById('add-product-modal').setAttribute('aria-hidden', 'true');
         renderInventoryStats();
         renderInventoryTable();
         alert('Producto agregado correctamente. Recuerda activarlo en el módulo de Administración para que sea visible en la tienda. ✅');
