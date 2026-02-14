@@ -1,0 +1,1863 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Inventario - Poás</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="poas-pos.css" />
+    <style>
+      .inventory-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid var(--poas-border);
+      }
+
+      .inventory-header h1 {
+        margin: 0;
+        color: var(--poas-blue);
+        font-size: 1.8rem;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      .stat-card {
+        background: var(--poas-card);
+        border-radius: var(--poas-radius);
+        padding: 18px;
+        border-left: 4px solid;
+        box-shadow: var(--poas-shadow);
+      }
+
+      .stat-card h3 {
+        margin: 0 0 6px 0;
+        font-size: 0.9rem;
+        color: var(--poas-muted);
+        font-weight: 600;
+      }
+
+      .stat-card .value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--poas-blue);
+        margin: 0;
+      }
+
+      .stat-card.critical { border-left-color: var(--poas-orange); }
+      .stat-card.warning { border-left-color: var(--poas-gold); }
+      .stat-card.success { border-left-color: var(--poas-blue-2); }
+      .stat-card.total { border-left-color: var(--poas-magenta); }
+
+      .search-filter {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+      }
+
+      .search-filter input,
+      .search-filter select {
+        padding: 10px 12px;
+        border: 1px solid var(--poas-border);
+        border-radius: 10px;
+        font-family: inherit;
+      }
+
+      .search-filter input {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .inventory-table {
+        background: var(--poas-card);
+        border-radius: var(--poas-radius);
+        overflow-x: auto;
+        box-shadow: var(--poas-shadow);
+      }
+
+      .inventory-table table {
+        width: 100%;
+        min-width: 800px;
+        border-collapse: collapse;
+      }
+
+      .inventory-table th {
+        background: linear-gradient(135deg, rgba(9, 72, 151, 0.08), rgba(180, 17, 175, 0.08));
+        padding: 12px;
+        text-align: left;
+        font-weight: 700;
+        color: var(--poas-blue);
+        font-size: 0.85rem;
+        border-bottom: 1px solid var(--poas-border);
+      }
+
+      .inventory-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--poas-border);
+        color: var(--poas-black);
+        font-size: 0.9rem;
+      }
+
+      .inventory-table tr:hover {
+        background: rgba(9, 72, 151, 0.02);
+      }
+
+      .product-img-small {
+        width: 48px;
+        height: 48px;
+        object-fit: cover;
+        border-radius: 8px;
+        background: #f4f7f9;
+      }
+
+      .inventory-product-title {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        line-height: 1.2;
+        max-width: 260px;
+      }
+
+      .stock-cell {
+        text-align: center;
+        font-weight: 700;
+        min-width: 50px;
+      }
+
+      .stock-critical { color: var(--poas-orange); }
+      .stock-warning { color: var(--poas-gold); }
+      .stock-good { color: var(--poas-blue-2); }
+
+      .btn-adjust {
+        padding: 6px 12px;
+        background: var(--poas-blue);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 0.85rem;
+      }
+
+      .btn-adjust:hover {
+        background: var(--poas-blue);
+        opacity: 0.9;
+      }
+
+      .btn-export {
+        padding: 10px 20px;
+        background: var(--poas-blue);
+        color: white;
+        border: none;
+        border-radius: 999px;
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 0.95rem;
+      }
+
+      .btn-export:hover {
+        opacity: 0.9;
+      }
+
+      .poas-modal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 100;
+        padding: 18px;
+      }
+
+      .poas-modal.active {
+        display: flex;
+      }
+
+      .poas-modal-content {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        max-width: 480px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+      }
+
+      .poas-modal h3 {
+        margin-top: 0;
+        color: var(--poas-blue);
+        font-size: 1.4rem;
+      }
+
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+
+      .form-field label {
+        font-weight: 600;
+        color: var(--poas-blue);
+      }
+
+      .form-field input {
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--poas-border);
+        font-family: inherit;
+      }
+
+      .modal-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .empty-state {
+        text-align: center;
+        color: var(--poas-muted);
+        padding: 40px;
+      }
+
+      @media (max-width: 768px) {
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .inventory-table table {
+          min-width: 600px;
+        }
+      }
+    </style>
+  </head>
+  <body style="background:var(--poas-bg)">
+    <header class="poas-header">
+      <div class="poas-brand">
+        <img src="Logo%20Po%C3%A1s/Logos-Poas-color-1.png" alt="Logo Poás" />
+        <div>
+          <h1>Poás</h1>
+          <p>Inventario</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span id="user-info-inventory" style="color:var(--poas-blue);font-weight:600;margin-right:16px;display:none">
+          <span id="user-name-inventory"></span> <span style="color:#888">(<span id="user-role-inventory"></span>)</span>
+        </span>
+        <button class="poas-btn ghost" onclick="exportInventory()">Exportar CSV</button>
+        <a href="pos-poas.html" class="poas-btn ghost">← Volver a POS</a>
+        <button class="poas-btn ghost" id="logout-btn-inventory" style="display:none">🚪 Cerrar Sesión</button>
+      </div>
+    </header>
+
+    <main class="poas-main">
+      <div class="inventory-header">
+        <h1>Gestión de Inventario</h1>
+        <div style="display:flex;gap:12px">
+          <button class="btn-export" onclick="openAddProductModal()" style="background: var(--poas-blue);">➕ Agregar Producto</button>
+          <button class="btn-export" onclick="openTransferModal()" style="background: var(--poas-magenta);">📦 Transferir desde Bodega</button>
+          <button class="btn-export" onclick="openTransferHistoryModal()" style="background: var(--poas-orange);">📋 Historial</button>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card total">
+          <h3>Total de productos</h3>
+          <p class="value" id="stat-total">0</p>
+        </div>
+        <div class="stat-card success">
+          <h3>En stock</h3>
+          <p class="value" id="stat-good">0</p>
+        </div>
+        <div class="stat-card warning">
+          <h3>Stock bajo</h3>
+          <p class="value" id="stat-low">0</p>
+        </div>
+        <div class="stat-card critical">
+          <h3>Agotado</h3>
+          <p class="value" id="stat-empty">0</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="search-filter">
+          <input type="text" id="inventory-search" class="search-input" placeholder="Buscar producto..." />
+          <select id="inventory-filter">
+            <option value="">Todos</option>
+            <option value="good">En stock</option>
+            <option value="low">Stock bajo</option>
+            <option value="empty">Agotado</option>
+          </select>
+        </div>
+
+        <div class="inventory-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Código</th>
+                <th>Código Proveedor</th>
+                <th>Stock Poás</th>
+                <th>Stock Bodega</th>
+                <th>Precio</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-tbody">
+              <tr><td colspan="7" class="empty-state">Cargando productos...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="poas-inventory-pagination" class="pagination"></div>
+      </div>
+    </main>
+
+    <div id="adjust-modal" class="poas-modal" aria-hidden="true">
+      <div class="poas-modal-content">
+        <h3>Ajustar inventario</h3>
+        <div class="form-field">
+          <label>Producto</label>
+          <input type="text" id="adjust-product" disabled />
+        </div>
+        <div id="adjust-variants-container" style="display:none;max-height:500px;overflow-y:auto;margin-bottom:16px"></div>
+        <div id="adjust-regular-container" style="display:none;margin-bottom:16px;">
+          <div class="form-field">
+            <label>Stock Poás (actual)</label>
+            <input type="text" id="adjust-current-poas" disabled />
+          </div>
+          <div class="form-field">
+            <label>Stock Poás (nuevo)</label>
+            <input type="number" id="adjust-new-poas" min="0" />
+          </div>
+          <div class="form-field">
+            <label>Stock Bodega (actual)</label>
+            <input type="text" id="adjust-current-bodega" disabled />
+          </div>
+          <div class="form-field">
+            <label>Stock Bodega (nuevo)</label>
+            <input type="number" id="adjust-new-bodega" min="0" />
+          </div>
+        </div>
+        <div id="variant-edit-section" style="display:none;max-height:500px;overflow-y:auto;margin-bottom:16px;">
+          <h4 style="margin-top:0;margin-bottom:12px;">Editar Variante</h4>
+          <div class="form-field">
+            <label>Nombre</label>
+            <input type="text" id="variant-edit-name" />
+          </div>
+          <div class="form-field">
+            <label>Precio</label>
+            <input type="number" id="variant-edit-price" step="0.01" min="0" />
+          </div>
+          <div class="form-field">
+            <label>Código de Barras</label>
+            <input type="text" id="variant-edit-barcode" />
+          </div>
+        </div>
+        <div class="modal-actions" id="adjust-modal-actions">
+          <button class="poas-btn ghost" onclick="closeAdjustModal()">Cancelar</button>
+          <button class="poas-btn" onclick="saveAdjustment()">Guardar</button>
+        </div>
+        <div class="modal-actions" id="variant-edit-actions" style="display:none;">
+          <button class="poas-btn ghost" onclick="document.getElementById('variant-edit-section').style.display='none'; document.getElementById('adjust-variants-container').style.display='block'; document.getElementById('adjust-modal-actions').style.display='flex'; document.getElementById('variant-edit-actions').style.display='none'">Cancelar</button>
+          <button class="poas-btn" onclick="saveVariantData()">Guardar Cambios</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="transfer-modal" class="poas-modal" aria-hidden="true">
+      <div class="poas-modal-content">
+        <h3>Transferir desde Bodega</h3>
+        <div class="form-field">
+          <label>Encargado *</label>
+          <input type="text" id="transfer-user-display" readonly style="background-color: #f5f5f5; cursor: not-allowed;" />
+        </div>
+        <div class="form-field" style="position: relative;">
+          <label>Buscar producto</label>
+          <input type="text" id="transfer-search-poas" placeholder="Código o nombre..." />
+          <div id="transfer-suggestions-poas" style="position: absolute; background: white; border: 1px solid #e0e0e0; border-radius: 8px; max-height: 280px; overflow-y: auto; width: calc(100% - 2px); display: none; margin-top: 2px; z-index: 101; left: 0; right: 0; top: 100%;"></div>
+        </div>
+        <div id="transfer-list-poas" style="margin: 12px 0; max-height: 300px; overflow-y: auto;"></div>
+        <div class="modal-actions">
+          <button class="poas-btn ghost" onclick="closeTransferModal()">Cancelar</button>
+          <button class="poas-btn" onclick="processTransfer()" style="background: var(--poas-magenta);">Transferir</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="transfer-variant-modal" class="poas-modal" aria-hidden="true">
+      <div class="poas-modal-content">
+        <h3 id="transfer-variant-title">Seleccionar Variante</h3>
+        <div id="transfer-variant-options" style="display: grid; gap: 12px; margin: 20px 0; max-height: 400px; overflow-y: auto;"></div>
+        <div style="margin-top: 20px;">
+          <label style="font-weight: 600; color: var(--poas-blue); display: block; margin-bottom: 8px;">Cantidad a transferir</label>
+          <input type="number" id="transfer-variant-qty" min="1" value="1" style="width: 100%; padding: 10px; border: 2px solid var(--poas-border); border-radius: 8px; font-size: 14px;" />
+        </div>
+        <div class="modal-actions" style="margin-top: 20px;">
+          <button class="poas-btn ghost" onclick="closeTransferVariantModal()">Cancelar</button>
+          <button class="poas-btn" onclick="confirmTransferVariant()" style="background: var(--poas-magenta);">Agregar</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-variant-stock-modal" class="poas-modal" aria-hidden="true">
+      <div class="poas-modal-content">
+        <h3 id="view-variant-stock-title">Stock de Variantes</h3>
+        <div id="view-variant-stock-content" style="display: grid; gap: 12px; margin: 20px 0; max-height: 400px; overflow-y: auto;"></div>
+        <div class="modal-actions" style="margin-top: 20px;">
+          <button class="poas-btn" onclick="closeViewVariantStockModal()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="add-product-modal" class="poas-modal" aria-hidden="true">
+      <div class="poas-modal-content" style="max-width: 650px;">
+        <h3 style="color: var(--poas-blue); margin-bottom: 20px; border-bottom: 2px solid var(--poas-border); padding-bottom: 12px;">Agregar Nuevo Producto</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+          <div class="form-field">
+            <label style="font-weight:600;color:var(--poas-blue);font-size:0.95rem">Nombre *</label>
+            <input type="text" id="new-product-title" placeholder="Nombre del producto" style="padding:10px;border:2px solid var(--poas-border);border-radius:8px;font-size:0.95rem" />
+          </div>
+          <div class="form-field">
+            <label style="font-weight:600;color:var(--poas-blue);font-size:0.95rem">Código/Barcode</label>
+            <input type="text" id="new-product-barcode" placeholder="Ej: POAS000001" style="padding:10px;border:2px solid var(--poas-border);border-radius:8px;font-size:0.95rem" />
+          </div>
+          <div class="form-field">
+            <label style="font-weight:600;color:var(--poas-blue);font-size:0.95rem">Código Proveedor</label>
+            <input type="text" id="new-product-supplier-code" placeholder="(opcional)" style="padding:10px;border:2px solid var(--poas-border);border-radius:8px;font-size:0.95rem" />
+          </div>
+          <div class="form-field">
+            <label style="font-weight:600;color:var(--poas-blue);font-size:0.95rem">Precio *</label>
+            <input type="number" id="new-product-price" min="0" step="100" placeholder="0" style="padding:10px;border:2px solid var(--poas-border);border-radius:8px;font-size:0.95rem" />
+          </div>
+        </div>
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+          <div class="form-field">
+            <label style="font-weight:600;color:var(--poas-blue);font-size:0.95rem">Stock Poás</label>
+            <input type="number" id="new-product-stock-poas" min="0" value="0" style="padding:10px;border:2px solid var(--poas-border);border-radius:8px;font-size:0.95rem" />
+          </div>
+          <div class="form-field">
+            <label style="font-weight:600;color:var(--poas-blue);font-size:0.95rem">Stock Bodega</label>
+            <input type="number" id="new-product-stock-bodega" min="0" value="0" style="padding:10px;border:2px solid var(--poas-border);border-radius:8px;font-size:0.95rem" />
+          </div>
+        </div>
+
+        <div class="form-field" style="margin-bottom:20px">
+          <label style="font-weight:600;color:var(--poas-blue);font-size:0.95rem">Imagen</label>
+          <input type="file" id="new-product-img-file" accept="image/*" onchange="previewProductImage(this)" style="padding:10px;border:2px solid var(--poas-border);border-radius:8px;cursor:pointer" />
+          <div id="new-product-img-preview" style="margin-top:12px;display:none;padding:12px;background:var(--poas-light);border-radius:8px;text-align:center">
+            <img id="preview-img" style="max-width:100%;max-height:150px;border-radius:6px;object-fit:contain" />
+          </div>
+        </div>
+
+        <div class="modal-actions" style="display:flex;gap:10px;margin-top:24px">
+          <button class="poas-btn ghost" onclick="closeAddProductModal()" style="flex:1">Cancelar</button>
+          <button class="poas-btn" onclick="saveNewProduct()" style="flex:1;background:var(--poas-blue)">Crear Producto</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="transfer-history-modal" class="poas-modal" aria-hidden="true">
+      <div class="poas-modal-content" style="max-width: 700px; max-height: 600px; overflow-y: auto;">
+        <h3>Historial de Transferencias</h3>
+        <div id="transfer-history-content" style="margin-top: 16px;"></div>
+        <div class="modal-actions" style="margin-top: 20px;">
+          <button class="poas-btn" onclick="closeTransferHistoryModal()">Cerrar</button>
+          <button class="btn-export" onclick="exportTransferHistory()" style="background: var(--poas-blue);">⬇️ Descargar CSV</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const STORAGE_KEYS = {
+        products: 'poas_products_data'
+      };
+
+      let products = [];
+      let currentAdjustId = null;
+      let inventoryCurrentPage = 1;
+      const INVENTORY_PRODUCTS_PER_PAGE = 20;
+      const renderInventoryPagination = (totalPages) => {
+        const container = document.getElementById('poas-inventory-pagination');
+        if (!container) return;
+        if (totalPages <= 1) {
+          container.innerHTML = '';
+          container.style.display = 'none';
+          return;
+        }
+        container.style.display = 'flex';
+        container.innerHTML = `
+          <button class="page-btn prev" ${inventoryCurrentPage===1 ? 'disabled aria-disabled="true"' : ''}>Anterior</button>
+          <span class="page-info">Página ${inventoryCurrentPage} de ${totalPages}</span>
+          <button class="page-btn next" ${inventoryCurrentPage===totalPages ? 'disabled aria-disabled="true"' : ''}>Siguiente</button>
+        `;
+        const prev = container.querySelector('.page-btn.prev');
+        const next = container.querySelector('.page-btn.next');
+        if (prev) prev.addEventListener('click', () => { if (inventoryCurrentPage > 1) { inventoryCurrentPage -= 1; renderInventory(); } });
+        if (next) next.addEventListener('click', () => { if (inventoryCurrentPage < totalPages) { inventoryCurrentPage += 1; renderInventory(); } });
+      };
+
+
+      const formatCRC = (amount) => {
+        return new Intl.NumberFormat('es-CR', {
+          style: 'currency',
+          currency: 'CRC',
+          minimumFractionDigits: 2
+        }).format(Number(amount || 0));
+      };
+
+      const getImagePath = (img) => {
+        if (!img) return '';
+        return img.startsWith('/') ? img : `./${img}`;
+      };
+
+      const getProductStock = (product, location = 'poas') => {
+        if (!product) return 0;
+        if (product.inventory && typeof product.inventory[location] === 'number') {
+          return product.inventory[location];
+        }
+        return 0;
+      };
+
+      const getProductPrice = (product) => {
+        if (typeof product.price === 'number') return product.price;
+        if (product?.variants?.options?.length) {
+          const prices = product.variants.options.map(opt => Number(opt.price || 0)).filter(p => p > 0);
+          if (prices.length) return Math.min(...prices);
+        }
+        return 0;
+      };
+
+      const loadProducts = () => {
+        const stored = localStorage.getItem(STORAGE_KEYS.products);
+        if (stored) {
+          const parsed = JSON.parse(stored || '[]');
+          return Array.isArray(parsed) ? parsed : [];
+        }
+        const fallback = JSON.parse(localStorage.getItem('products_data') || '[]');
+        return Array.isArray(fallback) ? fallback : [];
+      };
+
+      const saveProducts = (prods) => {
+        try {
+          localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(prods || []));
+        } catch (e) {
+          if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+            console.error('localStorage lleno. Liberando espacio...');
+            // Intentar remover imágenes grandes
+            const prodsWithoutImages = prods.map(p => ({
+              ...p,
+              img: p.img && p.img.length > 1000 ? '' : p.img
+            }));
+            localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(prodsWithoutImages));
+          } else {
+            throw e;
+          }
+        }
+      };
+
+      const renderStats = () => {
+        let total = 0, good = 0, low = 0, empty = 0;
+        let bodegaTotal = 0;
+        products.forEach(product => {
+          let stock = 0;
+          let bodega = 0;
+          
+          // Si el producto tiene variantes, sumar el stock de todas las variantes
+          if (product.variants && product.variants.options && product.variants.options.length > 0) {
+            product.variants.options.forEach(variant => {
+              stock += (variant.inventory?.poas || 0);
+              bodega += (variant.inventory?.bodega || 0);
+            });
+          } else {
+            // Si no tiene variantes, usar el inventario regular
+            stock = getProductStock(product, 'poas');
+            bodega = getProductStock(product, 'bodega');
+          }
+          
+          bodegaTotal += bodega;
+          total++;
+          if (stock === 0) empty++;
+          else if (stock < 5) low++;
+          else good++;
+        });
+        document.getElementById('stat-total').textContent = String(total);
+        document.getElementById('stat-good').textContent = String(good);
+        document.getElementById('stat-low').textContent = String(low);
+        document.getElementById('stat-empty').textContent = String(empty);
+      };
+
+      const renderInventory = () => {
+        const tbody = document.getElementById('inventory-tbody');
+        const term = (document.getElementById('inventory-search')?.value || '').trim().toLowerCase();
+        const filter = document.getElementById('inventory-filter')?.value || '';
+
+        let filtered = products.filter(product => {
+          const stock = getProductStock(product, 'poas');
+          let status = 'good';
+          if (stock === 0) status = 'empty';
+          else if (stock < 5) status = 'low';
+
+          if (filter && status !== filter) return false;
+
+          if (term) {
+            const title = (product.title || '').toLowerCase();
+            const barcode = (product.barcode || '').toLowerCase();
+            return title.includes(term) || barcode.includes(term);
+          }
+          return true;
+        });
+
+        tbody.innerHTML = '';
+
+        if (!filtered.length) {
+          tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No se encontraron productos.</td></tr>';
+          return;
+        }
+        const totalPages = Math.max(1, Math.ceil(filtered.length / INVENTORY_PRODUCTS_PER_PAGE));
+        if (inventoryCurrentPage > totalPages) inventoryCurrentPage = totalPages;
+        const start = (inventoryCurrentPage - 1) * INVENTORY_PRODUCTS_PER_PAGE;
+        const visible = filtered.slice(start, start + INVENTORY_PRODUCTS_PER_PAGE);
+        renderInventoryPagination(totalPages);
+
+        visible.forEach(product => {
+          const stockPoas = getProductStock(product, 'poas');
+          const stockBodega = getProductStock(product, 'bodega');
+          let statusClass = 'stock-good';
+          if (stockPoas === 0) statusClass = 'stock-critical';
+          else if (stockPoas < 5) statusClass = 'stock-warning';
+
+          const hasVariants = product?.variants?.options?.length > 0;
+          
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>
+              <div style="display:flex;align-items:center;gap:10px">
+                <img src="${getImagePath(product.img)}" alt="${product.title}" class="product-img-small" />
+                <div>
+                  <strong class="inventory-product-title">${product.title || 'Producto'}</strong>
+                  ${hasVariants ? '<div style="font-size:0.8rem;color:#888">(con variantes)</div>' : ''}
+                </div>
+              </div>
+            </td>
+            <td>${product.barcode || '-'}</td>
+            <td>${product.supplierCode || '-'}</td>
+            <td class="stock-cell ${statusClass}">${hasVariants ? `<button style="background:none;border:none;color:var(--poas-blue);cursor:pointer;font-weight:600;text-decoration:underline;padding:0" onclick="viewVariantStock('${product.id}', 'poas')">Ver variantes</button>` : stockPoas}</td>
+            <td class="stock-cell">${hasVariants ? `<button style="background:none;border:none;color:var(--poas-blue);cursor:pointer;font-weight:600;text-decoration:underline;padding:0" onclick="viewVariantStock('${product.id}', 'bodega')">Ver variantes</button>` : stockBodega}</td>
+            <td>${formatCRC(getProductPrice(product))}</td>
+            <td>
+              ${hasVariants ? `<button class="btn-adjust" onclick="openVariantAdjustModal('${product.id}')">Variantes</button>` : `<button class="btn-adjust" onclick="openAdjustModal('${product.id}')">Ajustar</button>`}
+              <button class="btn-adjust" onclick="deleteProduct('${product.id}')" style="background:var(--poas-orange);margin-left:4px">Eliminar</button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      };
+
+      const openAdjustModal = (productId) => {
+        const product = products.find(p => String(p.id) === String(productId));
+        if (!product) return;
+        currentAdjustId = productId;
+        
+        const modal = document.getElementById('adjust-modal');
+        
+        // Limpiar estado anterior
+        document.getElementById('adjust-variants-container').style.display = 'none';
+        document.getElementById('adjust-regular-container').style.display = 'none';
+        document.getElementById('variant-edit-section').style.display = 'none';
+        const actions = document.getElementById('adjust-modal-actions');
+        const editActions = document.getElementById('variant-edit-actions');
+        if (actions) actions.style.display = 'flex';
+        if (editActions) editActions.style.display = 'none';
+        
+        modal.dataset.isVariant = 'false';
+        const stockPoas = getProductStock(product, 'poas');
+        const stockBodega = getProductStock(product, 'bodega');
+        
+        const productInput = document.getElementById('adjust-product');
+        const currentPoasInput = document.getElementById('adjust-current-poas');
+        const newPoasInput = document.getElementById('adjust-new-poas');
+        const currentBodegaInput = document.getElementById('adjust-current-bodega');
+        const newBodegaInput = document.getElementById('adjust-new-bodega');
+        
+        if (productInput) productInput.value = product.title || 'Producto';
+        if (currentPoasInput) currentPoasInput.value = String(stockPoas);
+        if (newPoasInput) newPoasInput.value = String(stockPoas);
+        if (currentBodegaInput) currentBodegaInput.value = String(stockBodega);
+        if (newBodegaInput) newBodegaInput.value = String(stockBodega);
+        
+        document.getElementById('adjust-regular-container').style.display = 'block';
+        
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+      };
+
+      const openVariantAdjustModal = (productId) => {
+        const product = products.find(p => String(p.id) === String(productId));
+        if (!product || !product?.variants?.options?.length) return;
+        
+        currentAdjustId = productId;
+        
+        // Limpiar estado anterior
+        document.getElementById('adjust-variants-container').innerHTML = '';
+        document.getElementById('adjust-regular-container').style.display = 'none';
+        document.getElementById('variant-edit-section').style.display = 'none';
+        const actions = document.getElementById('adjust-modal-actions');
+        const editActions = document.getElementById('variant-edit-actions');
+        if (actions) actions.style.display = 'flex';
+        if (editActions) editActions.style.display = 'none';
+        
+        let variantsHTML = '';
+        product.variants.options.forEach((variant, idx) => {
+          const poasStock = (variant.inventory?.poas || 0);
+          const bodegaStock = (variant.inventory?.bodega || 0);
+          variantsHTML += `
+            <div style="margin-bottom:16px;padding:16px;background:linear-gradient(135deg, #f5f8fc 0%, #f9fafb 100%);border-radius:8px;border-left:6px solid var(--poas-blue);box-shadow:0 1px 3px rgba(0,0,0,0.08)">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                <div style="font-weight:700;color:var(--poas-blue);font-size:16px">${variant.name}</div>
+                <button class="poas-btn ghost" style="padding:6px 12px;font-size:12px" onclick="editVariantData(${productId}, ${idx})">Editar</button>
+              </div>
+              
+              <div style="margin-bottom:14px">
+                <label style="font-size:12px;color:#666;font-weight:600;display:block;margin-bottom:6px">Stock Poás</label>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <div>
+                    <label style="font-size:11px;color:#999;display:block;margin-bottom:4px">Actual</label>
+                    <input type="text" disabled value="${poasStock}" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;width:100%;box-sizing:border-box;background:#fff;color:#666;font-weight:500" />
+                  </div>
+                  <div>
+                    <label style="font-size:11px;color:#999;display:block;margin-bottom:4px">Nuevo</label>
+                    <input type="number" class="variant-poas-stock" data-idx="${idx}" min="0" value="${poasStock}" style="padding:8px;border:2px solid var(--poas-blue);border-radius:6px;font-size:13px;width:100%;box-sizing:border-box;font-weight:500" />
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <label style="font-size:12px;color:#666;font-weight:600;display:block;margin-bottom:6px">Stock Bodega</label>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <div>
+                    <label style="font-size:11px;color:#999;display:block;margin-bottom:4px">Actual</label>
+                    <input type="text" disabled value="${bodegaStock}" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;width:100%;box-sizing:border-box;background:#fff;color:#666;font-weight:500" />
+                  </div>
+                  <div>
+                    <label style="font-size:11px;color:#999;display:block;margin-bottom:4px">Nuevo</label>
+                    <input type="number" class="variant-bodega-stock" data-idx="${idx}" min="0" value="${bodegaStock}" style="padding:8px;border:2px solid var(--poas-blue);border-radius:6px;font-size:13px;width:100%;box-sizing:border-box;font-weight:500" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        
+        document.getElementById('adjust-product').value = product.title || 'Producto';
+        document.getElementById('adjust-variants-container').innerHTML = variantsHTML;
+        document.getElementById('adjust-variants-container').style.display = 'block';
+        
+        const modal = document.getElementById('adjust-modal');
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+        modal.dataset.isVariant = 'true';
+      };
+
+      const editVariantData = (productId, variantIdx) => {
+        const product = products.find(p => String(p.id) === String(productId));
+        if (!product || !product.variants.options[variantIdx]) return;
+        
+        const variant = product.variants.options[variantIdx];
+        
+        const nameInput = document.getElementById('variant-edit-name');
+        const priceInput = document.getElementById('variant-edit-price');
+        const barcodeInput = document.getElementById('variant-edit-barcode');
+        
+        if (!nameInput || !priceInput || !barcodeInput) {
+          console.error('Elementos de edición no encontrados');
+          return;
+        }
+        
+        nameInput.value = variant.name;
+        priceInput.value = variant.price || 0;
+        barcodeInput.value = variant.barcode || '';
+        
+        document.getElementById('adjust-variants-container').style.display = 'none';
+        document.getElementById('variant-edit-section').style.display = 'block';
+        
+        const actions = document.getElementById('adjust-modal-actions');
+        if (actions) actions.style.display = 'none';
+        
+        const editActions = document.getElementById('variant-edit-actions');
+        if (editActions) editActions.style.display = 'flex';
+        
+        const section = document.getElementById('variant-edit-section');
+        if (section) {
+          section.dataset.productId = productId;
+          section.dataset.variantIdx = variantIdx;
+        }
+      };
+
+      const saveVariantData = () => {
+        const section = document.getElementById('variant-edit-section');
+        if (!section) return;
+        
+        const productId = section.dataset.productId;
+        const variantIdx = section.dataset.variantIdx;
+        
+        const product = products.find(p => String(p.id) === String(productId));
+        if (!product || !product.variants.options[variantIdx]) return;
+        
+        const variant = product.variants.options[variantIdx];
+        const oldName = variant.name;
+        const oldPrice = variant.price;
+        const oldBarcode = variant.barcode;
+        
+        const nameInput = document.getElementById('variant-edit-name');
+        const priceInput = document.getElementById('variant-edit-price');
+        const barcodeInput = document.getElementById('variant-edit-barcode');
+        
+        if (!nameInput || !priceInput || !barcodeInput) return;
+        
+        variant.name = nameInput.value;
+        variant.price = Number(priceInput.value) || 0;
+        variant.barcode = barcodeInput.value;
+        
+        saveProducts(products);
+        syncBodegaToSophie(products);
+        
+        const cambios = [];
+        if (oldName !== variant.name) cambios.push(`Nombre: "${oldName}" → "${variant.name}"`);
+        if (oldPrice !== variant.price) cambios.push(`Precio: $${oldPrice} → $${variant.price}`);
+        if (oldBarcode !== variant.barcode) cambios.push(`Código: "${oldBarcode}" → "${variant.barcode}"`);
+        
+        const detalles = cambios.length ? cambios.join(' | ') : 'Sin cambios';
+        const user = sessionStorage.getItem('poasUsername') || 'Sin especificar';
+        addActionToHistory('Editar Variante', product.title, detalles, user);
+        
+        section.style.display = 'none';
+        document.getElementById('adjust-variants-container').style.display = 'block';
+        const actions = document.getElementById('adjust-modal-actions');
+        if (actions) actions.style.display = 'flex';
+        const editActions = document.getElementById('variant-edit-actions');
+        if (editActions) editActions.style.display = 'none';
+        renderInventory();
+      };
+
+
+      const closeAdjustModal = () => {
+        const modal = document.getElementById('adjust-modal');
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+        modal.dataset.isVariant = 'false';
+        currentAdjustId = null;
+        
+        // Limpiar contenedores
+        document.getElementById('adjust-variants-container').innerHTML = '';
+        document.getElementById('adjust-variants-container').style.display = 'none';
+        document.getElementById('adjust-regular-container').style.display = 'none';
+        document.getElementById('variant-edit-section').style.display = 'none';
+        document.getElementById('adjust-product').value = '';
+        
+        // Resetear botones
+        const actions = document.getElementById('adjust-modal-actions');
+        const editActions = document.getElementById('variant-edit-actions');
+        if (actions) actions.style.display = 'flex';
+        if (editActions) editActions.style.display = 'none';
+      };
+
+      const saveAdjustment = () => {
+        if (!currentAdjustId) return;
+        const product = products.find(p => String(p.id) === String(currentAdjustId));
+        if (!product) return;
+        
+        const modal = document.getElementById('adjust-modal');
+        const isVariant = modal.dataset.isVariant === 'true';
+        const user = sessionStorage.getItem('poasUsername') || 'Sin especificar';
+        let detalles = '';
+        
+        if (isVariant && product?.variants?.options?.length) {
+          // Guardar ajustes para variantes
+          const cambios = [];
+          const container = document.getElementById('adjust-variants-container');
+          const poasInputs = container.querySelectorAll('.variant-poas-stock');
+          
+          poasInputs.forEach(input => {
+            const idx = parseInt(input.dataset.idx);
+            const newStockPoas = Number(input.value || 0);
+            const bodegaInput = container.querySelector(`.variant-bodega-stock[data-idx="${idx}"]`);
+            const newStockBodega = bodegaInput ? Number(bodegaInput.value || 0) : 0;
+            const variantName = product.variants.options[idx]?.name;
+            const oldStockPoas = product.variants.options[idx]?.inventory?.poas || 0;
+            const oldStockBodega = product.variants.options[idx]?.inventory?.bodega || 0;
+            
+            if (product.variants.options[idx]) {
+              product.variants.options[idx].inventory = product.variants.options[idx].inventory || {};
+              product.variants.options[idx].inventory.poas = newStockPoas;
+              product.variants.options[idx].inventory.bodega = newStockBodega;
+              
+              if (oldStockPoas !== newStockPoas || oldStockBodega !== newStockBodega) {
+                cambios.push(`${variantName}: Poás ${oldStockPoas}→${newStockPoas}, Bodega ${oldStockBodega}→${newStockBodega}`);
+              }
+            }
+          });
+          detalles = cambios.join(' | ');
+        } else {
+          // Guardar ajustes para producto sin variantes
+          const newStockPoas = Number(document.getElementById('adjust-new-poas').value || 0);
+          const newStockBodega = Number(document.getElementById('adjust-new-bodega').value || 0);
+          const oldStockPoas = product.inventory?.poas || 0;
+          const oldStockBodega = product.inventory?.bodega || 0;
+          
+          if (!product.inventory) product.inventory = {};
+          product.inventory.poas = newStockPoas;
+          product.inventory.bodega = newStockBodega;
+          
+          detalles = `Poás ${oldStockPoas}→${newStockPoas}, Bodega ${oldStockBodega}→${newStockBodega}`;
+        }
+        
+        saveProducts(products);
+        syncBodegaToSophie(products);
+        addActionToHistory('Ajuste Inventario', product.title, detalles, user);
+        renderStats();
+        renderInventory();
+        closeAdjustModal();
+        modal.dataset.isVariant = 'false';
+      };
+
+      const deleteProduct = (productId) => {
+        const product = products.find(p => String(p.id) === String(productId));
+        if (!product) return;
+
+        if (!confirm(`¿Estás seguro de que deseas eliminar "${product.title}"? Esta acción no se puede deshacer.`)) {
+          return;
+        }
+
+        try {
+          const user = sessionStorage.getItem('poasUsername') || 'Sin especificar';
+          const detalles = `Código: ${product.barcode || 'N/A'}`;
+          
+          // Eliminar de Poás
+          products = products.filter(p => String(p.id) !== String(productId));
+          saveProducts(products);
+
+          // Eliminar también de Sophie
+          const sophieProducts = JSON.parse(localStorage.getItem('products_data') || '[]');
+          const filteredSophie = sophieProducts.filter(p => String(p.id) !== String(productId));
+          localStorage.setItem('products_data', JSON.stringify(filteredSophie));
+
+          // Registrar en historial
+          addActionToHistory('Eliminar Producto', product.title, detalles, user);
+          
+          renderStats();
+          renderInventory();
+
+          alert('✅ Producto eliminado exitosamente');
+        } catch (e) {
+          alert('Error al eliminar producto: ' + e.message);
+          console.error('Error eliminando producto:', e);
+        }
+      };
+
+      const syncBodegaToSophie = (products) => {
+        try {
+          const sophieProducts = JSON.parse(localStorage.getItem('products_data') || '[]');
+          let updated = false;
+          products.forEach(poasProduct => {
+            const sophieProduct = sophieProducts.find(sp => String(sp.id) === String(poasProduct.id));
+            if (sophieProduct && poasProduct.inventory && typeof poasProduct.inventory.bodega === 'number') {
+              if (!sophieProduct.inventory) sophieProduct.inventory = {};
+              if (sophieProduct.inventory.bodega !== poasProduct.inventory.bodega) {
+                sophieProduct.inventory.bodega = poasProduct.inventory.bodega;
+                updated = true;
+              }
+            }
+          });
+          if (updated) {
+            localStorage.setItem('products_data', JSON.stringify(sophieProducts));
+          }
+        } catch (e) {
+          if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+            console.warn('Espacio insuficiente al sincronizar bodega a Sophie');
+          } else {
+            console.error('Error en syncBodegaToSophie:', e);
+          }
+        }
+      };
+
+      const exportInventory = () => {
+        const lines = [['Producto', 'Código', 'Stock Poás', 'Stock Bodega', 'Precio'].join(',')];
+        products.forEach(product => {
+          const stockPoas = getProductStock(product, 'poas');
+          const stockBodega = getProductStock(product, 'bodega');
+          const price = getProductPrice(product);
+          lines.push([
+            `"${product.title || 'Producto'}"`,
+            product.barcode || '',
+            stockPoas,
+            stockBodega,
+            price
+          ].join(','));
+        });
+        const csv = lines.join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `inventario-poas-${new Date().toISOString().split('T')[0]}.csv`;
+        link.click();
+      };
+
+      // Variables para transferencia
+      let selectedTransfer = [];
+
+      const getTransferUsers = () => {
+        // Siempre usar la lista actualizada de usuarios (ignorar datos antiguos en localStorage)
+        const defaultUsers = [
+          // Vendedores
+          { name: 'Tamica', role: 'vendedor' },
+          { name: 'Valerie', role: 'vendedor' },
+          { name: 'Jesenia', role: 'vendedor' },
+          // Encargados
+          { name: 'Darlyn', role: 'encargado' },
+          { name: 'Rebeca', role: 'encargado' },
+          { name: 'Elizabeth', role: 'encargado' },
+          // Administradores
+          { name: 'Moni', role: 'admin' },
+          { name: 'Hernan', role: 'admin' },
+          { name: 'David', role: 'admin' },
+          { name: 'Esteban', role: 'admin' }
+        ];
+        localStorage.setItem('poas_transfer_users', JSON.stringify(defaultUsers));
+        return defaultUsers;
+      };
+
+      const loadTransferUsers = () => {
+        const userInput = document.getElementById('transfer-user-display');
+        if (!userInput) return;
+        
+        // Obtener el usuario logueado
+        const currentUser = sessionStorage.getItem('poasUsername');
+        if (currentUser) {
+          userInput.value = currentUser;
+        }
+      };
+
+      const openTransferModal = () => {
+        const modal = document.getElementById('transfer-modal');
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+        selectedTransfer = [];
+        loadTransferUsers();
+        renderTransferList();
+        setupTransferSearch();
+      };
+
+      const closeTransferModal = () => {
+        const modal = document.getElementById('transfer-modal');
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+        selectedTransfer = [];
+        document.getElementById('transfer-search-poas').value = '';
+      };
+
+      const setupTransferSearch = () => {
+        const input = document.getElementById('transfer-search-poas');
+        const suggestions = document.getElementById('transfer-suggestions-poas');
+        
+        input?.addEventListener('input', (e) => {
+          const value = e.target.value.toLowerCase();
+          if (value.length < 1) {
+            suggestions.style.display = 'none';
+            return;
+          }
+          
+          const filtered = products.filter(p => {
+            const bodegaStock = getProductStock(p, 'bodega');
+            const hasVariants = p.variants?.options?.length > 0;
+            const variantMatch = hasVariants && p.variants.options.some(v => v.name?.toLowerCase().includes(value));
+            const hasVariantStock = hasVariants && p.variants.options.some(v => (v.inventory?.bodega || 0) > 0);
+            
+            return (
+              (p.title?.toLowerCase().includes(value) || p.barcode?.toLowerCase().includes(value) || variantMatch) &&
+              ((bodegaStock > 0) || (hasVariants && hasVariantStock))
+            );
+          });
+          
+          if (filtered.length === 0) {
+            suggestions.style.display = 'none';
+            return;
+          }
+          
+          suggestions.innerHTML = filtered.map(p => {
+            const hasVariants = p.variants?.options?.length > 0;
+            let html = `<div style="padding:8px 12px;cursor:pointer;border-bottom:1px solid #f0f0f0;" onclick="${hasVariants ? `openTransferVariantSelector(${p.id})` : `addToTransferList(${p.id})`}">`;
+            
+            if (hasVariants) {
+              html += `<strong>${p.title}</strong> <small style="color:#888">${p.barcode}</small><br/>`;
+              html += `<small style="color:var(--poas-blue)">Con variantes</small>`;
+            } else {
+              const bodegaStock = getProductStock(p, 'bodega');
+              html += `<strong>${p.title}</strong> <small style="color:#888">${p.barcode}</small><br/>`;
+              html += `<small style="color:var(--poas-blue)">Stock bodega: ${bodegaStock}</small>`;
+            }
+            
+            html += `</div>`;
+            return html;
+          }).join('');
+          suggestions.style.display = 'block';
+        });
+
+        input?.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const value = e.target.value.toLowerCase();
+            const product = products.find(p => p.barcode?.toLowerCase() === value || p.title?.toLowerCase() === value);
+            if (product && getProductStock(product, 'bodega') > 0) {
+              addToTransferList(product.id);
+              input.value = '';
+              suggestions.style.display = 'none';
+            }
+          }
+        });
+      };
+
+      const openTransferVariantSelector = (productId) => {
+        const product = products.find(p => p.id === productId);
+        if (!product || !product.variants?.options?.length) {
+          addToTransferList(productId);
+          return;
+        }
+        
+        window.currentTransferProduct = { id: productId, title: product.title };
+        window.currentTransferVariantIdxList = [];
+        
+        const variantsWithStock = product.variants.options.filter(v => (v.inventory?.bodega || 0) > 0);
+        const optionsHtml = variantsWithStock.map((variant, idx) => `
+          <div id="transfer-variant-option-${idx}" data-variant-name="${variant.name}" data-bodega-stock="${variant.inventory?.bodega || 0}" style="padding:14px;background:linear-gradient(135deg, #f5f8fc 0%, #f9fafb 100%);border-radius:8px;border-left:4px solid var(--poas-blue);cursor:pointer;transition:all 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.08)" onclick="selectTransferVariant(${idx})" onmouseover="this.style.background='linear-gradient(135deg, #e8f1f8 0%, #f0f5fb 100%)'" onmouseout="this.style.background='linear-gradient(135deg, #f5f8fc 0%, #f9fafb 100%)'">
+            <div style="font-weight:700;color:var(--poas-blue);margin-bottom:8px">${variant.name}</div>
+            <div style="font-size:13px;color:#666">Stock en bodega: <strong style="color:var(--poas-magenta)">${variant.inventory?.bodega || 0}</strong></div>
+          </div>
+        `).join('');
+        
+        document.getElementById('transfer-variant-title').textContent = `Seleccionar Variante - ${product.title}`;
+        document.getElementById('transfer-variant-options').innerHTML = optionsHtml;
+        document.getElementById('transfer-variant-qty').value = '1';
+        document.getElementById('transfer-variant-qty').max = Math.max(...variantsWithStock.map(v => v.inventory?.bodega || 0));
+        
+        const modal = document.getElementById('transfer-variant-modal');
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+      };
+      
+      const selectTransferVariant = (variantIdx) => {
+        const selectedElement = document.getElementById(`transfer-variant-option-${variantIdx}`);
+        
+        // Verificar si ya está seleccionada
+        const isSelected = window.currentTransferVariantIdxList.includes(variantIdx);
+        
+        if (isSelected) {
+          // Desseleccionar
+          window.currentTransferVariantIdxList = window.currentTransferVariantIdxList.filter(idx => idx !== variantIdx);
+          
+          selectedElement.style.borderLeftColor = 'var(--poas-blue)';
+          selectedElement.style.borderLeftWidth = '4px';
+          selectedElement.style.background = 'linear-gradient(135deg, #f5f8fc 0%, #f9fafb 100%)';
+          selectedElement.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
+          selectedElement.style.transform = 'scale(1)';
+          selectedElement.style.color = 'inherit';
+          
+          // Restaurar el HTML original
+          const variantName = selectedElement.getAttribute('data-variant-name');
+          const bodegaStock = selectedElement.getAttribute('data-bodega-stock');
+          selectedElement.innerHTML = `
+            <div style="font-weight:700;color:var(--poas-blue);margin-bottom:8px">${variantName}</div>
+            <div style="font-size:13px;color:#666">Stock en bodega: <strong style="color:var(--poas-magenta)">${bodegaStock}</strong></div>
+          `;
+        } else {
+          // Seleccionar (agregar a la lista)
+          window.currentTransferVariantIdxList.push(variantIdx);
+          
+          selectedElement.style.borderLeftColor = 'var(--poas-magenta)';
+          selectedElement.style.borderLeftWidth = '8px';
+          selectedElement.style.background = 'linear-gradient(135deg, #ff1493 0%, #ff69b4 100%)';
+          selectedElement.style.boxShadow = '0 4px 12px rgba(255, 20, 147, 0.3)';
+          selectedElement.style.transform = 'scale(1.02)';
+          selectedElement.style.color = 'white';
+          
+          const variantName = selectedElement.getAttribute('data-variant-name');
+          const bodegaStock = selectedElement.getAttribute('data-bodega-stock');
+          selectedElement.innerHTML = `
+            <div style="font-weight:900;color:white;margin-bottom:10px;display:flex;align-items:center;gap:10px;font-size:16px;text-shadow:0 1px 3px rgba(0,0,0,0.2)">
+              <span style="font-size:20px">✓</span>
+              ${variantName}
+            </div>
+            <div style="font-size:14px;color:white;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,0.2)">Stock en bodega: <strong style="font-weight:700;font-size:15px">${bodegaStock}</strong></div>
+          `;
+        }
+      };
+      
+      const closeTransferVariantModal = () => {
+        const modal = document.getElementById('transfer-variant-modal');
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+        window.currentTransferProduct = null;
+        window.currentTransferVariantIdx = null;
+      };
+      
+      const viewVariantStock = (productId, location) => {
+        const product = products.find(p => String(p.id) === String(productId));
+        if (!product || !product.variants?.options?.length) return;
+        
+        const locationLabel = location === 'poas' ? 'Poás' : 'Bodega';
+        const variantsHTML = product.variants.options.map(variant => `
+          <div style="padding:14px;background:linear-gradient(135deg, #f5f8fc 0%, #f9fafb 100%);border-radius:8px;border-left:4px solid var(--poas-blue);box-shadow:0 1px 3px rgba(0,0,0,0.08)">
+            <div style="font-weight:700;color:var(--poas-blue);margin-bottom:8px">${variant.name}</div>
+            <div style="font-size:13px;color:#666">Stock en ${locationLabel}: <strong style="color:var(--poas-magenta)">${variant.inventory?.[location] || 0}</strong></div>
+          </div>
+        `).join('');
+        
+        document.getElementById('view-variant-stock-title').textContent = `Stock de Variantes - ${product.title} (${locationLabel})`;
+        document.getElementById('view-variant-stock-content').innerHTML = variantsHTML;
+        
+        const modal = document.getElementById('view-variant-stock-modal');
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+      };
+      
+      const closeViewVariantStockModal = () => {
+        const modal = document.getElementById('view-variant-stock-modal');
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+      };
+      
+      const confirmTransferVariant = () => {
+        if (!window.currentTransferVariantIdxList || window.currentTransferVariantIdxList.length === 0) {
+          alert('Por favor selecciona al menos una variante');
+          return;
+        }
+        
+        if (window.currentTransferProduct?.id !== undefined) {
+          const qty = parseInt(document.getElementById('transfer-variant-qty').value) || 1;
+          const product = products.find(p => p.id === window.currentTransferProduct.id);
+          
+          if (product?.variants?.options) {
+            window.currentTransferVariantIdxList.forEach(variantIdx => {
+              if (product.variants.options[variantIdx]) {
+                const variant = product.variants.options[variantIdx];
+                const maxQty = variant.inventory?.bodega || 0;
+                
+                if (qty > 0 && qty <= maxQty) {
+                  const itemKey = product.id + '-' + variant.name;
+                  const existing = selectedTransfer.find(t => t.key === itemKey);
+                  
+                  if (existing) {
+                    existing.qty = Math.min(existing.qty + qty, maxQty);
+                  } else {
+                    selectedTransfer.push({
+                      id: product.id,
+                      key: itemKey,
+                      title: product.title + ' - ' + variant.name,
+                      img: product.img,
+                      barcode: product.barcode,
+                      qty: qty,
+                      maxQty: maxQty,
+                      variant: { variantIdx: variantIdx, variantName: variant.name }
+                    });
+                  }
+                }
+              }
+            });
+            
+            renderTransferList();
+            document.getElementById('transfer-search-poas').value = '';
+            document.getElementById('transfer-suggestions-poas').style.display = 'none';
+            closeTransferVariantModal();
+          }
+        }
+      };
+
+      const addToTransferList = (productId, variantIdx) => {
+        const product = products.find(p => p.id === productId);
+        if (!product) return;
+        
+        let bodegaStock = 0;
+        let itemKey = String(productId);
+        let itemName = product.title;
+        let variantData = null;
+        
+        if (variantIdx !== undefined && product.variants?.options?.[variantIdx]) {
+          const variant = product.variants.options[variantIdx];
+          bodegaStock = variant.inventory?.bodega || 0;
+          itemKey = productId + '-' + variant.name;
+          itemName = product.title + ' - ' + variant.name;
+          variantData = { variantIdx, variantName: variant.name };
+        } else {
+          bodegaStock = getProductStock(product, 'bodega');
+        }
+        
+        if (bodegaStock <= 0) {
+          alert('No hay stock en bodega para este producto');
+          return;
+        }
+        
+        const existing = selectedTransfer.find(t => t.key === itemKey);
+        if (existing) {
+          existing.qty = Math.min(existing.qty + 1, bodegaStock);
+        } else {
+          selectedTransfer.push({
+            id: productId,
+            key: itemKey,
+            title: itemName,
+            img: product.img,
+            barcode: product.barcode,
+            qty: 1,
+            maxQty: bodegaStock,
+            variant: variantData
+          });
+        }
+        
+        renderTransferList();
+        document.getElementById('transfer-search-poas').value = '';
+        document.getElementById('transfer-suggestions-poas').style.display = 'none';
+      };
+
+      const renderTransferList = () => {
+        const list = document.getElementById('transfer-list-poas');
+        if (selectedTransfer.length === 0) {
+          list.innerHTML = '<div style="color:#888;text-align:center;padding:24px">No hay productos seleccionados</div>';
+          return;
+        }
+        
+        list.innerHTML = selectedTransfer.map((item, idx) => `
+          <div style="display:flex;gap:12px;padding:12px;background:#f9f9f9;border-radius:8px;margin-bottom:10px;align-items:center">
+            <img src="${item.img.startsWith('/') ? item.img : './' + item.img}" style="width:48px;height:48px;border-radius:6px;object-fit:cover" />
+            <div style="flex:1">
+              <div style="font-weight:600;color:var(--poas-blue)">${item.title}</div>
+              <div style="font-size:0.85rem;color:#888">${item.barcode}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <input type="number" min="1" max="${item.maxQty}" value="${item.qty}" 
+                     style="width:50px;padding:6px;border:1px solid #ddd;border-radius:4px;text-align:center"
+                     onchange="updateTransferQty(${idx}, this.value)" />
+              <span style="font-size:0.9rem;color:#888">/ ${item.maxQty}</span>
+              <button style="background:none;border:none;color:var(--poas-magenta);cursor:pointer;font-size:1.2rem" onclick="removeFromTransferList(${idx})">✕</button>
+            </div>
+          </div>
+        `).join('');
+      };
+
+      const updateTransferQty = (idx, value) => {
+        const qty = Math.max(1, Math.min(parseInt(value) || 1, selectedTransfer[idx].maxQty));
+        selectedTransfer[idx].qty = qty;
+        renderTransferList();
+      };
+
+      const removeFromTransferList = (idx) => {
+        selectedTransfer.splice(idx, 1);
+        renderTransferList();
+      };
+
+      const processTransfer = () => {
+        const user = sessionStorage.getItem('poasUsername');
+        
+        if (!user) {
+          alert('Debes estar logueado para realizar transferencias');
+          return;
+        }
+        
+        if (selectedTransfer.length === 0) {
+          alert('Agrega productos para transferir');
+          return;
+        }
+        
+        let totalItems = selectedTransfer.reduce((sum, t) => sum + t.qty, 0);
+        if (!confirm(`¿Transferir ${totalItems} producto${totalItems > 1 ? 's' : ''} desde bodega a tienda Poás?`)) {
+          return;
+        }
+        
+        selectedTransfer.forEach(transfer => {
+          const product = products.find(p => p.id === transfer.id);
+          if (!product) return;
+          
+          if (transfer.variant && product.variants?.options?.[transfer.variant.variantIdx]) {
+            // Transferir variante
+            const variant = product.variants.options[transfer.variant.variantIdx];
+            variant.inventory = variant.inventory || {};
+            variant.inventory.bodega = Math.max(0, (variant.inventory.bodega || 0) - transfer.qty);
+            variant.inventory.poas = (variant.inventory.poas || 0) + transfer.qty;
+          } else if (product.inventory) {
+            // Transferir producto regular
+            product.inventory.bodega = Math.max(0, (product.inventory.bodega || 0) - transfer.qty);
+            product.inventory.poas = (product.inventory.poas || 0) + transfer.qty;
+          }
+        });
+        
+        saveProducts(products);
+        syncBodegaToSophie(products);
+        addTransferToHistory(selectedTransfer, user);
+        renderStats();
+        renderInventory();
+        
+        alert('✅ Transferencia realizada exitosamente');
+        closeTransferModal();
+      };
+
+      const openAddProductModal = () => {
+        const modal = document.getElementById('add-product-modal');
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+        document.getElementById('new-product-title').focus();
+      };
+
+      const closeAddProductModal = () => {
+        const modal = document.getElementById('add-product-modal');
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+        document.getElementById('new-product-title').value = '';
+        document.getElementById('new-product-barcode').value = '';
+        document.getElementById('new-product-supplier-code').value = '';
+        document.getElementById('new-product-price').value = '';
+        document.getElementById('new-product-img-file').value = '';
+        document.getElementById('new-product-img-preview').style.display = 'none';
+        document.getElementById('new-product-stock-poas').value = '0';
+        document.getElementById('new-product-stock-bodega').value = '0';
+        window.newProductImageBase64 = null;
+      };
+
+      const compressImage = (base64, callback) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          // Redimensionar si es muy grande
+          const maxWidth = 400;
+          const maxHeight = 400;
+          if (width > height) {
+            if (width > maxWidth) {
+              height *= maxWidth / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width *= maxHeight / height;
+              height = maxHeight;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Comprimir a JPEG con calidad reducida
+          let quality = 0.8;
+          let compressed = canvas.toDataURL('image/jpeg', quality);
+          
+          // Si sigue siendo muy grande, reducir más
+          while (compressed.length > 200000 && quality > 0.3) {
+            quality -= 0.1;
+            compressed = canvas.toDataURL('image/jpeg', quality);
+          }
+          
+          callback(compressed);
+        };
+        img.src = base64;
+      };
+
+      const previewProductImage = (input) => {
+        if (!input.files || !input.files[0]) return;
+        
+        const file = input.files[0];
+        const maxSize = 5 * 1024 * 1024; // 5MB máximo
+        
+        if (file.size > maxSize) {
+          alert('La imagen es demasiado grande. Selecciona una imagen menor a 5MB');
+          input.value = '';
+          return;
+        }
+        
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+          compressImage(e.target.result, (compressed) => {
+            const preview = document.getElementById('new-product-img-preview');
+            const img = document.getElementById('preview-img');
+            img.src = compressed;
+            preview.style.display = 'block';
+            window.newProductImageBase64 = compressed;
+          });
+        };
+        
+        reader.readAsDataURL(file);
+      };
+
+      const saveNewProduct = () => {
+        const title = document.getElementById('new-product-title').value.trim();
+        const barcode = document.getElementById('new-product-barcode').value.trim();
+        const supplierCode = document.getElementById('new-product-supplier-code').value.trim();
+        const price = parseFloat(document.getElementById('new-product-price').value) || 0;
+        let img = window.newProductImageBase64 || '';
+        const stockPoas = parseInt(document.getElementById('new-product-stock-poas').value) || 0;
+        const stockBodega = parseInt(document.getElementById('new-product-stock-bodega').value) || 0;
+
+        if (!title) {
+          alert('El nombre del producto es obligatorio');
+          return;
+        }
+
+        // Validar que no se exceda la cuota de localStorage
+        const testProduct = {
+          id: 1,
+          title: title,
+          barcode: barcode,
+          supplierCode: supplierCode,
+          price: price,
+          img: img,
+          inventory: { poas: stockPoas, bodega: stockBodega }
+        };
+        
+        try {
+          const testStorage = localStorage.getItem('poas_products_data') || '[]';
+          const testSize = (testStorage + JSON.stringify(testProduct)).length;
+          const maxStorageSize = 5 * 1024 * 1024; // 5MB
+          
+          if (testSize > maxStorageSize) {
+            alert('No hay espacio suficiente en localStorage. Intenta sin imagen o con una imagen más pequeña.');
+            return;
+          }
+        } catch (e) {
+          if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+            alert('Espacio insuficiente. Intenta sin imagen.');
+            img = '';
+          }
+        }
+        const newId = Math.max(...products.map(p => p.id || 0), 0) + 1;
+        const newProduct = {
+          id: newId,
+          title: title,
+          barcode: barcode || `POAS${String(newId).padStart(6, '0')}`,
+          supplierCode: supplierCode || '',
+          price: price,
+          img: img || '',
+          inventory: {
+            poas: stockPoas,
+            bodega: stockBodega
+          }
+        };
+
+        products.push(newProduct);
+        
+        try {
+          saveProducts(products);
+          syncBodegaToSophie(products);
+          syncNewProductToSophie(newProduct);
+          renderStats();
+          renderInventory();
+          
+          alert('✅ Producto creado exitosamente');
+          closeAddProductModal();
+        } catch (e) {
+          if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+            alert('Error: Espacio insuficiente en localStorage. Intenta sin imagen o elimina algunos productos antiguos.');
+            products.pop(); // Remover el producto que acaba de agregar
+          } else {
+            alert('Error al guardar producto: ' + e.message);
+          }
+          console.error('Error guardando producto:', e);
+        }
+      };
+
+      const syncNewProductToSophie = (poasProduct) => {
+        try {
+          const sophieProducts = JSON.parse(localStorage.getItem('products_data') || '[]');
+          const existingIndex = sophieProducts.findIndex(sp => String(sp.id) === String(poasProduct.id));
+          
+          if (existingIndex === -1) {
+            // Crear copia del producto para Sophie sin imagen (para evitar QuotaExceededError)
+            const sophieProduct = {
+              id: poasProduct.id,
+              title: poasProduct.title,
+              barcode: poasProduct.barcode,
+              supplierCode: poasProduct.supplierCode || '',
+              price: poasProduct.price,
+              img: '', // No sincronizar imagen para evitar exceso de tamaño
+              inventory: {
+                tienda1: 0,
+                tienda2: 0,
+                tienda3: 0,
+                bodega: poasProduct.inventory.bodega || 0
+              }
+            };
+            sophieProducts.push(sophieProduct);
+            localStorage.setItem('products_data', JSON.stringify(sophieProducts));
+          }
+        } catch (e) {
+          console.error('Error sincronizando producto a Sophie:', e);
+        }
+      };
+
+      // Historial de transferencias
+      const TRANSFER_HISTORY_KEY = 'poas_transfer_history';
+
+      const getTransferHistory = () => {
+        const stored = localStorage.getItem(TRANSFER_HISTORY_KEY);
+        return JSON.parse(stored || '[]');
+      };
+
+      const saveTransferHistory = (history) => {
+        localStorage.setItem(TRANSFER_HISTORY_KEY, JSON.stringify(history));
+      };
+
+      const addActionToHistory = (action, productTitle, details, user) => {
+        const history = getTransferHistory();
+        const entry = {
+          id: Date.now(),
+          fecha: new Date().toISOString(),
+          user: user || sessionStorage.getItem('poasUsername') || 'Sin especificar',
+          tipo: action,
+          producto: productTitle,
+          detalles: details
+        };
+        history.unshift(entry);
+        saveTransferHistory(history);
+      };
+
+      const addTransferToHistory = (items, user) => {
+        const history = getTransferHistory();
+        const detalles = items.map(i => `${i.title}: ${i.qty}`).join(' | ');
+        const entry = {
+          id: Date.now(),
+          fecha: new Date().toISOString(),
+          user: user || 'Sin especificar',
+          tipo: 'Transferencia Bodega',
+          producto: `${items.length} producto${items.length > 1 ? 's' : ''}`,
+          detalles: detalles,
+          totalItems: items.reduce((sum, i) => sum + i.qty, 0),
+          items: items // Mantener items para compatibilidad con visualización anterior
+        };
+        history.unshift(entry);
+        saveTransferHistory(history);
+      };
+
+      const openTransferHistoryModal = () => {
+        const modal = document.getElementById('transfer-history-modal');
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+        renderTransferHistory();
+      };
+
+      const closeTransferHistoryModal = () => {
+        const modal = document.getElementById('transfer-history-modal');
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+      };
+
+      const renderTransferHistory = () => {
+        const history = getTransferHistory();
+        const content = document.getElementById('transfer-history-content');
+        
+        if (history.length === 0) {
+          content.innerHTML = '<div style="color:#888;text-align:center;padding:40px">No hay acciones registradas</div>';
+          return;
+        }
+
+        content.innerHTML = history.map(entry => {
+          const fecha = new Date(entry.fecha);
+          const fechaFormato = fecha.toLocaleDateString('es-CR', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+
+          // Determinar color de badge según tipo de acción
+          let badgeColor = 'var(--poas-magenta)';
+          let badgeLabel = entry.tipo || 'Transferencia';
+          
+          if (entry.tipo === 'Ajuste Inventario') {
+            badgeColor = 'var(--poas-blue)';
+          } else if (entry.tipo === 'Eliminar Producto') {
+            badgeColor = 'var(--poas-orange)';
+          }
+
+          // Si es una transferencia antigua con estructura de items
+          if (entry.items && entry.items.length > 0) {
+            const itemsHTML = entry.items.map(item => `
+              <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:0.9rem;border-bottom:1px solid #f0f0f0">
+                <div>
+                  <strong>${item.title}</strong><br/>
+                  <small style="color:#888">${item.barcode}</small>
+                </div>
+                <div style="text-align:right;color:var(--poas-blue);font-weight:600">
+                  ${item.qty} unid.
+                </div>
+              </div>
+            `).join('');
+
+            return `
+              <div style="background:#f9f9f9;border:1px solid #e0e0e0;border-radius:8px;padding:16px;margin-bottom:12px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+                  <div>
+                    <div style="font-weight:700;color:var(--poas-blue)">${fechaFormato}</div>
+                    <small style="color:#888">Encargado: <strong>${entry.user || 'Sin especificar'}</strong></small><br/>
+                    <small style="color:#888">ID: ${entry.id}</small>
+                  </div>
+                  <div style="background:${badgeColor};color:white;padding:6px 12px;border-radius:20px;font-weight:600;font-size:0.9rem">
+                    ${entry.totalItems || entry.items.reduce((sum, i) => sum + i.qty, 0)} productos
+                  </div>
+                </div>
+                <div style="background:white;border-radius:6px;padding:12px">
+                  ${itemsHTML}
+                </div>
+              </div>
+            `;
+          } else {
+            // Nueva estructura para todas las acciones
+            return `
+              <div style="background:#f9f9f9;border:1px solid #e0e0e0;border-radius:8px;padding:16px;margin-bottom:12px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+                  <div>
+                    <div style="font-weight:700;color:var(--poas-blue)">${fechaFormato}</div>
+                    <small style="color:#888">Usuario: <strong>${entry.user || 'Sin especificar'}</strong></small><br/>
+                    <small style="color:#888">ID: ${entry.id}</small>
+                  </div>
+                  <div style="background:${badgeColor};color:white;padding:6px 12px;border-radius:20px;font-weight:600;font-size:0.9rem">
+                    ${badgeLabel}
+                  </div>
+                </div>
+                <div style="background:white;border-radius:6px;padding:12px">
+                  <div style="margin-bottom:8px;font-weight:600;color:var(--poas-blue)">Producto: ${entry.producto}</div>
+                  <div style="font-size:0.9rem;color:#555">${entry.detalles || 'Sin detalles'}</div>
+                </div>
+              </div>
+            `;
+          }
+        }).join('');
+      };
+
+      const exportTransferHistory = () => {
+        const history = getTransferHistory();
+        const lines = [['Fecha', 'Encargado', 'Producto', 'Código', 'Cantidad'].join(',')];
+        
+        history.forEach(entry => {
+          const fecha = new Date(entry.fecha).toLocaleDateString('es-CR');
+          entry.items.forEach(item => {
+            lines.push([
+              fecha,
+              `"${entry.user || 'Sin especificar'}"`,
+              `"${item.title}"`,
+              item.barcode,
+              item.qty
+            ].join(','));
+          });
+        });
+
+        const csv = lines.join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `historial-transferencias-poas-${new Date().toISOString().split('T')[0]}.csv`;
+        link.click();
+      };
+
+      const init = () => {
+        products = loadProducts();
+        renderStats();
+        renderInventory();
+
+        document.getElementById('inventory-search')?.addEventListener('input', () => {
+          inventoryCurrentPage = 1;
+          renderInventory();
+        });
+        document.getElementById('inventory-filter')?.addEventListener('change', () => {
+          inventoryCurrentPage = 1;
+          renderInventory();
+        });
+        document.getElementById('adjust-modal')?.addEventListener('click', (e) => {
+          if (e.target === e.currentTarget) closeAdjustModal();
+        });
+        document.getElementById('transfer-modal')?.addEventListener('click', (e) => {
+          if (e.target === e.currentTarget) closeTransferModal();
+        });
+        document.getElementById('add-product-modal')?.addEventListener('click', (e) => {
+          if (e.target === e.currentTarget) closeAddProductModal();
+        });
+        document.getElementById('transfer-history-modal')?.addEventListener('click', (e) => {
+          if (e.target === e.currentTarget) closeTransferHistoryModal();
+        });
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+
+      // Verificar sesión en Inventario Poás
+      function checkInventorySession() {
+        const isLoggedIn = sessionStorage.getItem('poasLoggedIn') === 'true';
+        const username = sessionStorage.getItem('poasUsername');
+        const userType = sessionStorage.getItem('poasUserType');
+        
+        if (!isLoggedIn || !username) {
+          // Redirigir al login si no está logueado
+          window.location.href = 'login-poas.html';
+          return;
+        }
+        
+        // Redirigir a vendedores a la página de POS
+        if (userType === 'vendedor') {
+          alert('No tienes permiso para acceder al inventario. Solo encargados y administradores pueden acceder.');
+          window.location.href = 'pos-poas.html';
+          return;
+        }
+        
+        // Mostrar información del usuario
+        const userInfoDiv = document.getElementById('user-info-inventory');
+        const userNameSpan = document.getElementById('user-name-inventory');
+        const userRoleSpan = document.getElementById('user-role-inventory');
+        const logoutBtn = document.getElementById('logout-btn-inventory');
+        
+        if (userInfoDiv && userNameSpan && userRoleSpan) {
+          userNameSpan.textContent = username;
+          
+          const roleLabels = {
+            'admin': '👨‍💼 Administrador',
+            'encargado': '👤 Encargado',
+            'vendedor': '💳 Vendedor'
+          };
+          userRoleSpan.textContent = roleLabels[userType] || 'Usuario';
+          
+          userInfoDiv.style.display = 'inline';
+        }
+        
+        // Configurar botón de logout
+        if (logoutBtn) {
+          logoutBtn.style.display = 'inline-block';
+          logoutBtn.addEventListener('click', logoutPoasInventory);
+        }
+      }
+      
+      function logoutPoasInventory() {
+        if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+          sessionStorage.removeItem('poasLoggedIn');
+          sessionStorage.removeItem('poasUsername');
+          sessionStorage.removeItem('poasUserType');
+          sessionStorage.removeItem('poasLoginTime');
+          window.location.href = 'login-poas.html';
+        }
+      }
+      
+      // Verificar sesión al cargar la página
+      document.addEventListener('DOMContentLoaded', checkInventorySession);
+    </script>
+  </body>
+</html>

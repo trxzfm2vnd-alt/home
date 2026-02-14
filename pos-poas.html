@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Punto de Ventas - Poás</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="poas-pos.css" />
+  </head>
+  <body>
+    <header class="poas-header">
+      <div class="poas-brand">
+        <img src="Logo%20Po%C3%A1s/Logos-Poas-color-1.png" alt="Logo Poás" />
+        <div>
+          <h1>Poás</h1>
+          <p>Punto de Ventas</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span id="user-info-poas" style="color:var(--poas-blue);font-weight:600;margin-right:16px;display:none">
+          <span id="user-name-poas"></span> <span style="color:#888">(<span id="user-role-poas"></span>)</span>
+        </span>
+        <a href="inventory-poas.html" class="poas-btn ghost" id="inventory-btn-poas" style="display:none">📦 Inventario</a>
+        <button class="poas-btn ghost" id="poas-sales-summary" style="display:none">📊 Resumen de ventas</button>
+        <button class="poas-btn ghost" id="poas-open-invoices">Historial de facturas</button>
+        <button class="poas-btn secondary" id="poas-open-apartados">Apartados</button>
+        <button class="poas-btn ghost" id="logout-btn-poas" style="display:none">🚪 Cerrar Sesión</button>
+      </div>
+    </header>
+
+    <nav class="poas-tabs">
+      <button class="poas-tab active" data-tab="pos">Punto de ventas</button>
+      <button class="poas-tab" data-tab="apartados">Apartados</button>
+    </nav>
+
+    <main class="poas-main">
+      <section id="tab-pos" class="tab-panel active">
+        <div class="pos-grid">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Productos</h2>
+              <div style="text-align:right;font-size:0.85rem;color:#5b6b75;">
+                <div>Productos: <strong id="poas-products-count">0</strong></div>
+                <div>Stock total: <strong id="poas-products-stock">0</strong></div>
+              </div>
+            </div>
+            <input class="search-input" id="poas-search" type="text" placeholder="Buscar por nombre o código" />
+            <div class="products-grid" id="poas-products-grid"></div>
+            <div id="poas-products-pagination" class="pagination"></div>
+          </section>
+
+          <aside class="panel">
+            <div class="panel-header">
+              <h2>Carrito</h2>
+              <button class="poas-btn ghost" id="poas-clear-cart">Limpiar</button>
+            </div>
+            <div class="cart-items" id="poas-cart-items"></div>
+            <div class="cart-summary">
+              <div class="cart-summary-row">
+                <span>Subtotal</span>
+                <span id="poas-subtotal">₡0.00</span>
+              </div>
+              <div class="cart-summary-row total">
+                <span>Total</span>
+                <span id="poas-total">₡0.00</span>
+              </div>
+            </div>
+            <div class="cart-actions">
+              <button class="poas-btn" id="poas-checkout">Cobrar</button>
+              <button class="poas-btn secondary" id="poas-create-apartado">Crear apartado</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="tab-apartados" class="tab-panel">
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Apartados</h2>
+          </div>
+          <input class="search-input" id="poas-apartados-search" type="text" placeholder="Buscar por cliente, ID o estado" />
+          <div class="apartados-grid" id="poas-apartados-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <div id="poas-modal" class="poas-modal" aria-hidden="true">
+      <div class="poas-modal-content">
+        <button class="poas-modal-close" id="poas-modal-close">×</button>
+        <h3 id="poas-modal-title">Modal</h3>
+        <div id="poas-modal-body"></div>
+      </div>
+    </div>
+
+    <script src="poas-pos.js"></script>
+    <script>
+      // Verificar sesión en Poás POS
+      function checkPoasSession() {
+        const isLoggedIn = sessionStorage.getItem('poasLoggedIn') === 'true';
+        const username = sessionStorage.getItem('poasUsername');
+        const userType = sessionStorage.getItem('poasUserType');
+        
+        if (!isLoggedIn || !username) {
+          // Redirigir al login si no está logueado
+          window.location.href = 'login-poas.html';
+          return;
+        }
+        
+        // Mostrar información del usuario
+        const userInfoDiv = document.getElementById('user-info-poas');
+        const userNameSpan = document.getElementById('user-name-poas');
+        const userRoleSpan = document.getElementById('user-role-poas');
+        const logoutBtn = document.getElementById('logout-btn-poas');
+        const inventoryBtn = document.getElementById('inventory-btn-poas');
+        const salesSummaryBtn = document.getElementById('poas-sales-summary');
+        
+        if (userInfoDiv && userNameSpan && userRoleSpan) {
+          userNameSpan.textContent = username;
+          
+          const roleLabels = {
+            'admin': '👨‍💼 Administrador',
+            'encargado': '👤 Encargado',
+            'vendedor': '💳 Vendedor'
+          };
+          userRoleSpan.textContent = roleLabels[userType] || 'Usuario';
+          
+          userInfoDiv.style.display = 'inline';
+        }
+        
+        // Mostrar botón de inventario solo para encargados y administradores
+        if (userType === 'encargado' || userType === 'admin') {
+          if (inventoryBtn) inventoryBtn.style.display = 'inline-block';
+          if (salesSummaryBtn) salesSummaryBtn.style.display = 'inline-block';
+        }
+        
+        // Configurar botón de logout
+        if (logoutBtn) {
+          logoutBtn.style.display = 'inline-block';
+          logoutBtn.addEventListener('click', logoutPoas);
+        }
+      }
+      
+      function logoutPoas() {
+        if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+          sessionStorage.removeItem('poasLoggedIn');
+          sessionStorage.removeItem('poasUsername');
+          sessionStorage.removeItem('poasUserType');
+          sessionStorage.removeItem('poasLoginTime');
+          window.location.href = 'login-poas.html';
+        }
+      }
+      
+      // Verificar sesión al cargar la página
+      document.addEventListener('DOMContentLoaded', checkPoasSession);
+    </script>
+  </body>
+</html>

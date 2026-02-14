@@ -1,0 +1,19 @@
+# Enable rewrite engine
+RewriteEngine On
+
+# Redirect direct requests ending with .html to clean URL (permanent)
+RewriteCond %{THE_REQUEST} \s/([^\s]+?)\.html[^
+]*\s [NC]
+RewriteRule ^ /%1 [R=301,L]
+
+# If requested resource without extension doesn't exist but .html file exists, serve it
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.*?)/?$ $1.html [L]
+
+# Default directory index
+DirectoryIndex index.html index.php
+
+# Ensure UTF-8
+AddDefaultCharset UTF-8

@@ -6,7 +6,6 @@
   <title>Punto de Ventas - Sophie</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css" />
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <script src="script.js"></script>
     <style>
       .admin-tabs {
@@ -132,7 +131,12 @@
         color: #5a2032;
         overflow: hidden;
         text-overflow: ellipsis;
-        white-space: nowrap;
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        line-height: 1.2;
+        min-height: 3.6em;
       }
       .product-card .price {
         font-weight: 700;
@@ -325,25 +329,7 @@
       <div class="container header-inner">
         <button id="hamburger" class="hamburger" aria-label="Abrir menú">☰</button>
         <a href="index.html" class="logo" style="text-decoration:none;cursor:pointer;display:flex;align-items:center;gap:10px">
-          <svg width="32" height="32" viewBox="0 0 32 32" style="flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.1))">
-            <defs>
-              <linearGradient id="giftGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#ff6b9d;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#d946a6;stop-opacity:1" />
-              </linearGradient>
-              <linearGradient id="ribbonGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#ffed4e;stop-opacity:1" />
-              </linearGradient>
-            </defs>
-            <rect x="4" y="10" width="24" height="16" rx="2" fill="url(#giftGradient)" />
-            <path d="M 4 10 Q 16 4 28 10" fill="#ff8ab3" />
-            <rect x="14" y="4" width="4" height="22" fill="url(#ribbonGradient)" />
-            <rect x="4" y="14" width="24" height="3" fill="url(#ribbonGradient)" />
-            <circle cx="16" cy="8" r="3" fill="#ffd700" />
-            <ellipse cx="8" cy="14" rx="2" ry="3" fill="rgba(255,255,255,0.4)" />
-          </svg>
-          <span style="font-size:1.3rem;font-weight:700;color:white">Sophie - POS</span>
+          <span style="font-family:'Daily',Playfair Display,serif;font-size:2.5rem;font-weight:400;color:#2c4a8c">SophieWeb - POS</span>
         </a>
         <a href="index.html" class="btn">← Volver a la tienda</a>
         <button id="logout-btn" class="btn" style="color:#f44336;font-weight:700">Cerrar Sesión</button>
@@ -395,6 +381,7 @@
           <input type="text" id="pos-search" placeholder="🔍 Buscar producto o escanear código de barras (Enter)...">
         </div>
         <div class="products-grid" id="pos-products-grid"></div>
+        <div id="pos-products-pagination" class="pagination" style="margin-top:18px;display:flex;justify-content:center;gap:10px"></div>
       </div>
 
       <!-- Carrito de compra -->
@@ -430,7 +417,8 @@
 
     <!-- Modal de Métodos de Pago -->
     <div id="payment-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;flex-direction:column">
-      <div style="background:white;border-radius:12px;padding:30px;width:90%;max-width:500px;max-height:60vh;overflow-y:auto;box-shadow:0 4px 20px rgba(0,0,0,0.3)">
+      <div style="background:white;border-radius:12px;padding:30px;width:90%;max-width:500px;max-height:60vh;overflow-y:auto;box-shadow:0 4px 20px rgba(0,0,0,0.3);position:relative">
+        <button type="button" onclick="closePaymentModal()" aria-label="Cerrar" style="position:absolute;top:10px;right:10px;background:transparent;border:none;font-size:1.4rem;cursor:pointer;color:#666;line-height:1">×</button>
         <h2 style="color:#5a2032;margin-bottom:20px;text-align:center" id="payment-title">Métodos de Pago</h2>
         
         <!-- Información del apartado si aplica -->
@@ -465,9 +453,18 @@
           </select>
         </div>
         
-        <div style="margin-bottom:20px;padding:15px;background:#f5f5f5;border-radius:8px;text-align:center">
-          <div style="font-size:0.95rem;color:#666;margin-bottom:5px">Total a pagar:</div>
-          <div style="font-size:2rem;font-weight:700;color:#5a2032" id="payment-total">₡0.00</div>
+        <div style="margin-bottom:20px">
+          <label style="display:block;color:#5a2032;font-weight:600;margin-bottom:8px">Tipo de Factura:</label>
+          <select id="tax-type-select" onchange="updateTaxDisplay()" style="width:100%;padding:10px;border:2px solid #e3cfe0;border-radius:8px;font-family:Montserrat,sans-serif;font-size:0.95rem">
+            <option value="simple">📄 Simple (Sin desglose de IVA)</option>
+            <option value="coniva">📋 Con IVA (Muestra desglose)</option>
+            <option value="exonerado">🏛️ Exonerado (Diplomáticos - Sin IVA)</option>
+          </select>
+          <div id="tax-description" style="margin-top:8px;padding:8px;background:#e3f2fd;border-radius:4px;font-size:0.85rem;color:#1565c0"></div>
+        </div>
+        
+        <div style="margin-bottom:20px;padding:15px;background:#f5f5f5;border-radius:8px;text-align:center" id="total-breakdown-section">
+          <div id="tax-breakdown-display"></div>
         </div>
 
         <div id="payment-methods-list" style="margin-bottom:20px"></div>
@@ -513,6 +510,91 @@
       let currentApartadoInProgress = null; // Almacena el apartado que se está completando
       let currentStore = 'tienda1';
       let posPaymentMethods = [];
+      let currentTaxType = 'simple'; // simple, coniva, exonerado
+
+      function adaptProductForPOS(apiProduct) {
+        return {
+          id: apiProduct.id,
+          title: apiProduct.titulo,
+          price: Number(apiProduct.precio_base),
+          img: apiProduct.url_imagen || '',
+          barcode: apiProduct.codigo_externo,
+          inventory: {},
+
+          variants: {
+            options: (apiProduct.variants || []).map(v => ({
+              name: v.name,
+              barcode: v.barcode,
+              supplier_code: '',
+              inventory: v.inventory || {},
+              variant_id: v.variant_id   // 🔥 ESTO ES CLAVE
+            }))
+          }
+        };
+      }
+
+      
+      // Función para redondear a la denominación más cercana (múltiplos de 5 colones)
+      function roundToCostaRicaCoins(amount) {
+        // Costa Rica usa monedas de 10, 25, 50, 100 colones (todos múltiplos de 5)
+        // Redondeamos al múltiplo de 5 más cercano
+        return Math.round(amount / 5) * 5;
+      }
+      
+      // Función para calcular IVA (Costa Rica usa 13%)
+      function calculateIVA(subtotal, taxType) {
+        const IVA_RATE = 0.13;
+        
+        if (taxType === 'simple') {
+          // Factura simple: mantener precio original
+          return {
+            subtotal: subtotal,
+            iva: 0,
+            total: subtotal,
+            baseImponible: 0,
+            originalTotal: subtotal,
+            roundingAdjustment: 0
+          };
+        } else if (taxType === 'coniva') {
+          // Con IVA: el precio ya incluye IVA, mostrar desglose
+          // Precio = Base + IVA
+          // Precio = Base * 1.13
+          // Base = Precio / 1.13
+          const baseImponible = subtotal / 1.13;
+          const iva = baseImponible * IVA_RATE;
+          return {
+            subtotal: subtotal,
+            iva: iva,
+            total: subtotal,
+            baseImponible: baseImponible,
+            originalTotal: subtotal,
+            roundingAdjustment: 0
+          };
+        } else if (taxType === 'exonerado') {
+          // Exonerado: remover el IVA del precio y redondear a denominaciones válidas
+          const baseImponible = subtotal / 1.13;
+          const roundedTotal = roundToCostaRicaCoins(baseImponible);
+          const roundingAdjustment = roundedTotal - baseImponible;
+          
+          return {
+            subtotal: baseImponible,
+            iva: 0,
+            total: roundedTotal,
+            baseImponible: baseImponible,
+            originalTotal: baseImponible,
+            roundingAdjustment: roundingAdjustment
+          };
+        }
+        
+        return {
+          subtotal: subtotal,
+          iva: 0,
+          total: subtotal,
+          baseImponible: 0,
+          originalTotal: subtotal,
+          roundingAdjustment: 0
+        };
+      }
 
       // Esperar a que script.js cargue y luego inicializar POS
       function initPOS() {
@@ -559,18 +641,13 @@
       }
 
 
-      function ensureProductsLoaded() {
-        if (!Array.isArray(productsData) || productsData.length === 0) {
-          console.warn('Productos vacíos, intentando recargar...');
-          if (typeof loadProductsFromStorage === 'function') {
-            productsData = loadProductsFromStorage();
-          } else if (typeof defaultProducts !== 'undefined' && Array.isArray(defaultProducts)) {
-            productsData = [...defaultProducts];
-          } else {
-            productsData = [];
-          }
-        }
+      async function ensureProductsLoaded() {
+        const res = await fetch("http://localhost:3000/products");
+        const data = await res.json();
+        productsData = data.map(adaptProductForPOS);
+        console.log("Productos adaptados POS:", productsData);
       }
+
 
       // Recargar datos y re-renderizar (usado por eventos de storage)
       function refreshPOSData() {
@@ -612,7 +689,7 @@
               const searchTerm = searchInput.value.trim();
               
               if (searchTerm) {
-                // Buscar producto por código de barras exacto
+                // Buscar producto por código de barras exacto o código de proveedor
                 let foundProduct = null;
                 let foundVariant = null;
                 
@@ -623,10 +700,17 @@
                     break;
                   }
                   
-                  // Buscar en códigos de barras de variantes
+                  // Buscar en código de proveedor
+                  if (product.supplier_code && product.supplier_code.toLowerCase() === searchTerm.toLowerCase()) {
+                    foundProduct = product;
+                    break;
+                  }
+                  
+                  // Buscar en códigos de barras o proveedor de variantes
                   if (product.variants && product.variants.options) {
                     for (let option of product.variants.options) {
-                      if (option.barcode && option.barcode.toLowerCase() === searchTerm.toLowerCase()) {
+                      if ((option.barcode && option.barcode.toLowerCase() === searchTerm.toLowerCase()) ||
+                          (option.supplier_code && option.supplier_code.toLowerCase() === searchTerm.toLowerCase())) {
                         foundProduct = product;
                         foundVariant = option;
                         break;
@@ -796,7 +880,32 @@
         window.location.href = page;
       }
 
-      function renderPOSProducts() {
+      // Paginación POS
+      let posCurrentPage = 1;
+      const POS_PRODUCTS_PER_PAGE = 20;
+
+      function renderPOSPagination(totalPages) {
+        const container = document.getElementById('pos-products-pagination');
+        if (!container) return;
+        if (totalPages <= 1) {
+          container.innerHTML = '';
+          container.style.display = 'none';
+          return;
+        }
+        container.style.display = 'flex';
+        container.innerHTML = `
+          <button class="page-btn prev" ${posCurrentPage===1 ? 'disabled aria-disabled="true"' : ''}>Anterior</button>
+          <span class="page-info">Página ${posCurrentPage} de ${totalPages}</span>
+          <button class="page-btn next" ${posCurrentPage===totalPages ? 'disabled aria-disabled="true"' : ''}>Siguiente</button>
+        `;
+        const prev = container.querySelector('.page-btn.prev');
+        const next = container.querySelector('.page-btn.next');
+        if(prev) prev.addEventListener('click',()=>{ if(posCurrentPage>1){ posCurrentPage-=1; renderPOSProducts(); } });
+        if(next) next.addEventListener('click',()=>{ if(posCurrentPage<totalPages){ posCurrentPage+=1; renderPOSProducts(); } });
+      }
+
+      function renderPOSProducts(page) {
+        if (typeof page === 'number') posCurrentPage = page;
         ensureProductsLoaded();
         const grid = document.getElementById('pos-products-grid');
         const searchEl = document.getElementById('pos-search');
@@ -837,7 +946,7 @@
           }
           storeTotal += totalStock;
           
-          // Búsqueda por nombre o código de barras
+          // Búsqueda por nombre o código de barras o código de proveedor
           if (searchTerm) {
             let matchesSearch = p.title.toLowerCase().includes(searchTerm);
             
@@ -846,10 +955,16 @@
               matchesSearch = p.barcode.toLowerCase().includes(searchTerm);
             }
             
-            // Buscar en códigos de barras de variantes
+            // Buscar en código de proveedor
+            if (!matchesSearch && p.supplier_code) {
+              matchesSearch = p.supplier_code.toLowerCase().includes(searchTerm);
+            }
+            
+            // Buscar en códigos de barras o proveedor de variantes
             if (!matchesSearch && p.variants && p.variants.options) {
-              matchesSearch = p.variants.options.some(option => 
-                option.barcode && option.barcode.toLowerCase().includes(searchTerm)
+              matchesSearch = p.variants.options.some(option =>
+                (option.barcode && option.barcode.toLowerCase().includes(searchTerm)) ||
+                (option.supplier_code && option.supplier_code.toLowerCase().includes(searchTerm))
               );
             }
             
@@ -860,6 +975,11 @@
           
           return true;
         });
+        const totalPages = Math.max(1, Math.ceil(filtered.length / POS_PRODUCTS_PER_PAGE));
+        if (posCurrentPage > totalPages) posCurrentPage = totalPages;
+        const start = (posCurrentPage - 1) * POS_PRODUCTS_PER_PAGE;
+        const visible = filtered.slice(start, start + POS_PRODUCTS_PER_PAGE);
+        renderPOSPagination(totalPages);
         
         console.log('Productos filtrados:', filtered.length);
         if (debugInfo) {
@@ -874,7 +994,7 @@
           return;
         }
 
-        filtered.forEach(product => {
+        visible.forEach(product => {
           // Calcular stock total considerando variantes
           let totalStock = 0;
           if (product.variants && product.variants.options && product.variants.options.length > 0) {
@@ -909,7 +1029,7 @@
           
           card.innerHTML = `
             <img src="${product.img}" alt="${product.title}" style="width:100%;height:160px;object-fit:cover;border-radius:6px;background:#f7f0f6">
-            <h4 style="margin:0;color:#5a2032">${product.title}</h4>
+            <h4 style="margin:0;color:#5a2032;font-family:'CenturyGothic',Playfair Display,serif">${product.title}</h4>
             <div class="price" style="color:#5a2a57;font-weight:700">₡${product.price.toLocaleString()}</div>
             <div class="stock" style="color:#6b2840;font-size:0.9rem">Stock: ${totalStock}</div>
             ${barcodeDisplay}
@@ -1076,14 +1196,6 @@
           });
         });
         
-        container.querySelectorAll('.cart-item-remove').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const index = parseInt(btn.dataset.index);
-            removeFromCartByIndex(index);
-          });
-        });
-        
         container.querySelectorAll('.apply-discount').forEach(btn => {
           btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -1157,10 +1269,10 @@
           alert(`No hay stock disponible de "${option.name}" en ${currentStore}`);
           return;
         }
-        
-        const variantId = product.id + '-' + option.name;
+
+        const variantId = product.id + '-' + optionIndex;
         const existingItem = posCart.find(item => item.variantId === variantId);
-        
+
         if (existingItem) {
           if (existingItem.qty >= availableStock) {
             alert(`No hay más stock de "${option.name}" disponible en ${currentStore}`);
@@ -1171,8 +1283,9 @@
           posCart.push({
             id: product.id,
             variantId: variantId,
-            variantName: option.name,
+            variantIndex: optionIndex,   // ⭐ ESTA ES LA CLAVE
             title: product.title,
+            variantName: option.name,
             price: option.price || product.price,
             img: product.img,
             barcode: option.barcode,
@@ -1183,6 +1296,7 @@
         
         renderPOSCart();
       }
+
 
       function completeSale() {
         if (posCart.length === 0) {
@@ -1469,7 +1583,8 @@
         
         // Encabezado
         html += '<div style="text-align:center;margin-bottom:20px;border-bottom:2px solid #ff9800;padding-bottom:15px">';
-        html += '<h2 style="margin:0 0 5px 0;color:#ff9800">🏪 ' + storeName + '</h2>';
+        html += '<h2 style="margin:0 0 5px 0;font-family:\'Daily\',Playfair Display,serif;color:#2c4a8c;font-size:1.8rem">' + storeName + '</h2>';
+        html += '<p style="margin:5px 0 0 0;color:#666;font-size:0.9rem">APARTADO REGISTRADO</p>';
         html += '<p style="margin:0;color:#666;font-size:0.9rem">APARTADO REGISTRADO</p>';
         html += '</div>';
         
@@ -1906,6 +2021,9 @@
             html += '</div>';
             
             html += '<div style="display:flex;gap:10px;border-top:1px solid #ddd;padding-top:10px">';
+            if (apt.balance > 0) {
+              html += '<button onclick="openApartadoAbono(' + i + ')" style="flex:1;padding:8px;background:#ff9800;color:white;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:0.9rem">💳 Abonar</button>';
+            }
             html += '<button onclick="completeApartado(' + i + ')" style="flex:1;padding:8px;background:#4caf50;color:white;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:0.9rem">✅ Completar Venta</button>';
             html += '<button onclick="deleteApartado(' + i + ')" style="flex:1;padding:8px;background:#f44336;color:white;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:0.9rem">🗑️ Eliminar</button>';
             html += '</div>';
@@ -2030,6 +2148,9 @@
           html += '</div>';
           
           html += '<div style="display:flex;gap:10px;border-top:1px solid #ddd;padding-top:10px">';
+          if (apt.balance > 0) {
+            html += '<button onclick="openApartadoAbono(' + originalIndex + ')" style="flex:1;padding:8px;background:#ff9800;color:white;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:0.9rem">💳 Abonar</button>';
+          }
           html += '<button onclick="completeApartado(' + originalIndex + ')" style="flex:1;padding:8px;background:#4caf50;color:white;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:0.9rem">✅ Completar Venta</button>';
           html += '<button onclick="deleteApartado(' + originalIndex + ')" style="flex:1;padding:8px;background:#f44336;color:white;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:0.9rem">🗑️ Eliminar</button>';
           html += '</div>';
@@ -2076,6 +2197,163 @@
           renderPaymentModal();
           document.getElementById('payment-modal').style.display = 'flex';
         }
+      }
+
+      function openApartadoAbono(index) {
+        var apartados = JSON.parse(localStorage.getItem('apartados') || '[]');
+        var apt = apartados[index];
+        if (!apt) return;
+        if (apt.balance <= 0) {
+          alert('Este apartado ya está pagado.');
+          return;
+        }
+
+        var modal = document.createElement('div');
+        modal.id = 'apartado-abono-modal';
+        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:2500;display:flex;align-items:center;justify-content:center;';
+
+        var content = '';
+        content += '<div style="background:white;padding:30px;border-radius:12px;max-width:500px;width:90%;max-height:70vh;overflow-y:auto;box-shadow:0 4px 20px rgba(0,0,0,0.3);">';
+        content += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-bottom:2px solid #ff9800;padding-bottom:15px;">';
+        content += '<h2 style="margin:0;color:#ff9800">Registrar Abono</h2>';
+        content += '<button onclick="document.getElementById(\'apartado-abono-modal\').remove();" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#666">✕</button>';
+        content += '</div>';
+
+        content += '<div style="margin-bottom:15px;font-size:0.95rem;color:#333">';
+        content += '<div><strong>Cliente:</strong> ' + apt.clientName + '</div>';
+        content += '<div><strong>Saldo actual:</strong> ₡' + apt.balance.toLocaleString('es-CR', {minimumFractionDigits:2}) + '</div>';
+        content += '</div>';
+
+        content += '<div style="margin-bottom:15px;">';
+        content += '<label style="display:block;color:#333;font-weight:600;margin-bottom:8px">Cajero:</label>';
+        content += '<select id="abono-cashier" style="width:100%;padding:10px;border:2px solid #e3cfe0;border-radius:8px;font-family:Montserrat,sans-serif;font-size:0.95rem">';
+        content += '<option value="">Seleccione un cajero</option>';
+        content += '<optgroup label="Vendedores">';
+        content += '<option value="Tamica">Tamica</option>';
+        content += '<option value="Valerie">Valerie</option>';
+        content += '<option value="Jesenia">Jesenia</option>';
+        content += '</optgroup>';
+        content += '<optgroup label="━━━ ENCARGADOS ━━━">';
+        content += '<option value="Darlyn">👑 Darlyn (Encargado)</option>';
+        content += '<option value="Rebeca">👑 Rebeca (Encargado)</option>';
+        content += '<option value="Elizabeth">👑 Elizabeth (Encargado)</option>';
+        content += '</optgroup>';
+        content += '<optgroup label="━━━ ADMINISTRADORES ━━━">';
+        content += '<option value="Moni">🔴 Moni (Admin)</option>';
+        content += '<option value="Hernan">🔴 Hernan (Admin)</option>';
+        content += '<option value="David">🔴 David (Admin)</option>';
+        content += '<option value="Esteban">🔴 Esteban (Admin)</option>';
+        content += '</optgroup>';
+        content += '</select>';
+        content += '</div>';
+
+        content += '<div style="margin-bottom:15px;">';
+        content += '<label style="display:block;color:#333;font-weight:600;margin-bottom:8px">Método de pago:</label>';
+        content += '<select id="abono-method" style="width:100%;padding:10px;border:2px solid #ff9800;border-radius:8px;font-family:Montserrat,sans-serif;font-size:0.95rem">';
+        content += '<option value="efectivo">💵 Efectivo</option>';
+        content += '<option value="tarjeta">💳 Tarjeta</option>';
+        content += '<option value="sinpe">📱 Sinpe Móvil</option>';
+        content += '<option value="otro">📋 Otro</option>';
+        content += '</select>';
+        content += '</div>';
+
+        content += '<div style="margin-bottom:15px;">';
+        content += '<label style="display:block;color:#333;font-weight:600;margin-bottom:8px">Monto del abono:</label>';
+        content += '<div style="position:relative">';
+        content += '<span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#666;font-weight:600">₡</span>';
+        content += '<input type="number" id="abono-amount" style="width:100%;padding:10px 10px 10px 35px;border:2px solid #ff9800;border-radius:8px;font-family:Montserrat,sans-serif;font-size:1rem;" placeholder="0.00" min="0" step="0.01">';
+        content += '</div>';
+        content += '</div>';
+
+        content += '<div style="display:flex;gap:10px;">';
+        content += '<button style="flex:1;padding:12px;background:#9e9e9e;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:1rem" onclick="document.getElementById(\'apartado-abono-modal\').remove()">Cancelar</button>';
+        content += '<button style="flex:1;padding:12px;background:#ff9800;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:1rem" onclick="saveApartadoAbono(' + index + ')">Guardar Abono</button>';
+        content += '</div>';
+        content += '</div>';
+
+        modal.innerHTML = content;
+        document.body.appendChild(modal);
+      }
+
+      function saveApartadoAbono(index) {
+        var apartados = JSON.parse(localStorage.getItem('apartados') || '[]');
+        var apt = apartados[index];
+        if (!apt) return;
+
+        var cashier = document.getElementById('abono-cashier').value;
+        if (!cashier) {
+          alert('Debe seleccionar un cajero');
+          return;
+        }
+
+        var method = document.getElementById('abono-method').value || 'efectivo';
+        var amount = parseFloat(document.getElementById('abono-amount').value || 0);
+
+        if (amount <= 0) {
+          alert('El abono debe ser mayor a ₡0');
+          return;
+        }
+        if (amount > apt.balance) {
+          alert('El abono no puede ser mayor al saldo pendiente');
+          return;
+        }
+
+        // Registrar abono
+        apt.abonos = Array.isArray(apt.abonos) ? apt.abonos : [];
+        apt.abonos.unshift({
+          date: getLocalISODateTime(),
+          amount: amount,
+          method: method,
+          cashier: cashier
+        });
+
+        apt.balance = Math.max(0, apt.balance - amount);
+
+        // Extender 15 días
+        var currentExpiry = apt.expiresAt ? new Date(apt.expiresAt) : new Date();
+        var extended = new Date(currentExpiry.getTime() + 15 * 24 * 60 * 60 * 1000);
+        apt.expiresAt = extended.toISOString();
+
+        if (apt.balance === 0) {
+          apt.status = 'pagado';
+        }
+
+        apartados[index] = apt;
+        localStorage.setItem('apartados', JSON.stringify(apartados));
+
+        // Guardar en historial de facturas (abono)
+        try {
+          var invoices = JSON.parse(localStorage.getItem('invoiceHistory') || '[]');
+          invoices.push({
+            id: 'ABN-' + new Date().getTime(),
+            date: getLocalISODateTime(),
+            store: apt.store,
+            cashier: cashier,
+            items: apt.items || [],
+            paymentMethods: [{ method: method, amount: amount }],
+            subtotal: amount,
+            dateString: new Date().toLocaleDateString('es-CR'),
+            taxType: 'simple',
+            taxInfo: { subtotal: amount, iva: 0, total: amount, baseImponible: 0 },
+            apartadoInfo: {
+              apartadoId: apt.id,
+              apartadoStatus: 'abono',
+              clientName: apt.clientName,
+              moneyApartado: apt.moneyApartado,
+              abonoAmount: amount,
+              balance: apt.balance,
+              notes: apt.notes
+            }
+          });
+          localStorage.setItem('invoiceHistory', JSON.stringify(invoices));
+        } catch (err) {
+          console.error('Error al guardar abono en historial:', err);
+        }
+
+        // Actualizar UI
+        displayApartados();
+        document.getElementById('apartado-abono-modal').remove();
+        alert('✅ Abono registrado y apartado extendido 15 días');
       }
 
       function deleteApartado(index) {
@@ -2136,6 +2414,97 @@
         }
       }
 
+      function updateTaxDisplay() {
+        const taxSelect = document.getElementById('tax-type-select');
+        if (!taxSelect) return;
+        
+        currentTaxType = taxSelect.value;
+        const descriptionDiv = document.getElementById('tax-description');
+        
+        if (currentTaxType === 'simple') {
+          descriptionDiv.innerHTML = '💡 Factura estándar sin desglose de impuestos.';
+          descriptionDiv.style.background = '#e3f2fd';
+          descriptionDiv.style.color = '#1565c0';
+        } else if (currentTaxType === 'coniva') {
+          descriptionDiv.innerHTML = '📊 Se mostrará el desglose del IVA (13%). El precio ya incluye IVA.';
+          descriptionDiv.style.background = '#fff3e0';
+          descriptionDiv.style.color = '#e65100';
+        } else if (currentTaxType === 'exonerado') {
+          descriptionDiv.innerHTML = '🏛️ Factura para diplomáticos. Se descontará el 13% de IVA del total.';
+          descriptionDiv.style.background = '#e8f5e9';
+          descriptionDiv.style.color = '#2e7d32';
+        }
+        
+        // Actualizar desglose de totales
+        renderTaxBreakdown();
+        updatePaymentBreakdown();
+      }
+      
+      function renderTaxBreakdown() {
+        const total = posCart.reduce((sum, item) => {
+          const discount = item.discount || 0;
+          const discountType = item.discountType || 'percentage';
+          let discountAmount = 0;
+          
+          if (discountType === 'percentage') {
+            discountAmount = (item.price * discount) / 100;
+          } else {
+            discountAmount = discount;
+          }
+          
+          const priceAfterDiscount = Math.max(0, item.price - discountAmount);
+          return sum + (priceAfterDiscount * item.qty);
+        }, 0);
+        
+        // Si hay apartado, calcular sobre el total original
+        const taxCalc = calculateIVA(total, currentTaxType);
+        
+        // Ajustar por apartado si existe
+        let displayTotal = taxCalc.total;
+        if (currentApartadoInProgress) {
+          displayTotal = Math.max(0, taxCalc.total - currentApartadoInProgress.señaPagada);
+        }
+        
+        const breakdownDiv = document.getElementById('tax-breakdown-display');
+        let html = '';
+        
+        if (currentTaxType === 'simple') {
+          html += '<div style="font-size:0.95rem;color:#666;margin-bottom:5px">Total a pagar:</div>';
+          html += '<div style="font-size:2rem;font-weight:700;color:#5a2032">' + formatMoney(displayTotal) + '</div>';
+        } else if (currentTaxType === 'coniva') {
+          html += '<div style="font-size:0.85rem;color:#666;margin-bottom:3px">Base imponible:</div>';
+          html += '<div style="font-size:1.1rem;font-weight:600;color:#333;margin-bottom:8px">' + formatMoney(taxCalc.baseImponible) + '</div>';
+          html += '<div style="font-size:0.85rem;color:#666;margin-bottom:3px">IVA (13%):</div>';
+          html += '<div style="font-size:1.1rem;font-weight:600;color:#ff9800;margin-bottom:8px">' + formatMoney(taxCalc.iva) + '</div>';
+          html += '<div style="border-top:2px solid #5a2032;padding-top:8px;margin-top:8px">';
+          html += '<div style="font-size:0.95rem;color:#666;margin-bottom:5px">Total a pagar:</div>';
+          html += '<div style="font-size:2rem;font-weight:700;color:#5a2032">' + formatMoney(displayTotal) + '</div>';
+          html += '</div>';
+        } else if (currentTaxType === 'exonerado') {
+          html += '<div style="font-size:0.85rem;color:#2e7d32;margin-bottom:3px">✓ Exonerado de IVA (Diplomáticos)</div>';
+          html += '<div style="font-size:0.85rem;color:#666;margin-bottom:3px;text-decoration:line-through">Precio con IVA: ' + formatMoney(total) + '</div>';
+          html += '<div style="font-size:0.85rem;color:#2e7d32;margin-bottom:3px">Descuento IVA (13%): -' + formatMoney(total - taxCalc.originalTotal) + '</div>';
+          
+          // Mostrar ajuste de redondeo si existe
+          if (taxCalc.roundingAdjustment !== 0) {
+            const roundingText = taxCalc.roundingAdjustment > 0 ? 'Redondeo' : 'Ajuste';
+            const roundingColor = taxCalc.roundingAdjustment > 0 ? '#ff9800' : '#4caf50';
+            html += '<div style="font-size:0.8rem;color:' + roundingColor + ';margin-bottom:8px">';
+            html += roundingText + ' (denominación): ' + (taxCalc.roundingAdjustment >= 0 ? '+' : '') + formatMoney(Math.abs(taxCalc.roundingAdjustment));
+            html += '</div>';
+          } else {
+            html += '<div style="margin-bottom:8px"></div>';
+          }
+          
+          html += '<div style="border-top:2px solid #2e7d32;padding-top:8px;margin-top:8px">';
+          html += '<div style="font-size:0.95rem;color:#666;margin-bottom:5px">Total a pagar (sin IVA):</div>';
+          html += '<div style="font-size:2rem;font-weight:700;color:#2e7d32">' + formatMoney(displayTotal) + '</div>';
+          html += '</div>';
+        }
+        
+        breakdownDiv.innerHTML = html;
+      }
+      
       function renderPaymentModal() {
         const total = posCart.reduce((sum, item) => {
           const discount = item.discount || 0;
@@ -2179,7 +2548,13 @@
           document.getElementById('apartado-payment-info').style.display = 'none';
         }
         
-        document.getElementById('payment-total').textContent = '₡' + displayTotal.toLocaleString('es-CR', {minimumFractionDigits: 2});
+        // Inicializar tipo de impuesto
+        const taxSelect = document.getElementById('tax-type-select');
+        if (taxSelect) {
+          taxSelect.value = 'simple';
+          currentTaxType = 'simple';
+        }
+        updateTaxDisplay();
         
         const methodsList = document.getElementById('payment-methods-list');
         methodsList.innerHTML = `
@@ -2215,10 +2590,13 @@
           return sum + (priceAfterDiscount * item.qty);
         }, 0);
         
+        // Aplicar cálculo de impuestos
+        const taxCalc = calculateIVA(total, currentTaxType);
+        
         // Si hay un apartado en proceso, calcular solo el saldo pendiente
-        var payableTotal = total;
+        var payableTotal = taxCalc.total;
         if (currentApartadoInProgress) {
-          payableTotal = Math.max(0, total - currentApartadoInProgress.señaPagada);
+          payableTotal = Math.max(0, taxCalc.total - currentApartadoInProgress.señaPagada);
         }
         
         const paid = posPaymentMethods.reduce((sum, p) => sum + p.amount, 0);
@@ -2312,10 +2690,13 @@
           return sum + (priceAfterDiscount * item.qty);
         }, 0);
         
+        // Aplicar cálculo de impuestos
+        const taxCalc = calculateIVA(total, currentTaxType);
+        
         // Si hay un apartado en proceso, calcular solo el saldo pendiente
-        var payableTotal = total;
+        var payableTotal = taxCalc.total;
         if (currentApartadoInProgress) {
-          payableTotal = Math.max(0, total - currentApartadoInProgress.señaPagada);
+          payableTotal = Math.max(0, taxCalc.total - currentApartadoInProgress.señaPagada);
         }
         
         const paid = posPaymentMethods.reduce((sum, p) => sum + p.amount, 0);
@@ -2371,10 +2752,13 @@
           return sum + (priceAfterDiscount * item.qty);
         }, 0);
         
+        // Aplicar cálculo de impuestos
+        const taxCalc = calculateIVA(total, currentTaxType);
+        
         // Si hay un apartado en proceso, el monto a validar es solo el saldo pendiente
-        var amountToValidate = total;
+        var amountToValidate = taxCalc.total;
         if (currentApartadoInProgress) {
-          amountToValidate = Math.max(0, total - currentApartadoInProgress.señaPagada);
+          amountToValidate = Math.max(0, taxCalc.total - currentApartadoInProgress.señaPagada);
         }
         
         const paid = posPaymentMethods.reduce((sum, p) => sum + p.amount, 0);
@@ -2401,32 +2785,51 @@
           paymentSummary += methodNames[p.method] + ': ₡' + p.amount.toLocaleString('es-CR', {minimumFractionDigits: 2}) + '\n';
         });
         
-        if (!confirm('¿Confirmar venta?\n\nTotal: ₡' + total.toLocaleString('es-CR', {minimumFractionDigits: 2}) + '\n\n' + paymentSummary)) {
+        let taxTypeName = currentTaxType === 'simple' ? 'Simple' : currentTaxType === 'coniva' ? 'Con IVA' : 'Exonerado';
+        let confirmMsg = '¿Confirmar venta?\n\nTipo: ' + taxTypeName + '\nTotal: ₡' + taxCalc.total.toLocaleString('es-CR', {minimumFractionDigits: 2});
+        if (currentTaxType === 'coniva') {
+          confirmMsg += '\n(Base: ₡' + taxCalc.baseImponible.toLocaleString('es-CR', {minimumFractionDigits: 2}) + ' + IVA: ₡' + taxCalc.iva.toLocaleString('es-CR', {minimumFractionDigits: 2}) + ')';
+        } else if (currentTaxType === 'exonerado') {
+          confirmMsg += '\n(Precio original: ₡' + total.toLocaleString('es-CR', {minimumFractionDigits: 2}) + ' - IVA exonerado)';
+        }
+        confirmMsg += '\n\n' + paymentSummary;
+        
+        if (!confirm(confirmMsg)) {
           return;
         }
         
         // Actualizar inventario
+        // Actualizar inventario
         posCart.forEach(item => {
           const product = productsData.find(p => p.id === item.id);
-          if (product) {
-            // Si el producto tiene variantes, actualizar el inventario de la variante seleccionada
-            if (item.variantName && product.variants && product.variants.options) {
-              const variantOption = product.variants.options.find(opt => opt.name === item.variantName);
-              if (variantOption && variantOption.inventory) {
-                variantOption.inventory[currentStore] = Math.max(0, (variantOption.inventory[currentStore] || 0) - item.qty);
-              }
-            } else if (item.variantOption && product.variants && product.variants.options) {
-              const variantOption = product.variants.options.find(opt => opt.name === item.variantOption);
-              if (variantOption && variantOption.inventory) {
-                variantOption.inventory[currentStore] = Math.max(0, (variantOption.inventory[currentStore] || 0) - item.qty);
-              }
-            } else if (product.inventory) {
-              // Si no es variante o no hay variant seleccionado, actualizar inventario raíz
-              product.inventory[currentStore] = Math.max(0, (product.inventory[currentStore] || 0) - item.qty);
+          if (!product) return;
+
+          // ⭐ SI ES VARIANTE -> usar el índice guardado
+          if (
+            item.variantIndex !== undefined &&
+            product.variants &&
+            product.variants.options &&
+            product.variants.options[item.variantIndex]
+          ) {
+
+            const variantOption = product.variants.options[item.variantIndex];
+
+            if (variantOption.inventory) {
+              variantOption.inventory[currentStore] =
+                Math.max(0, (variantOption.inventory[currentStore] || 0) - item.qty);
             }
-            product.sold = (product.sold || 0) + item.qty;
+
           }
-        });
+          // ⭐ SI ES PRODUCTO NORMAL
+          else if (product.inventory) {
+
+            product.inventory[currentStore] =
+              Math.max(0, (product.inventory[currentStore] || 0) - item.qty);
+
+          }
+
+          product.sold = (product.sold || 0) + item.qty;
+        });   // ⭐⭐⭐ ESTE ES EL CIERRE DEL FOREACH ⭐⭐⭐
         
         // Guardar cambios
         if (typeof saveProductsToStorage !== 'undefined') {
@@ -2438,7 +2841,7 @@
         
         // Generar e imprimir factura
         try {
-          printInvoice(posCart, posPaymentMethods, currentStore, cashier);
+          printInvoice(posCart, posPaymentMethods, currentStore, cashier, currentTaxType, taxCalc);
         } catch (err) {
           console.error('Error al imprimir la factura', err);
           alert('Error al generar factura: ' + err.message);
@@ -2446,7 +2849,7 @@
         
         // Guardar factura en historial
         try {
-          saveInvoiceToHistory(posCart, posPaymentMethods, currentStore, cashier);
+          saveInvoiceToHistory(posCart, posPaymentMethods, currentStore, cashier, currentTaxType, taxCalc);
         } catch (err) {
           console.error('Error al guardar factura en historial:', err);
           alert('Error al guardar factura: ' + err.message);
@@ -2476,7 +2879,7 @@
         alert('¡Venta completada exitosamente!');
       }
       
-      function saveInvoiceToHistory(cartItems, paymentMethods, storeKey, cashier) {
+      function saveInvoiceToHistory(cartItems, paymentMethods, storeKey, cashier, taxType, taxCalc) {
         var now = new Date();
         var invoiceId = 'FAC-' + now.getTime();
         var invoiceDateTime = getLocalISODateTime();
@@ -2535,7 +2938,14 @@
           items: itemsCopy,
           paymentMethods: paymentsCopy,
           subtotal: subtotal,
-          dateString: now.toLocaleDateString('es-CR')
+          dateString: now.toLocaleDateString('es-CR'),
+          taxType: taxType || 'simple',
+          taxInfo: taxCalc || {
+            subtotal: subtotal,
+            iva: 0,
+            total: subtotal,
+            baseImponible: 0
+          }
         };
         
         // Si esto es una finalización de apartado, agregar info del apartado
@@ -2729,12 +3139,14 @@
         return storeKey || 'Tienda';
       }
 
-      function printInvoice(cartItems, paymentMethods, storeKey, cashier) {
+      function printInvoice(cartItems, paymentMethods, storeKey, cashier, taxType, taxCalc) {
         // Eliminar modal anterior si existe
         const existingModal = document.getElementById('invoice-modal');
         if (existingModal) {
           existingModal.remove();
         }
+        
+        taxType = taxType || 'simple';
         
         var now = new Date();
         var invoiceId = 'FAC-' + now.getTime();
@@ -2792,93 +3204,121 @@
           // Mostrar precio y descuento
           var priceDisplay = '';
           if (discount > 0) {
-            priceDisplay = '<span style="text-decoration:line-through;color:#999;font-size:0.85rem">' + formatMoney(item.price) + '</span><br>' + formatMoney(priceAfterDiscount);
+            priceDisplay = '<span style="text-decoration:line-through;font-size:7px">' + formatMoney(item.price) + '</span><br>' + formatMoney(priceAfterDiscount);
             if (discountType === 'percentage') {
-              priceDisplay += '<br><span style="color:#4caf50;font-size:0.75rem">(-' + discount + '%)</span>';
+              priceDisplay += '<br><span style="font-size:7px">(-' + discount + '%)</span>';
             } else {
-              priceDisplay += '<br><span style="color:#4caf50;font-size:0.75rem">(-' + formatMoney(discount) + ')</span>';
+              priceDisplay += '<br><span style="font-size:7px">(-' + formatMoney(discount) + ')</span>';
             }
           } else {
             priceDisplay = formatMoney(item.price);
           }
           
-          itemsRows += '<tr style="border-bottom:1px solid #ddd;"><td style="padding:12px;text-align:left;">' + displayTitle + '</td><td style="padding:12px;text-align:center;width:60px;">' + item.qty + '</td><td style="padding:12px;text-align:right;width:100px;">' + priceDisplay + '</td><td style="padding:12px;text-align:right;width:120px;font-weight:bold;">' + formatMoney(lineTotal) + '</td><td style="padding:12px;text-align:center;width:100px;font-size:0.75rem;color:#666;font-family:monospace;">' + (item.barcode || 'N/A') + '</td></tr>';
+          itemsRows += '<tr style="border-bottom:1px dashed #000;"><td style="padding:3px 2px;text-align:left;">' + displayTitle + '</td><td style="padding:3px 2px;text-align:center;width:30px;">' + item.qty + '</td><td style="padding:3px 2px;text-align:right;width:55px;">' + priceDisplay + '</td><td style="padding:3px 2px;text-align:right;width:60px;font-weight:bold;">' + formatMoney(lineTotal) + '</td></tr>';
         }
         
         var paymentRows = '';
         for (var i = 0; i < paymentMethods.length; i++) {
           var p = paymentMethods[i];
           var methodName = p.method === 'efectivo' ? 'Efectivo' : p.method === 'tarjeta' ? 'Tarjeta de Crédito' : p.method === 'sinpe' ? 'Sinpe Móvil' : 'Otro';
-          paymentRows += '<tr><td style="padding:6px;">' + methodName + '</td><td style="padding:6px;text-align:right;">' + formatMoney(p.amount) + '</td></tr>';
+          paymentRows += '<tr><td style="padding:3px;">' + methodName + '</td><td style="padding:3px;text-align:right;">' + formatMoney(p.amount) + '</td></tr>';
         }
         
-        var content = '<div style="background:white;padding:40px;border-radius:8px;max-width:650px;max-height:65vh;overflow-y:auto;font-family:Arial,sans-serif;box-shadow:0 4px 20px rgba(0,0,0,0.3);">';
+        var content = '<div style="background:white;padding:8px;border-radius:6px;max-width:300px;max-height:80vh;overflow-y:auto;font-family:\'Courier New\',monospace;font-size:9px;box-shadow:0 4px 20px rgba(0,0,0,0.2);">';
         
         // Header
-        content += '<div style="text-align:center;border-bottom:3px solid #5a2032;padding-bottom:20px;margin-bottom:20px;">';
-        content += '<h1 style="margin:0;font-size:2rem;color:#5a2032;">SOPHIE</h1>';
-        content += '<p style="margin:5px 0;color:#666;font-size:0.9rem;">Tienda de Regalos y Accesorios</p>';
+        content += '<div style="text-align:center;border-bottom:1px dashed #000;padding-bottom:8px;margin-bottom:8px;">';
+        content += '<div style="margin:0;font-size:11px;font-weight:bold;color:#000">' + storeName + '</div>';
+        content += '<div style="margin:3px 0;font-size:8px;">Tienda de Regalos y Accesorios</div>';
         content += '</div>';
         
         // Información del apartado si aplica
         if (currentApartadoInProgress) {
-          content += '<div style="margin-bottom:20px;padding:15px;background:#fff3e0;border-left:4px solid #ff9800;border-radius:4px;">';
-          content += '<div style="font-weight:bold;color:#ff9800;margin-bottom:10px;font-size:0.95rem;">📋 COMPLETACIÓN DE APARTADO</div>';
-          content += '<div style="font-size:0.85rem;color:#333;margin-bottom:5px;"><strong>Apartado ID:</strong> ' + currentApartadoInProgress.id + '</div>';
-          content += '<div style="font-size:0.85rem;color:#333;margin-bottom:5px;"><strong>Cliente:</strong> ' + currentApartadoInProgress.clientName + '</div>';
+          content += '<div style="margin-bottom:8px;padding:8px;background:#f0f0f0;border:1px dashed #000;">';
+          content += '<div style="font-weight:bold;margin-bottom:5px;font-size:9px;">COMPLETACIÓN DE APARTADO</div>';
+          content += '<div style="font-size:8px;margin-bottom:3px;"><strong>Apartado ID:</strong> ' + currentApartadoInProgress.id + '</div>';
+          content += '<div style="font-size:8px;margin-bottom:3px;"><strong>Cliente:</strong> ' + currentApartadoInProgress.clientName + '</div>';
           if (currentApartadoInProgress.phoneNumber) {
-            content += '<div style="font-size:0.85rem;color:#333;margin-bottom:5px;"><strong>Teléfono:</strong> ' + currentApartadoInProgress.phoneNumber + '</div>';
+            content += '<div style="font-size:8px;margin-bottom:3px;"><strong>Tel:</strong> ' + currentApartadoInProgress.phoneNumber + '</div>';
           }
           if (currentApartadoInProgress.email) {
-            content += '<div style="font-size:0.85rem;color:#333;margin-bottom:10px;"><strong>Email:</strong> ' + currentApartadoInProgress.email + '</div>';
+            content += '<div style="font-size:8px;margin-bottom:5px;">' + currentApartadoInProgress.email + '</div>';
           }
-          content += '<div style="font-size:0.85rem;color:#4caf50;font-weight:bold;margin-bottom:5px;"><strong>Seña Recibida:</strong> ' + formatMoney(currentApartadoInProgress.señaPagada) + '</div>';
+          content += '<div style="font-size:8px;font-weight:bold;margin-bottom:3px;"><strong>Seña Recibida:</strong> ' + formatMoney(currentApartadoInProgress.señaPagada) + '</div>';
           var saldoPendiente = subtotal - currentApartadoInProgress.señaPagada;
-          content += '<div style="font-size:0.85rem;color:#ff9800;font-weight:bold;border-top:1px solid #ffb74d;padding-top:8px;margin-top:8px;"><strong>Saldo a Pagar:</strong> ' + formatMoney(saldoPendiente) + '</div>';
+          content += '<div style="font-size:8px;font-weight:bold;border-top:1px dashed #000;padding-top:5px;margin-top:5px;"><strong>Saldo a Pagar:</strong> ' + formatMoney(saldoPendiente) + '</div>';
           content += '</div>';
         }
         
         // Invoice Info
-        content += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;font-size:0.9rem;">';
-        content += '<div><strong>No. Factura:</strong><br>' + invoiceId + '<br><strong>Fecha:</strong><br>' + now.toLocaleDateString() + '<br><strong>Hora:</strong><br>' + now.toLocaleTimeString() + '</div>';
-        content += '<div style="text-align:right;"><strong>Ubicación:</strong><br>' + storeName + '<br><strong>Cajero:</strong><br>' + cashier + '<br><br></div>';
+        content += '<div style="margin-bottom:8px;font-size:8px;border-bottom:1px dashed #000;padding-bottom:6px;">';
+        content += '<div><strong>No. Factura:</strong> ' + invoiceId + '</div>';
+        content += '<div><strong>Fecha:</strong> ' + now.toLocaleDateString() + ' ' + now.toLocaleTimeString() + '</div>';
+        content += '<div><strong>Ubicación:</strong> ' + storeName + '</div>';
+        content += '<div><strong>Cajero:</strong> ' + cashier + '</div>';
         content += '</div>';
         
         // Items Table
-        content += '<table style="width:100%;border-collapse:collapse;margin:20px 0;border-top:2px solid #5a2032;border-bottom:2px solid #5a2032;">';
-        content += '<tr style="background:#f5f5f5;border-bottom:2px solid #5a2032;"><th style="padding:12px;text-align:left;font-weight:bold;color:#5a2032;">Descripción</th><th style="padding:12px;text-align:center;width:50px;font-weight:bold;color:#5a2032;">Cant.</th><th style="padding:12px;text-align:right;width:80px;font-weight:bold;color:#5a2032;">Precio</th><th style="padding:12px;text-align:right;width:100px;font-weight:bold;color:#5a2032;">Subtotal</th><th style="padding:12px;text-align:center;width:90px;font-weight:bold;color:#5a2032;font-size:0.8rem;">Código</th></tr>';
+        content += '<table style="width:100%;border-collapse:collapse;margin:8px 0;border-top:1px dashed #000;border-bottom:1px dashed #000;font-size:8px;">';
+        content += '<tr style="background:#f0f0f0;border-bottom:1px dashed #000;"><th style="padding:3px 2px;text-align:left;font-weight:bold;">Descripción</th><th style="padding:3px 2px;text-align:center;width:30px;font-weight:bold;">Cant.</th><th style="padding:3px 2px;text-align:right;width:55px;font-weight:bold;">Precio</th><th style="padding:3px 2px;text-align:right;width:60px;font-weight:bold;">Subtotal</th></tr>';
         content += itemsRows;
         content += '</table>';
         
-        // Totals
-        content += '<div style="margin:30px 0;padding:20px;background:#f9f9f9;border-left:4px solid #5a2032;">';
-        content += '<div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:1rem;"><span>Subtotal:</span><span>' + formatMoney(subtotal) + '</span></div>';
-        content += '<div style="display:flex;justify-content:space-between;font-size:1.4rem;font-weight:bold;color:#5a2032;border-top:2px solid #5a2032;padding-top:10px;"><span>TOTAL:</span><span>' + formatMoney(subtotal) + '</span></div>';
+        // Totals con desglose de IVA
+        content += '<div style="margin:8px 0;padding:6px;background:#f0f0f0;border:1px dashed #000;font-size:8px;">';
+        
+        if (taxType === 'simple') {
+          content += '<div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:8px;"><span>Subtotal:</span><span>' + formatMoney(subtotal) + '</span></div>';
+          content += '<div style="display:flex;justify-content:space-between;font-size:9px;font-weight:bold;border-top:1px dashed #000;padding-top:4px;"><span>TOTAL:</span><span>' + formatMoney(subtotal) + '</span></div>';
+        } else if (taxType === 'coniva') {
+          content += '<div style="padding:6px;background:#f9f9f9;margin-bottom:6px;border:1px dashed #000;">';
+          content += '<div style="text-align:center;font-weight:bold;margin-bottom:4px;font-size:8px;">DESGLOSE DE IMPUESTOS</div>';
+          content += '<div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:8px;"><span>Base Imponible:</span><span>' + formatMoney(taxCalc.baseImponible) + '</span></div>';
+          content += '<div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:8px;"><span>IVA (13%):</span><span>' + formatMoney(taxCalc.iva) + '</span></div>';
+          content += '</div>';
+          content += '<div style="display:flex;justify-content:space-between;font-size:9px;font-weight:bold;border-top:1px dashed #000;padding-top:4px;"><span>TOTAL:</span><span>' + formatMoney(taxCalc.total) + '</span></div>';
+        } else if (taxType === 'exonerado') {
+          content += '<div style="padding:6px;background:#f0f0f0;margin-bottom:6px;border:1px dashed #000;">';
+          content += '<div style="text-align:center;font-weight:bold;margin-bottom:4px;font-size:8px;">FACTURA EXONERADA DE IVA</div>';
+          content += '<div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:7px;text-decoration:line-through;"><span>Precio con IVA:</span><span>' + formatMoney(subtotal) + '</span></div>';
+          content += '<div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:8px;"><span>Descuento IVA (13%):</span><span>-' + formatMoney(subtotal - taxCalc.originalTotal) + '</span></div>';
+          
+          // Mostrar ajuste de redondeo si existe
+          if (taxCalc.roundingAdjustment && taxCalc.roundingAdjustment !== 0) {
+            const roundingText = taxCalc.roundingAdjustment > 0 ? 'Redondeo' : 'Ajuste';
+            content += '<div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:8px;"><span>' + roundingText + ' (monedas CR):</span><span>' + (taxCalc.roundingAdjustment >= 0 ? '+' : '') + formatMoney(Math.abs(taxCalc.roundingAdjustment)) + '</span></div>';
+          }
+          
+          content += '<div style="text-align:center;font-size:7px;margin-top:3px;font-style:italic;">Cliente diplomático exonerado de impuestos</div>';
+          content += '</div>';
+          content += '<div style="display:flex;justify-content:space-between;font-size:9px;font-weight:bold;border-top:1px dashed #000;padding-top:4px;"><span>TOTAL (SIN IVA):</span><span>' + formatMoney(taxCalc.total) + '</span></div>';
+        }
+        
         content += '</div>';
         
         // Payment Details
-        content += '<div style="margin:20px 0;">';
-        content += '<h3 style="color:#5a2032;font-size:1rem;margin-bottom:10px;">FORMAS DE PAGO</h3>';
-        content += '<table style="width:100%;border-collapse:collapse;">';
-        content += '<tr style="background:#f5f5f5;"><th style="padding:8px;text-align:left;font-weight:bold;">Método</th><th style="padding:8px;text-align:right;font-weight:bold;">Monto</th></tr>';
+        content += '<div style="margin:8px 0;">';
+        content += '<div style="font-size:9px;font-weight:bold;margin-bottom:4px;border-bottom:1px dashed #000;padding-bottom:3px;">FORMAS DE PAGO</div>';
+        content += '<table style="width:100%;border-collapse:collapse;font-size:8px;">';
+        content += '<tr style="background:#f0f0f0;"><th style="padding:3px;text-align:left;font-weight:bold;">Método</th><th style="padding:3px;text-align:right;font-weight:bold;">Monto</th></tr>';
         content += paymentRows;
-        content += '<tr style="border-top:2px solid #5a2032;font-weight:bold;"><td style="padding:8px;">Total Pagado</td><td style="padding:8px;text-align:right;">' + formatMoney(paid) + '</td></tr>';
+        content += '<tr style="border-top:1px dashed #000;font-weight:bold;"><td style="padding:3px;">Total Pagado</td><td style="padding:3px;text-align:right;">' + formatMoney(paid) + '</td></tr>';
         if (change > 0) {
-          content += '<tr style="background:#e8f5e9;"><td style="padding:8px;color:#2e7d32;font-weight:bold;">Cambio</td><td style="padding:8px;text-align:right;color:#2e7d32;font-weight:bold;">' + formatMoney(change) + '</td></tr>';
+          content += '<tr style="background:#f0f0f0;"><td style="padding:3px;font-weight:bold;">Cambio</td><td style="padding:3px;text-align:right;font-weight:bold;">' + formatMoney(change) + '</td></tr>';
         }
         content += '</table>';
         content += '</div>';
         
         // Footer
-        content += '<div style="text-align:center;margin-top:30px;padding-top:20px;border-top:1px solid #ddd;color:#666;font-size:0.85rem;">';
-        content += '<p style="margin:5px 0;">Gracias por su compra</p>';
-        content += '<p style="margin:5px 0;">www.sophieshop.com</p>';
+        content += '<div style="text-align:center;margin-top:8px;padding-top:6px;border-top:1px dashed #000;font-size:8px;">';
+        content += '<div style="margin:3px 0;">Gracias por su compra</div>';
+        content += '<div style="margin:3px 0;">www.sophieshop.com</div>';
         content += '</div>';
         
         // Buttons
-        content += '<div style="display:flex;gap:10px;margin-top:20px;padding-top:20px;border-top:1px solid #ddd;">';
-        content += '<button onclick="window.print();" style="flex:1;padding:12px;background:#4caf50;color:white;border:none;cursor:pointer;border-radius:4px;font-weight:bold;font-size:1rem;">🖨️ Imprimir</button>';
-        content += '<button onclick="document.getElementById(\'invoice-modal\').remove();" style="flex:1;padding:12px;background:#9e9e9e;color:white;border:none;cursor:pointer;border-radius:4px;font-weight:bold;font-size:1rem;">✕ Cerrar</button>';
+        content += '<div style="display:flex;gap:6px;margin-top:8px;padding-top:6px;border-top:1px dashed #000;">';
+        content += '<button onclick="window.print();" style="flex:1;padding:6px;background:#333;color:white;border:none;cursor:pointer;border-radius:3px;font-weight:bold;font-size:8px;">Imprimir</button>';
+        content += '<button onclick="document.getElementById(\'invoice-modal\').remove();" style="flex:1;padding:6px;background:#666;color:white;border:none;cursor:pointer;border-radius:3px;font-weight:bold;font-size:8px;">Cerrar</button>';
         content += '</div>';
         
         content += '</div>';
@@ -2898,7 +3338,7 @@
             * { margin:0 !important; padding:0 !important; }
             body { margin:0 !important; padding:0 !important; background:white !important; }
             html { margin:0 !important; padding:0 !important; }
-            @page { size:A4; margin:0.5cm; }
+            @page { size:80mm auto; margin:0; }
             .pos-container { display:none !important; }
             .admin-tabs { display:none !important; }
             main { display:none !important; }
@@ -2907,30 +3347,30 @@
               position:static !important; 
               background:white !important; 
               z-index:auto !important;
-              width:100% !important;
-              height:100% !important;
+              width:80mm !important;
+              height:auto !important;
               top:0 !important;
               left:0 !important;
             }
             #invoice-modal > div { 
               display:block !important;
               box-shadow:none !important; 
-              padding:15px !important; 
+              padding:8px !important; 
               max-height:none !important; 
               overflow:visible !important; 
               page-break-after:avoid !important;
-              width:100% !important;
+              width:80mm !important;
               font-family:Arial, sans-serif !important;
               border-radius:0 !important;
               max-width:none !important;
             }
             button { display:none !important; }
-            table { page-break-inside:avoid !important; width:100% !important; font-size:0.85rem !important; }
+            table { page-break-inside:avoid !important; width:100% !important; font-size:0.7rem !important; }
             tr { page-break-inside:avoid !important; }
-            h1 { font-size:1.3rem !important; margin:3px 0 !important; }
-            h3 { font-size:0.9rem !important; margin:5px 0 !important; }
-            p { margin:3px 0 !important; font-size:0.85rem !important; }
-            td, th { padding:5px !important; }
+            h1 { font-size:1rem !important; margin:3px 0 !important; }
+            h3 { font-size:0.8rem !important; margin:4px 0 !important; }
+            p { margin:3px 0 !important; font-size:0.75rem !important; }
+            td, th { padding:4px !important; }
           }
         `;
         document.head.appendChild(style);
@@ -2959,6 +3399,7 @@
         content += '<input type="text" id="history-invoice-filter" style="padding:8px 12px;border:1px solid #e3cfe0;border-radius:6px;font-family:Montserrat,sans-serif;flex:1" placeholder="Ej: FAC-1234">';
         content += '</div>';
         content += '<button onclick="filterInvoices()" style="padding:8px 16px;background:#5a2032;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600;white-space:nowrap">🔍 Buscar</button>';
+        content += '<button onclick="exportInvoiceHistoryCSV()" style="padding:8px 16px;background:#2e7d32;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600;white-space:nowrap">⬇️ Descargar CSV</button>';
         content += '</div>';
         
         content += '<div id="history-results" style="margin-top:20px"></div>';
@@ -3015,6 +3456,8 @@
         
         console.log('✓ Resultados encontrados:', filtered.length);
         console.log('✓ Apartados en resultados:', filtered.filter(function(inv) { return inv.apartadoInfo; }).length);
+
+        window.filteredInvoices = filtered;
         
         var resultsDiv = document.getElementById('history-results');
         if (!resultsDiv) return;
@@ -3152,6 +3595,69 @@
         }
         
         resultsDiv.innerHTML = html;
+      }
+
+      function exportInvoiceHistoryCSV() {
+        var invoices = window.filteredInvoices || JSON.parse(localStorage.getItem('invoiceHistory') || '[]');
+
+        if (!invoices || invoices.length === 0) {
+          alert('No hay facturas para exportar.');
+          return;
+        }
+
+        var rows = [];
+        rows.push([
+          'Factura',
+          'Fecha',
+          'Hora',
+          'Tienda',
+          'Cajero',
+          'Cantidad Items',
+          'Subtotal',
+          'Métodos de Pago',
+          'Apartado'
+        ]);
+
+        invoices.forEach(function(invoice) {
+          var dateObj = new Date(invoice.date);
+          var dateStr = isNaN(dateObj.getTime()) ? (invoice.date || '') : dateObj.toLocaleDateString('es-CR');
+          var timeStr = isNaN(dateObj.getTime()) ? '' : dateObj.toLocaleTimeString('es-CR');
+          var itemCount = (invoice.items && invoice.items.length) ? invoice.items.reduce(function(acc, it){ return acc + (it.qty || 0); }, 0) : 0;
+          var subtotal = (typeof invoice.subtotal === 'number') ? invoice.subtotal : 0;
+          var payments = (invoice.paymentMethods || []).map(function(p){
+            return p.method + ' ₡' + (p.amount || 0);
+          }).join(' | ');
+          var apartadoFlag = invoice.apartadoInfo ? 'SI' : 'NO';
+
+          rows.push([
+            invoice.id || '',
+            dateStr,
+            timeStr,
+            invoice.store || '',
+            invoice.cashier || '',
+            itemCount,
+            subtotal,
+            payments,
+            apartadoFlag
+          ]);
+        });
+
+        var csv = rows.map(function(row){
+          return row.map(function(cell){
+            var value = String(cell === undefined || cell === null ? '' : cell);
+            return '"' + value.replace(/"/g, '""') + '"';
+          }).join(',');
+        }).join('\n');
+
+        var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        var link = document.createElement('a');
+        var url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'historial_facturas.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
 
       function filterInvoicesByDate() {

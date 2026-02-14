@@ -20,17 +20,17 @@
 			.checkout-form { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 			.checkout-form label { font-weight:600; font-size:0.95rem; color:#4a4a4a; display:block; margin-bottom:4px; }
 			.checkout-form input, .checkout-form textarea, .checkout-form select { width:100%; padding:10px 12px; border:1px solid #e6e6e6; border-radius:10px; font-size:0.98rem; transition:border-color 0.2s, box-shadow 0.2s; background:#fff; }
-			.checkout-form input:focus, .checkout-form textarea:focus, .checkout-form select:focus { outline:none; border-color:#d946a6; box-shadow:0 0 0 3px rgba(217,70,166,0.15); }
+			.checkout-form input:focus, .checkout-form textarea:focus, .checkout-form select:focus { outline:none; border-color:#C7499F; box-shadow:0 0 0 3px rgba(217,70,166,0.15); }
 			.checkout-radio-group { grid-column:1/3; display:flex; flex-direction:column; gap:10px; padding:16px; border:1px solid #e0e0e0; border-radius:10px; background:rgba(0,0,0,0.02); }
 			.checkout-radio-group strong { font-size:0.95rem; margin-bottom:4px; display:block; color:#333; }
 			.checkout-radio { display:flex; align-items:center; gap:10px; cursor:pointer; }
 			.checkout-radio input[type="radio"] { width:auto; margin:0; cursor:pointer; }
-			.payment-note { display:flex; align-items:center; gap:6px; font-size:0.82rem; color:#7a7a7a; margin-left:28px; padding:6px 10px; background:linear-gradient(135deg, rgba(217,70,166,0.08), rgba(255,107,157,0.05)); border-left:3px solid #d946a6; border-radius:4px; }
+			.payment-note { display:flex; align-items:center; gap:6px; font-size:0.82rem; color:#7a7a7a; margin-left:28px; padding:6px 10px; background:linear-gradient(135deg, rgba(217,70,166,0.08), rgba(255,107,157,0.05)); border-left:3px solid #C7499F; border-radius:4px; }
 			.payment-note::before { content:"⏱"; font-size:0.9rem; }
 			#payment-card-section { transition:all 0.3s ease; }
 			#payment-card-section h3 { font-size:1.05rem; color:#6b2840; font-weight:600; }
 			#payment-card-section input { background:linear-gradient(135deg, rgba(255,255,255,0.95), rgba(217,70,166,0.02)) !important; transition:all 0.2s ease !important; }
-			#payment-card-section input:focus { background:linear-gradient(135deg, #fff, rgba(217,70,166,0.05)) !important; border-color:#d946a6 !important; box-shadow:0 0 0 3px rgba(217,70,166,0.2) !important; }
+			#payment-card-section input:focus { background:linear-gradient(135deg, #fff, rgba(217,70,166,0.05)) !important; border-color:#C7499F !important; box-shadow:0 0 0 3px rgba(217,70,166,0.2) !important; }
 			.checkout-summary { padding:0; margin-top:12px; border-top:1px solid #eee; }
 			.checkout-summary .amounts { display:flex; flex-direction:column; gap:8px; padding-top:12px; }
 			.checkout-summary .amounts div { display:flex; justify-content:space-between; align-items:center; }
@@ -45,25 +45,7 @@
 			<div class="container header-inner">
 				<button id="hamburger" class="hamburger" aria-label="Abrir menu">☰</button>
 				<a href="index.html" class="logo" style="text-decoration:none;cursor:pointer;display:flex;align-items:center;gap:10px">
-					<svg width="32" height="32" viewBox="0 0 32 32" style="flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.1))">
-						<defs>
-							<linearGradient id="giftGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-								<stop offset="0%" style="stop-color:#ff6b9d;stop-opacity:1" />
-								<stop offset="100%" style="stop-color:#d946a6;stop-opacity:1" />
-							</linearGradient>
-							<linearGradient id="ribbonGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-								<stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
-								<stop offset="100%" style="stop-color:#ffed4e;stop-opacity:1" />
-							</linearGradient>
-						</defs>
-						<rect x="4" y="10" width="24" height="16" rx="2" fill="url(#giftGradient)" />
-						<path d="M 4 10 Q 16 4 28 10" fill="#ff8ab3" />
-						<rect x="14" y="4" width="4" height="22" fill="url(#ribbonGradient)" />
-						<rect x="4" y="14" width="24" height="3" fill="url(#ribbonGradient)" />
-						<circle cx="16" cy="8" r="3" fill="#ffd700" />
-						<ellipse cx="8" cy="14" rx="2" ry="3" fill="rgba(255,255,255,0.4)" />
-					</svg>
-					<span style="font-size:1.3rem;font-weight:700;color:white">Sophie</span>
+					<span style="font-family:'Daily',Playfair Display,serif;font-size:2.5rem;font-weight:400;color:#2c4a8c">SophieWeb</span>
 				</a>
 				<button id="account-btn" class="account" type="button" aria-label="Abrir cuenta">👤 Iniciar sesión</button>
 				<div id="account-menu" class="account-menu hidden" aria-hidden="true">
@@ -165,26 +147,58 @@
 							<label class="checkout-radio"><input type="radio" name="shipping" value="pickup" /> Retiro en tienda física (gratis)</label>
 								
 								<!-- Selector de tienda para retiro -->
-								<div id="store-selector-container" style="display:none;margin-left:20px;margin-top:10px;padding:15px;background:#f3e5f5;border-radius:10px;border-left:4px solid #d946a6">
-									<label for="pickup-store" style="display:block;font-weight:600;color:#5a2032;margin-bottom:8px">📍 Selecciona la tienda de retiro:</label>
-									<select id="pickup-store" style="width:100%;padding:12px 14px;border:2px solid #e3cfe0;border-radius:10px;font-family:Montserrat,sans-serif;font-size:0.95rem;cursor:pointer">
+								<div id="store-selector-container" style="display:none;margin-left:20px;margin-top:10px;padding:15px;background:#F5E6F0;border-radius:10px;border-left:4px solid #C7499F">
+									<label for="pickup-store" style="display:block;font-weight:600;color:#2D4A9C;margin-bottom:8px">📍 Selecciona la tienda de retiro:</label>
+									<select id="pickup-store" style="width:100%;padding:12px 14px;border:2px solid #E8F3F8;border-radius:10px;font-family:Montserrat,sans-serif;font-size:0.95rem;cursor:pointer">
 										<option value="">-- Selecciona una tienda --</option>
 										<option value="tienda1">Sophie Store</option>
 										<option value="tienda2">Sophie Mall</option>
 										<option value="tienda3">Sophie's Ticados</option>
+										<option value="tienda4">Poas</option>
 									</select>
 								</div>
 								
 								<strong>Método de pago</strong>
 								<div>
-									<label class="checkout-radio"><input type="radio" name="payment" value="transferencia" checked /> Transferencia </label>
-								<span class="payment-note">Validamos el depósito en hasta 24 horas hábiles</span>
+								<label class="checkout-radio"><input type="radio" name="payment" value="transferencia" /> Transferencia </label>
+							<span class="payment-note">Validamos el depósito en hasta 24 horas hábiles</span>
+						</div>
+						<div>
+							<label class="checkout-radio"><input type="radio" name="payment" value="sinpe" /> SINPE Móvil</label>
+							<span class="payment-note">Validamos el pago en hasta 24 horas hábiles</span>
 							</div>
-							<div>
-								<label class="checkout-radio"><input type="radio" name="payment" value="sinpe" /> SINPE Móvil</label>
-								<span class="payment-note">Validamos el pago en hasta 24 horas hábiles</span>
+							<label class="checkout-radio"><input type="radio" name="payment" value="tarjeta" checked /> Tarjeta de crédito/débito</label>
+							<!-- Sección para subir comprobante de pago -->
+							<div id="payment-receipt-section" style="display:none;grid-column:1/3;margin-top:10px;padding:20px;background:linear-gradient(135deg, rgba(33,150,243,0.08), rgba(33,150,243,0.03));border-radius:10px;border-left:4px solid #2196f3">
+								<h3 style="margin:0 0 12px 0;font-size:1.05rem;color:#1976d2;display:flex;align-items:center;gap:8px">
+									📸 Comprobante de Pago
+								</h3>
+								<p style="font-size:0.9rem;color:#555;margin:0 0 15px 0">
+									Por favor, adjunta una foto o captura de pantalla del comprobante de tu transferencia o SINPE Móvil.
+								</p>
+								<div style="display:flex;flex-direction:column;gap:12px">
+									<label style="display:block;cursor:pointer">
+										<div id="upload-area" style="border:2px dashed #2196f3;border-radius:10px;padding:30px 20px;text-align:center;background:#fff;transition:all 0.3s ease">
+											<div style="font-size:2.5rem;margin-bottom:8px">📁</div>
+											<div style="font-weight:600;color:#1976d2;margin-bottom:5px">Haz clic para seleccionar archivo</div>
+											<div style="font-size:0.85rem;color:#777">o arrastra y suelta aquí</div>
+											<div style="font-size:0.8rem;color:#999;margin-top:8px">Formatos: JPG, PNG, PDF (Max 5MB)</div>
+										</div>
+										<input type="file" id="payment-receipt" name="payment_receipt" accept="image/jpeg,image/png,image/jpg,application/pdf" style="display:none">
+									</label>
+									<div id="file-preview" style="display:none;padding:12px;background:#fff;border-radius:8px;border:1px solid #e0e0e0">
+										<div style="display:flex;align-items:center;justify-content:space-between">
+											<div style="display:flex;align-items:center;gap:10px">
+												<span style="font-size:1.5rem">📎</span>
+												<div>
+													<div id="file-name" style="font-weight:600;color:#333;font-size:0.9rem"></div>
+													<div id="file-size" style="font-size:0.8rem;color:#777"></div>
+												</div>
+											</div>
+											<button type="button" id="remove-file" style="background:#f44336;color:white;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">✕</button>
+										</div>
+									</div>
 								</div>
-								<label class="checkout-radio"><input type="radio" name="payment" value="tarjeta" /> Tarjeta de crédito/débito</label>
 							</div>
 
 							<button type="submit" class="add" style="grid-column:1/3">Realizar pedido</button>
@@ -226,7 +240,7 @@
 										<input name="card_cvv" placeholder="123" maxlength="3" type="password" style="width:100%;padding:10px 12px;border:1px solid #e6e6e6;border-radius:10px;font-size:0.98rem;background:linear-gradient(135deg, rgba(255,255,255,0.95), rgba(217,70,166,0.02))" />
 									</div>
 								</div>
-								<p style="font-size:0.82rem;color:#999;margin:10px 0 0 0;padding:10px;background:rgba(217,70,166,0.08);border-radius:8px;border-left:3px solid #d946a6">🔒 Tus datos de tarjeta son seguros y encriptados</p>
+								<p style="font-size:0.82rem;color:#999;margin:10px 0 0 0;padding:10px;background:rgba(217,70,166,0.08);border-radius:8px;border-left:3px solid #C7499F">🔒 Tus datos de tarjeta son seguros y encriptados</p>
 							</div>
 						</div>
 					</section>
@@ -602,13 +616,18 @@
 
 				// Botón para guardar dirección
 				if(form){
-					saveAddressBtn = document.createElement('button');
-					saveAddressBtn.type = 'button';
-					saveAddressBtn.textContent = 'Guardar dirección en mi cuenta';
-					saveAddressBtn.className = 'btn';
-					saveAddressBtn.style.margin = '8px 0 0 0';
-					form.insertBefore(saveAddressBtn, form.querySelector('button[type="submit"]'));
-					saveAddressBtn.addEventListener('click', saveShippingToAccount);
+					const submitBtn = form.querySelector('button[type="submit"]');
+					// Verificar que no exista ya un botón de guardar dirección
+					const existingSaveBtn = form.querySelector('button.btn[type="button"]');
+					if(submitBtn && !existingSaveBtn){
+						saveAddressBtn = document.createElement('button');
+						saveAddressBtn.type = 'button';
+						saveAddressBtn.textContent = 'Guardar dirección en mi cuenta';
+						saveAddressBtn.className = 'btn';
+						saveAddressBtn.style.cssText = 'grid-column:1/3;margin:8px 0 0 0';
+						submitBtn.parentNode.insertBefore(saveAddressBtn, submitBtn);
+						saveAddressBtn.addEventListener('click', saveShippingToAccount);
+					}
 				}
 
 				if(provinciaSel) provinciaSel.addEventListener('change',()=>{
@@ -661,23 +680,123 @@
 				// Mostrar/ocultar campos de tarjeta según método de pago
 				const paymentRadios = document.querySelectorAll('input[name="payment"]');
 				const cardSection = document.getElementById('payment-card-section');
+				const receiptSection = document.getElementById('payment-receipt-section');
 				
 				function toggleCardFields(){
-					const isTarjeta = document.querySelector('input[name="payment"]:checked').value === 'tarjeta';
+					const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+					const isTarjeta = paymentMethod === 'tarjeta';
+					const needsReceipt = paymentMethod === 'transferencia' || paymentMethod === 'sinpe';
+					
 					if(cardSection){
 						cardSection.style.display = isTarjeta ? 'block' : 'none';
 					}
-					// Actualizar atributo required
+					
+					if(receiptSection){
+						receiptSection.style.display = needsReceipt ? 'block' : 'none';
+					}
+					
+					// Actualizar atributo required para campos de tarjeta
 					const cardInputs = cardSection ? cardSection.querySelectorAll('input') : [];
 					cardInputs.forEach(input => {
 						if(isTarjeta) input.setAttribute('required', 'required');
 						else input.removeAttribute('required');
 					});
+					
+					// Actualizar atributo required para comprobante
+					const receiptInput = document.getElementById('payment-receipt');
+					if(receiptInput){
+						if(needsReceipt) receiptInput.setAttribute('required', 'required');
+						else receiptInput.removeAttribute('required');
+					}
 				}
 				
 				paymentRadios.forEach(r=> {
 					r.addEventListener('change', toggleCardFields);
 				});
+				
+				// Manejo de carga de archivo de comprobante
+				const receiptInput = document.getElementById('payment-receipt');
+				const uploadArea = document.getElementById('upload-area');
+				const filePreview = document.getElementById('file-preview');
+				const fileName = document.getElementById('file-name');
+				const fileSize = document.getElementById('file-size');
+				const removeFileBtn = document.getElementById('remove-file');
+				
+				if(receiptInput && uploadArea){
+					// Click en área de carga
+					uploadArea.addEventListener('click', () => receiptInput.click());
+					
+					// Drag and drop
+					uploadArea.addEventListener('dragover', (e) => {
+						e.preventDefault();
+						uploadArea.style.borderColor = '#1976d2';
+						uploadArea.style.background = 'rgba(33,150,243,0.1)';
+					});
+					
+					uploadArea.addEventListener('dragleave', (e) => {
+						e.preventDefault();
+						uploadArea.style.borderColor = '#2196f3';
+						uploadArea.style.background = '#fff';
+					});
+					
+					uploadArea.addEventListener('drop', (e) => {
+						e.preventDefault();
+						uploadArea.style.borderColor = '#2196f3';
+						uploadArea.style.background = '#fff';
+						
+						if(e.dataTransfer.files.length > 0){
+							receiptInput.files = e.dataTransfer.files;
+							displayFilePreview(e.dataTransfer.files[0]);
+						}
+					});
+					
+					// Cambio de archivo
+					receiptInput.addEventListener('change', (e) => {
+						if(e.target.files.length > 0){
+							displayFilePreview(e.target.files[0]);
+						}
+					});
+					
+					// Remover archivo
+					if(removeFileBtn){
+						removeFileBtn.addEventListener('click', (e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							receiptInput.value = '';
+							filePreview.style.display = 'none';
+							uploadArea.style.display = 'block';
+						});
+					}
+					
+					function displayFilePreview(file){
+						// Validar tamaño (5MB max)
+						if(file.size > 5 * 1024 * 1024){
+							alert('El archivo es demasiado grande. El tamaño máximo es 5MB.');
+							receiptInput.value = '';
+							return;
+						}
+						
+						// Validar tipo
+						const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+						if(!validTypes.includes(file.type)){
+							alert('Tipo de archivo no válido. Solo se permiten JPG, PNG o PDF.');
+							receiptInput.value = '';
+							return;
+						}
+						
+						// Mostrar preview
+						fileName.textContent = file.name;
+						fileSize.textContent = formatFileSize(file.size);
+						uploadArea.style.display = 'none';
+						filePreview.style.display = 'block';
+					}
+					
+					function formatFileSize(bytes){
+						if(bytes < 1024) return bytes + ' B';
+						if(bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+						return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+					}
+				}
 
 				function generateOrderNumber(){
 					const date = new Date();
@@ -696,7 +815,28 @@
 						const userEmail = document.querySelector('input[name="email"]').value;
 						const requiresValidation = paymentMethod === 'sinpe' || paymentMethod === 'transferencia';
 						const cartItems = getCart();
-						incrementSoldCounts(cartItems);
+
+						// Validación visual de campos requeridos para Correos
+						if(shippingMethod === 'correos'){
+							let missing = [];
+							const provincia = provinciaSel.value;
+							const canton = cantonSel.value;
+							const distrito = distritoInput.value.trim();
+							const address = addressInput.value.trim();
+							if(!provincia) missing.push('Provincia');
+							if(!canton) missing.push('Cantón');
+							if(!distrito) missing.push('Distrito');
+							if(!address) missing.push('Dirección exacta');
+							if(missing.length > 0){
+								alert('Por favor completa los siguientes campos de envío: ' + missing.join(', '));
+								// Resaltar los campos faltantes
+								if(!provincia) provinciaSel.style.borderColor = '#C7499F'; else provinciaSel.style.borderColor = '';
+								if(!canton) cantonSel.style.borderColor = '#C7499F'; else cantonSel.style.borderColor = '';
+								if(!distrito) distritoInput.style.borderColor = '#C7499F'; else distritoInput.style.borderColor = '';
+								if(!address) addressInput.style.borderColor = '#C7499F'; else addressInput.style.borderColor = '';
+								return;
+							}
+						}
 						// Decrementar inventario de productos al comprar online
 						(function decrementInventory(cartItems, shippingMethod, pickupStoreKey) {
 							if (!Array.isArray(cartItems)) return;
@@ -705,12 +845,16 @@
 							cartItems.forEach(item => {
 								const id = item && item.id;
 								const qty = Number(item && item.qty) || 0;
+								const itemBarcode = item && item.barcode ? String(item.barcode) : '';
 								if (!id || qty <= 0) return;
 								const p = storedProducts.find(prod => prod.id === id);
 								if (p) {
-									// Si el producto tiene variantes y se especifica variante
-									if (p.variants && item.variant) {
-										const opt = (p.variants.options || []).find(o => o.name === item.variant);
+									// Si el producto tiene variantes, buscar la opción por barcode (o por nombre si existe)
+									if (p.variants && p.variants.options && p.variants.options.length > 0 && itemBarcode) {
+										let opt = (p.variants.options || []).find(o => String(o.barcode || '') === itemBarcode);
+										if (!opt && item.variant) {
+											opt = (p.variants.options || []).find(o => o.name === item.variant);
+										}
 										if (opt && opt.inventory) {
 											let left = qty;
 											let keys;
@@ -719,10 +863,10 @@
 												keys = [pickupStoreKey];
 											} else {
 												// Decrementar de bodega primero, luego tiendas
-												keys = ['bodega', 'tienda1', 'tienda2', 'tienda3'];
+												keys = ['bodega', 'tienda1', 'tienda2', 'tienda3', 'tienda4'];
 											}
 											for (const k of keys) {
-												if (opt.inventory[k] && left > 0) {
+													if (typeof opt.inventory[k] === 'number' && opt.inventory[k] > 0 && left > 0) {
 													const take = Math.min(opt.inventory[k], left);
 													opt.inventory[k] -= take;
 													left -= take;
@@ -736,10 +880,10 @@
 										if (shippingMethod === 'pickup' && pickupStoreKey && p.inventory[pickupStoreKey] !== undefined) {
 											keys = [pickupStoreKey];
 										} else {
-											keys = ['bodega', 'tienda1', 'tienda2', 'tienda3'];
+											keys = ['bodega', 'tienda1', 'tienda2', 'tienda3', 'tienda4'];
 										}
 										for (const k of keys) {
-											if (p.inventory[k] && left > 0) {
+											if (typeof p.inventory[k] === 'number' && p.inventory[k] > 0 && left > 0) {
 												const take = Math.min(p.inventory[k], left);
 												p.inventory[k] -= take;
 												left -= take;
@@ -749,8 +893,12 @@
 									}
 								}
 							});
-							if (changed && typeof window.saveProductsToStorage === 'function') {
-								window.saveProductsToStorage(storedProducts);
+							if (changed) {
+								if (typeof window.saveProductsToStorage === 'function') {
+									window.saveProductsToStorage(storedProducts);
+								} else {
+									localStorage.setItem('products_data', JSON.stringify(storedProducts));
+								}
 								if (Array.isArray(window.products)) window.products = storedProducts;
 							}
 						})(cartItems, shippingMethod, (shippingMethod === 'pickup' ? document.getElementById('pickup-store').value : null));
@@ -763,7 +911,8 @@
 							const storeNames = {
 								'tienda1': 'Sophie Store',
 								'tienda2': 'Sophie Mall',
-								'tienda3': 'Sophie\'s Ticados'
+								'tienda3': 'Sophie\'s Ticados',
+								'tienda4': 'Poas'
 							};
 							pickupStoreInfo = storeNames[pickupStore] || 'Tienda no especificada';
 							pickupStoreKey = pickupStore;
@@ -772,6 +921,25 @@
 						// Guardar la orden en invoiceHistory como venta de tienda virtual
 						const orderNum = generateOrderNumber();
 						const invoiceHistory = JSON.parse(localStorage.getItem('invoiceHistory') || '[]');
+						
+						// Manejar el archivo del comprobante si existe
+						let receiptData = null;
+						const receiptInput = document.getElementById('payment-receipt');
+						if(receiptInput && receiptInput.files && receiptInput.files.length > 0){
+							const file = receiptInput.files[0];
+							// Convertir archivo a base64 para almacenamiento
+							const reader = new FileReader();
+							reader.onloadend = function() {
+								receiptData = {
+									name: file.name,
+									type: file.type,
+									size: file.size,
+									data: reader.result // base64
+								};
+								console.log('✅ Comprobante cargado:', file.name, '(' + (file.size/1024).toFixed(1) + ' KB)');
+							};
+							reader.readAsDataURL(file);
+						}
 						
 						const invoice = {
 							id: orderNum,
@@ -788,7 +956,8 @@
 							pickupStoreInfo: pickupStoreInfo,
 							customerEmail: userEmail,
 							customerName: userEmail.split('@')[0],
-							status: 'pendiente'
+							status: 'pendiente',
+							paymentReceipt: receiptData
 						};
 						
 						invoiceHistory.push(invoice);
@@ -809,7 +978,8 @@
 							items: cartItems,
 							shippingMethod: shippingMethod,
 							confirmedDate: paymentMethod === 'tarjeta' ? new Date().toISOString() : null,
-							dispatchedDate: null
+							dispatchedDate: null,
+							paymentReceipt: receiptData
 						};
 						onlineOrders.push(onlineOrder);
 						localStorage.setItem('onlineOrders', JSON.stringify(onlineOrders));
@@ -819,32 +989,95 @@
 						if(paymentMethod === 'tarjeta'){
 							// Modal de agradecimiento y factura para tarjeta
 							let facturaHTML = `
-								<h2 style="color:#6b2840;margin:0 0 20px 0">¡Gracias por tu compra!</h2>
-								<p style="font-size:1.1rem;color:#666;margin:0 0 20px 0">Tu pago con tarjeta fue exitoso.</p>
-								<div style="background:linear-gradient(135deg, rgba(217,70,166,0.1), rgba(255,107,157,0.1));padding:20px;border-radius:12px;margin:0 0 20px 0">
-									<p style="font-size:1.1rem;color:#d946a6;margin:0 0 10px 0;font-family:monospace;letter-spacing:2px"><strong>Factura #${orderNum}</strong></p>
-									<p style="margin:0;color:#666"><strong>Fecha:</strong> ${new Date().toLocaleString('es-CR')}</p>
-									<p style="margin:0;color:#666"><strong>Cliente:</strong> ${userEmail}</p>
-								</div>
-								<div style="margin-bottom:16px">
-									<table style='width:100%;font-size:0.98rem;border-collapse:collapse'>
-										<thead><tr style='background:#f3e5f5'><th style='text-align:left;padding:6px'>Producto</th><th style='text-align:right;padding:6px'>Cantidad</th><th style='text-align:right;padding:6px'>Precio</th></tr></thead>
-										<tbody>
-											${cartItems.map(item => `<tr><td style='padding:6px'>${item.title}${item.variant ? ' ('+item.variant+')' : ''}</td><td style='text-align:right;padding:6px'>${item.qty}</td><td style='text-align:right;padding:6px'>₡${(item.price*item.qty).toFixed(2)}</td></tr>`).join('')}
-										</tbody>
-									</table>
-								</div>
-								<div style="text-align:right;margin-bottom:10px">
-									<strong>Subtotal:</strong> ₡${invoice.subtotal.toFixed(2)}<br/>
-									<strong>Envío:</strong> ${shippingMethod==='pickup' ? 'Gratis' : document.getElementById('checkout-shipping').textContent}<br/>
-									<strong>Total:</strong> ₡${(invoice.subtotal + (shippingMethod==='pickup'?0:getShippingCost())).toFixed(2)}
-								</div>
-								<button class="add order-confirm-btn" style="margin-top:20px">Cerrar</button>
-							`;
+								<style>
+									@media print {
+										body { margin: 0; padding: 0; }
+										#receipt-content { width: 100%; }
+										.print-receipt-btn, .order-confirm-btn { display: none; }
+										.buttons-container { display: none; }
+									}
+								</style>
+								<div id="receipt-content" style="padding:0;background:linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);border-radius:12px;font-family:Montserrat,Arial,sans-serif">
+									<div style="text-align:center;margin:0;padding:20px 20px 15px 20px;border-bottom:3px solid #C7499F">
+										<h1 style="font-family:'Daily',serif;color:#2c4a8c;font-size:2.2rem;margin:0 0 5px 0;letter-spacing:2px">SophieWeb</h1>
+										<p style="color:#C7499F;margin:0;font-weight:600;font-size:0.9rem">Tienda Online</p>
+									</div>
+									
+									<div style="background:transparent;padding:15px 20px;margin:0;border-radius:0;box-shadow:none">
+										<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:15px">
+											<div>
+												<p style="color:#999;font-size:0.8rem;margin:0 0 3px 0">NÚMERO DE FACTURA</p>
+												<p style="font-size:1.2rem;font-weight:700;color:#2c4a8c;margin:0;font-family:monospace;letter-spacing:2px">${orderNum}</p>
+											</div>
+											<div style="text-align:right">
+												<p style="color:#999;font-size:0.8rem;margin:0 0 3px 0">FECHA</p>
+												<p style="font-size:1rem;font-weight:600;color:#333;margin:0">${new Date().toLocaleDateString('es-CR')}</p>
+											</div>
+										</div>
+										<div style="padding-top:12px;border-top:1px solid #e0e0e0">
+											<p style="color:#999;font-size:0.8rem;margin:0 0 3px 0">CLIENTE</p>
+											<p style="font-size:0.95rem;color:#333;margin:0;font-weight:500">${userEmail}</p>
+										</div>
+									</div>
+									
+									<div style="background:transparent;padding:15px 20px;margin:0;border-radius:0;box-shadow:none">
+										<h3 style="color:#2c4a8c;margin:0 0 12px 0;font-size:1rem;font-weight:700">PRODUCTOS</h3>
+										<table style='width:100%;font-size:0.85rem;border-collapse:collapse;min-width:300px'>
+											<thead>
+												<tr style='background:#F5E6F0;border-bottom:2px solid #C7499F'>
+													<th style='text-align:left;padding:10px;color:#2c4a8c;font-weight:700;width:45%'>Producto</th>
+													<th style='text-align:center;padding:10px;color:#2c4a8c;font-weight:700;width:15%'>Cant.</th>
+													<th style='text-align:right;padding:10px;color:#2c4a8c;font-weight:700;width:20%'>Precio</th>
+													<th style='text-align:right;padding:10px;color:#2c4a8c;font-weight:700;width:20%'>Total</th>
+												</tr>
+											</thead>
+											<tbody>
+												${cartItems.map(item => `<tr style='border-bottom:1px solid #e0e0e0'><td style='padding:10px;white-space:normal'><strong style="color:#333">${item.title}</strong>${item.variant ? '<br><span style="color:#999;font-size:0.75rem">'+item.variant+'</span>' : ''}</td><td style='text-align:center;padding:10px'>${item.qty}</td><td style='text-align:right;padding:10px'>₡${(item.price).toFixed(2)}</td><td style='text-align:right;padding:10px;font-weight:700;color:#2c4a8c'>₡${(item.price*item.qty).toFixed(2)}</td></tr>`).join('')}
+											</tbody>
+										</table>
+									</div>
+									
+									<div style="background:linear-gradient(135deg, rgba(217,70,166,0.08), rgba(44,74,140,0.08));padding:15px 20px;margin:0;border-radius:0;border-left:5px solid #C7499F">
+										<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:0.9rem">
+											<span style="color:#666;font-weight:500">Subtotal:</span>
+											<span style="font-weight:600;color:#333">₡${invoice.subtotal.toFixed(2)}</span>
+										</div>
+										<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid rgba(0,0,0,0.15);font-size:0.9rem">
+											<span style="color:#666;font-weight:500">Envío:</span>
+											<span style="font-weight:600;color:#333">${shippingMethod==='pickup' ? 'Gratis' : '₡' + getShippingCost().toFixed(2)}</span>
+										</div>
+										<div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px">
+											<span style="color:#2c4a8c;font-size:1rem;font-weight:700">TOTAL A PAGAR:</span>
+											<span style="font-size:1.3rem;font-weight:700;color:#C7499F">₡${(invoice.subtotal + (shippingMethod==='pickup'?0:getShippingCost())).toFixed(2)}</span>
+										</div>
+									</div>
+									
+									<div style="text-align:center;margin:0;padding:15px 20px 20px 20px;border-top:1px solid #e0e0e0">
+										<p style="color:#999;font-size:0.85rem;margin:0 0 3px 0">Gracias por tu compra en SophieWeb</p>
+										<p style="color:#999;font-size:0.85rem;margin:0 0 8px 0">www.sophieshop.com</p>
+										<p style="color:#C7499F;font-size:0.8rem;margin:0">✓ Pago recibido exitosamente</p>
+									</div>
+								</div>`;
 							let modal = document.getElementById('order-modal');
 							let modalBody = document.getElementById('order-modal-body');
-							modalBody.innerHTML = facturaHTML;
+							
+							// Crear contenedor para botones
+							const buttonsHTML = `<div class="buttons-container" style="display:flex;gap:10px;margin-top:15px;width:100%">
+								<button class="print-receipt-btn" style="flex:1;padding:12px;background:#2D4A9C;color:white;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:0.95rem;transition:background 0.3s">🖨️ Imprimir</button>
+								<button class="add order-confirm-btn" style="flex:1;padding:12px;font-size:0.95rem">Cerrar</button>
+							</div>`;
+							
+							modalBody.innerHTML = facturaHTML + buttonsHTML;
 							modal.setAttribute('aria-hidden', 'false');
+							
+							// Botón de impresión
+							const printBtn = modalBody.querySelector('.print-receipt-btn');
+							if(printBtn){
+								printBtn.addEventListener('click', ()=>{
+									window.print();
+								});
+							}
+							
 							const confirmBtn = modalBody.querySelector('.order-confirm-btn');
 							confirmBtn.addEventListener('click', ()=>{
 								modal.setAttribute('aria-hidden', 'true');
@@ -854,25 +1087,83 @@
 							});
 						} else if(requiresValidation){
 							const paymentText = paymentMethod === 'sinpe' ? 'SINPE Móvil' : 'Transferencia Bancaria';
-							// ...existing code...
 							let orderDetailsHTML = `
-								<h2 style="color:#6b2840;margin:0 0 20px 0">¡Pedido Confirmado!</h2>
-								<p style="font-size:1.1rem;color:#666;margin:0 0 30px 0">Tu número de orden es:</p>
-								<div style="background:linear-gradient(135deg, rgba(217,70,166,0.1), rgba(255,107,157,0.1));padding:20px;border-radius:12px;margin:0 0 20px 0">
-									<p style="font-size:2rem;font-weight:700;color:#d946a6;margin:0;font-family:monospace;letter-spacing:2px">${orderNum}</p>
-								</div>
-								<p style="color:#666;margin:0 0 15px 0"><strong>Método de pago:</strong> ${paymentText}</p>
-								<p style="color:#666;margin:0 0 15px 0"><strong>Correo:</strong> ${userEmail}</p>`;
-							if(pickupStoreInfo){
-								orderDetailsHTML += `<p style="color:#666;margin:0 0 15px 0"><strong>Retiro en:</strong> ${pickupStoreInfo}</p>`;
-							}
-							orderDetailsHTML += `
-								<p style="font-size:0.95rem;color:#999;margin:0 0 20px 0">Validaremos tu pago en hasta 24 horas hábiles</p>
-								<p style="font-size:0.9rem;color:#999;margin:0">Hemos enviado estos detalles a tu correo (cuando esté configurado el servicio de email)</p>
-								<button class="add order-confirm-btn" style="margin-top:20px">Entendido</button>
-							`;
-							orderModalBody.innerHTML = orderDetailsHTML;
+								<style>
+									@media print {
+										body { margin: 0; padding: 0; }
+										.print-receipt-btn, .order-confirm-btn { display: none; }
+										.buttons-container { display: none; }
+									}
+								</style>
+								<div style="padding:0;background:linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);border-radius:12px;font-family:Montserrat,Arial,sans-serif">
+									<div style="text-align:center;margin:0;padding:20px 20px 15px 20px;border-bottom:3px solid #C7499F">
+										<h1 style="font-family:'Daily',serif;color:#2c4a8c;font-size:2.2rem;margin:0 0 5px 0;letter-spacing:2px">SophieWeb</h1>
+										<p style="color:#C7499F;margin:0;font-weight:600;font-size:0.9rem">Tienda Online</p>
+									</div>
+									
+									<div style="background:transparent;padding:15px 20px;margin:0">
+										<div style="text-align:center;margin-bottom:15px;padding-bottom:15px;border-bottom:1px solid #e0e0e0">
+											<p style="color:#999;font-size:0.8rem;margin:0 0 5px 0">TU NÚMERO DE ORDEN</p>
+											<p style="font-size:2rem;font-weight:700;color:#2c4a8c;margin:0;font-family:monospace;letter-spacing:3px">${orderNum}</p>
+										</div>
+										
+										<div style="background:linear-gradient(135deg, rgba(255,152,0,0.08), rgba(255,193,7,0.08));padding:12px;border-radius:8px;margin-bottom:15px;border-left:4px solid #ff9800">
+											<p style="color:#999;font-size:0.75rem;margin:0 0 3px 0;text-transform:uppercase">Estado del Pedido</p>
+											<p style="font-size:1rem;font-weight:700;color:#e65100;margin:0 0 3px 0">⏳ Pendiente de Verificación</p>
+											<p style="font-size:0.8rem;color:#666;margin:0">Validaremos tu pago en hasta 24 horas hábiles</p>
+										</div>
+										
+										<div style="margin-top:12px;padding-top:12px;border-top:1px solid #e0e0e0">
+											<p style="color:#999;font-size:0.75rem;margin:0 0 3px 0;text-transform:uppercase">Método de Pago</p>
+											<p style="font-size:0.95rem;color:#333;margin:0;font-weight:600">${paymentText}</p>
+										</div>
+										
+										<div style="margin-top:12px;padding-top:12px;border-top:1px solid #e0e0e0">
+											<p style="color:#999;font-size:0.75rem;margin:0 0 3px 0;text-transform:uppercase">Correo de Contacto</p>
+											<p style="font-size:0.9rem;color:#333;margin:0;font-weight:500">${userEmail}</p>
+										</div>
+										
+										${pickupStoreInfo ? `<div style="margin-top:12px;padding-top:12px;border-top:1px solid #e0e0e0">
+											<p style="color:#999;font-size:0.75rem;margin:0 0 3px 0;text-transform:uppercase">Punto de Retiro</p>
+											<p style="font-size:0.9rem;color:#333;margin:0;font-weight:500">${pickupStoreInfo}</p>
+										</div>` : ''}
+										
+										${receiptData ? `<div style="margin-top:12px;padding:10px;background:#e8f5e9;border-left:4px solid #4caf50;border-radius:6px">
+											<p style="margin:0;color:#2e7d32;font-size:0.8rem"><strong>✓ Comprobante recibido:</strong> ${receiptData.name}</p>
+										</div>` : ''}
+									</div>
+									
+									<div style="background:linear-gradient(135deg, rgba(255,152,0,0.08), rgba(255,193,7,0.08));border-left:4px solid #ff9800;padding:12px 15px;margin:15px 20px;border-radius:6px">
+										<p style="color:#e65100;margin:0 0 3px 0;font-size:0.85rem;font-weight:700">ℹ️ Próximos pasos:</p>
+										<p style="color:#e65100;margin:0;font-size:0.8rem">Verificaremos tu comprobante de pago y confirmaremos tu pedido por correo electrónico.</p>
+									</div>
+									
+									<div style="text-align:center;margin:0;padding:12px 20px 15px 20px;border-top:1px solid #e0e0e0">
+										<p style="color:#999;font-size:0.8rem;margin:0 0 3px 0">Gracias por tu compra en SophieWeb</p>
+										<p style="color:#999;font-size:0.9rem;margin:0">www.sophieshop.com</p>
+									</div>
+								</div>`;
+							
+							// Crear botones para transferencia/SINPE
+							const buttonsHTMLTransfer = `<div class="buttons-container" style="display:flex;gap:10px;margin-top:12px;width:100%">
+								<button class="print-receipt-btn" style="flex:1;padding:12px;background:#2D4A9C;color:white;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:0.9rem;transition:background 0.3s">🖨️ Imprimir</button>
+								<button class="add order-confirm-btn" style="flex:1;padding:12px;font-size:0.9rem">Entendido</button>
+							</div>`;
+							
+							// Corregir referencia al modal y su body
+							let orderModal = document.getElementById('order-modal');
+							let orderModalBody = document.getElementById('order-modal-body');
+							orderModalBody.innerHTML = orderDetailsHTML + buttonsHTMLTransfer;
 							orderModal.setAttribute('aria-hidden', 'false');
+							
+							// Botón de impresión para transferencia
+							const printBtnTransfer = orderModalBody.querySelector('.print-receipt-btn');
+							if(printBtnTransfer){
+								printBtnTransfer.addEventListener('click', ()=>{
+									window.print();
+								});
+							}
+							
 							const confirmBtn = orderModalBody.querySelector('.order-confirm-btn');
 							confirmBtn.addEventListener('click', ()=>{
 								orderModal.setAttribute('aria-hidden', 'true');

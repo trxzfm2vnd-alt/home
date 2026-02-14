@@ -1,3 +1,28 @@
+﻿  <!-- Pagination will be moved below the table -->
+    <script>
+    // Paginación para inventario
+    let inventoryCurrentPage = 1;
+    const INVENTORY_PRODUCTS_PER_PAGE = 20;
+    function renderInventoryPagination(totalPages) {
+      const container = document.getElementById('inventory-pagination');
+      if (!container) return;
+      if (totalPages <= 1) {
+        container.innerHTML = '';
+        container.style.display = 'none';
+        return;
+      }
+      container.style.display = 'flex';
+      container.innerHTML = `
+        <button class="page-btn prev" ${inventoryCurrentPage===1 ? 'disabled aria-disabled="true"' : ''}>Anterior</button>
+        <span class="page-info">Página ${inventoryCurrentPage} de ${totalPages}</span>
+        <button class="page-btn next" ${inventoryCurrentPage===totalPages ? 'disabled aria-disabled="true"' : ''}>Siguiente</button>
+      `;
+      const prev = container.querySelector('.page-btn.prev');
+      const next = container.querySelector('.page-btn.next');
+      if(prev) prev.addEventListener('click',()=>{ if(inventoryCurrentPage>1){ inventoryCurrentPage-=1; renderInventoryTable(); } });
+      if(next) next.addEventListener('click',()=>{ if(inventoryCurrentPage<totalPages){ inventoryCurrentPage+=1; renderInventoryTable(); } });
+    }
+    </script>
 <!doctype html>
 <html lang="es">
   <head>
@@ -6,7 +31,6 @@
   <title>Inventario - Sophie</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css" />
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <style>
       .admin-tabs {
         max-width: 1400px;
@@ -147,6 +171,14 @@
         object-fit: cover;
         border-radius: 6px;
       }
+      .inventory-product-title {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        line-height: 1.2;
+        max-width: 260px;
+      }
       .stock-cell {
         text-align: center;
         font-weight: 700;
@@ -203,38 +235,87 @@
       }
       .modal-content {
         background: white;
-        padding: 30px;
+        padding: 40px;
         border-radius: 16px;
-        max-width: 600px;
-        width: 90%;
+        max-width: 700px;
+        width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
       }
       .modal-content h2 {
         margin-top: 0;
+        margin-bottom: 30px;
         color: #5a2032;
         font-family: Playfair Display, serif;
+        font-size: 1.8rem;
+        border-bottom: 3px solid #e3cfe0;
+        padding-bottom: 15px;
       }
       .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 25px;
       }
       .form-group label {
         display: block;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
         font-weight: 600;
         color: #5a2032;
+        font-size: 0.95rem;
       }
-      .form-group input {
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
         width: 100%;
-        padding: 10px;
-        border: 1px solid #e3cfe0;
+        padding: 12px;
+        border: 2px solid #e3cfe0;
         border-radius: 8px;
         font-family: Montserrat, sans-serif;
         font-size: 0.95rem;
+        transition: border-color 0.3s ease;
+        box-sizing: border-box;
+      }
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #5a8dee;
+      }
+      .form-group textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+      .form-group small {
+        display: block;
+        margin-top: 6px;
+        color: #999;
+        font-size: 0.85rem;
+      }
+      .image-preview-container {
+        margin-top: 12px;
+        border: 2px dashed #e3cfe0;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        background: #fafafa;
+      }
+      .image-preview-container img {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 8px;
+        margin-top: 12px;
+      }
+      .image-preview-container.has-image {
+        border-style: solid;
+        border-color: #5a8dee;
+        background: #f0f7ff;
       }
       .form-actions {
         display: flex;
         gap: 12px;
         justify-content: flex-end;
-        margin-top: 24px;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e3cfe0;
       }
       .btn-cancel {
         padding: 10px 20px;
@@ -267,25 +348,7 @@
       <div class="container header-inner">
         <button id="hamburger" class="hamburger" aria-label="Abrir menú">☰</button>
         <a href="index.html" class="logo" style="text-decoration:none;cursor:pointer;display:flex;align-items:center;gap:10px">
-          <svg width="32" height="32" viewBox="0 0 32 32" style="flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.1))">
-            <defs>
-              <linearGradient id="giftGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#ff6b9d;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#d946a6;stop-opacity:1" />
-              </linearGradient>
-              <linearGradient id="ribbonGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#ffed4e;stop-opacity:1" />
-              </linearGradient>
-            </defs>
-            <rect x="4" y="10" width="24" height="16" rx="2" fill="url(#giftGradient)" />
-            <path d="M 4 10 Q 16 4 28 10" fill="#ff8ab3" />
-            <rect x="14" y="4" width="4" height="22" fill="url(#ribbonGradient)" />
-            <rect x="4" y="14" width="24" height="3" fill="url(#ribbonGradient)" />
-            <circle cx="16" cy="8" r="3" fill="#ffd700" />
-            <ellipse cx="8" cy="14" rx="2" ry="3" fill="rgba(255,255,255,0.4)" />
-          </svg>
-          <span style="font-size:1.3rem;font-weight:700;color:white">Sophie - Inventario</span>
+          <span style="font-family:'Daily',Playfair Display,serif;font-size:2.5rem;font-weight:400;color:#2c4a8c">SophieWeb - Inventario</span>
         </a>
         <a href="index.html" class="btn">← Volver a la tienda</a>
         <button id="logout-btn" class="btn" style="color:#f44336;font-weight:700">Cerrar Sesión</button>
@@ -320,6 +383,69 @@
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn-export" id="btn-add-product-inventory" style="background:#d946a6;color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600">+ Agregar Producto</button>
           <button class="btn-export" id="export-inventory">📥 Exportar Inventario</button>
+          <button class="btn-export" id="import-inventory-btn" style="background:#5a8dee;color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600">📤 Importar Inventario</button>
+          <input type="file" id="import-inventory-file" accept=".csv" style="display:none" />
+          <button class="btn-export" id="open-transfer-modal" style="background:#4caf50;color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600">Transferir Bodega → Tienda</button>
+          <button class="btn-export" id="open-history-modal" style="background:#ff9800;color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600">📋 Historial de Transferencias</button>
+          <div id="transfer-modal" class="modal" aria-hidden="true" style="display:none">
+            <div class="modal-content" style="max-width:1200px;max-height:90vh;overflow-y:auto;padding:0">
+              <div style="display:grid;grid-template-columns:1.5fr 2fr;gap:0;min-height:520px">
+                <div style="padding:32px 32px 32px 40px;display:flex;flex-direction:column;gap:18px;border-right:2px solid #e3cfe0;background:#f8f5fa">
+                  <h2 style="margin-bottom:0;font-size:2rem;color:#5a2032">Transferir productos de Bodega</h2>
+                  <div style="font-size:1rem;color:#555;margin-bottom:10px">Selecciona la tienda destino, agrega productos y cantidades, y tu nombre de usuario. Puedes buscar productos por nombre o código y se mostrarán sugerencias.</div>
+                  <form id="form-transfer-bodega" style="display:flex;flex-direction:column;gap:16px;margin-top:8px">
+                    <label style="font-weight:600;color:#5a2032">Usuario que transfiere *</label>
+                    <input type="text" id="transfer-usuario" placeholder="" style="width:100%;padding:10px;border:2px solid #e3cfe0;border-radius:8px;font-family:Montserrat,sans-serif;font-size:1.05rem;background-color:#f5f5f5;cursor:not-allowed" readonly />
+                    <label style="font-weight:600;color:#5a2032">Agregar productos *</label>
+                    <input type="text" id="transfer-input" placeholder="Buscar y selecciona productos..." style="padding:10px;border-radius:8px;border:2px solid #e3cfe0;min-width:220px;font-size:1.05rem" autocomplete="off" />
+                    <div id="transfer-suggestions" style="background:#fff;border:1.5px solid #e3cfe0;border-radius:8px;max-height:180px;overflow-y:auto;display:none;position:relative;z-index:10"></div>
+                    <label style="font-weight:600;color:#5a2032">Tiendas destino *</label>
+                    <div style="display:flex;flex-direction:column;gap:12px">
+                      <label style="display:flex;align-items:center;gap:10px;font-weight:500;color:#5a2032;cursor:pointer;font-size:1rem">
+                        <input type="checkbox" id="transfer-tienda1" value="tienda1" checked style="width:18px;height:18px;cursor:pointer;accent-color:#ff6b9d" />
+                        🏪 Sophie Store
+                      </label>
+                      <label style="display:flex;align-items:center;gap:10px;font-weight:500;color:#5a2032;cursor:pointer;font-size:1rem">
+                        <input type="checkbox" id="transfer-tienda2" value="tienda2" checked style="width:18px;height:18px;cursor:pointer;accent-color:#5a8dee" />
+                        🏬 Sophie Mall
+                      </label>
+                      <label style="display:flex;align-items:center;gap:10px;font-weight:500;color:#5a2032;cursor:pointer;font-size:1rem">
+                        <input type="checkbox" id="transfer-tienda3" value="tienda3" checked style="width:18px;height:18px;cursor:pointer;accent-color:#ffc107" />
+                        🛍️ Sophie's Ticados
+                      </label>
+                    </div>
+                    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:24px">
+                      <button type="button" id="close-transfer-modal" class="btn-cancel" style="padding:10px 20px;border-radius:8px;border:none;background:#eee;color:#333;font-weight:600;font-size:1.05rem">Cancelar</button>
+                      <button type="submit" class="btn-export" style="background:#4caf50;color:white;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-weight:700;font-size:1.15rem">Transferir</button>
+                    </div>
+                  </form>
+                </div>
+                <div style="padding:32px 32px 32px 32px;background:white;display:flex;flex-direction:column;gap:0;min-width:400px">
+                  <h3 style="margin:0 0 18px 0;font-size:1.5rem;color:#5a2032;font-weight:700">Productos seleccionados</h3>
+                  <div id="transfer-list" style="flex:1;overflow-y:auto;border-top:1.5px solid #e3cfe0;padding-top:18px;font-size:1.05rem">
+                    <!-- Aquí se mostrarán los productos seleccionados tipo carrito -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MODAL DE HISTORIAL DE TRANSFERENCIAS -->
+          <div id="history-modal" class="modal" aria-hidden="true" style="display:none">
+            <div class="modal-content" style="max-width:1000px;max-height:90vh;overflow-y:auto;padding:32px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+                <h2 style="margin:0;font-size:1.8rem;color:#5a2032">📋 Historial de Transferencias</h2>
+                <button type="button" id="close-history-modal" style="background:none;border:none;color:#888;font-size:1.8rem;cursor:pointer">✕</button>
+              </div>
+              <div style="display:flex;gap:12px;margin-bottom:24px">
+                <button id="export-history-excel" style="background:#e74c3c;color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;font-size:1rem">📄 Descargar como PDF</button>
+                <button id="export-history-csv" style="background:#3498db;color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;font-size:1rem">📥 Descargar como CSV</button>
+              </div>
+              <div id="history-container" style="background:#f8f5fa;padding:18px;border-radius:8px;max-height:600px;overflow-y:auto">
+                <!-- Aquí se mostrarán las transferencias agrupadas por fecha -->
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -380,7 +506,8 @@
             <tr>
               <th style="width:60px">Imagen</th>
               <th style="min-width:180px">Producto</th>
-              <th style="width:130px">Código</th>
+              <th style="width:130px">Código Barras</th>
+              <th style="width:110px">Código Proveedor</th>
               <th style="width:110px">Categoría</th>
               <th style="width:80px;text-align:center">Sophie Store</th>
               <th style="width:80px;text-align:center">Sophie Mall</th>
@@ -395,6 +522,7 @@
             <!-- Los productos se cargarán dinámicamente -->
           </tbody>
         </table>
+        <div id="inventory-pagination" class="pagination" style="margin:18px 0;display:flex;justify-content:center;gap:10px"></div>
       </div>
     </main>
 
@@ -454,14 +582,24 @@
           </div>
 
           <div class="form-group">
-            <label for="inv-product-img">Ruta de Imagen *</label>
-            <input type="text" id="inv-product-img" placeholder="Fotos productos/..." required>
+            <label for="inv-product-img">Subir Imagen *</label>
+            <input type="file" id="inv-product-img" accept="image/*" required>
+            <small>Formatos: JPG, PNG, WebP | Máx. 5MB</small>
+            <div id="inv-image-preview" class="image-preview-container">
+              <span style="color: #999;">📷 No hay imagen seleccionada</span>
+            </div>
           </div>
 
           <div class="form-group">
             <label for="inv-product-barcode">Código de Barras (opcional)</label>
             <input type="text" id="inv-product-barcode" placeholder="Dejar vacío para generar automáticamente" style="font-family:monospace;">
             <small style="color:#666;display:block;margin-top:4px;">Si no ingresa un código, se generará uno automáticamente basado en el ID del producto</small>
+          </div>
+
+          <div class="form-group">
+            <label for="inv-product-supplier-code">Código de Proveedor (opcional)</label>
+            <input type="text" id="inv-product-supplier-code" placeholder="Código del proveedor" style="font-family:monospace;">
+            <small style="color:#666;display:block;margin-top:4px;">Identificador único del proveedor para rastreo</small>
           </div>
 
           <div class="form-group">
@@ -499,6 +637,294 @@
 
     <script src="script.js"></script>
     <script>
+                              // Autocompletado para productos en transferencia
+                              document.addEventListener('DOMContentLoaded', function() {
+                                const input = document.getElementById('transfer-input');
+                                const suggestions = document.getElementById('transfer-suggestions');
+                                if (input && suggestions) {
+                                  input.addEventListener('input', function() {
+                                    const val = input.value.trim().toLowerCase();
+                                    if (!val || !productsData) {
+                                      suggestions.style.display = 'none';
+                                      return;
+                                    }
+                                    const claves = val.split(',').map(c => c.trim()).filter(c => c.length > 0);
+                                    const last = claves[claves.length - 1];
+                                    if (!last) {
+                                      suggestions.style.display = 'none';
+                                      return;
+                                    }
+                                    const matches = [];
+                                    productsData.forEach(p => {
+                                      const titleMatch = p.title && p.title.toLowerCase().includes(last);
+                                      const barcodeMatch = p.barcode && p.barcode.toLowerCase().includes(last);
+                                      if (titleMatch || barcodeMatch) {
+                                        matches.push({
+                                          label: p.title,
+                                          barcode: p.barcode
+                                        });
+                                      }
+                                      if (p.variants && Array.isArray(p.variants.options)) {
+                                        p.variants.options.forEach(opt => {
+                                          if (!opt || !opt.barcode) return;
+                                          const optName = opt.name ? opt.name : 'Variante';
+                                          const optLabel = `${p.title} (${optName})`;
+                                          const optMatch = optLabel.toLowerCase().includes(last) || opt.barcode.toLowerCase().includes(last);
+                                          if (optMatch) {
+                                            matches.push({
+                                              label: optLabel,
+                                              barcode: opt.barcode
+                                            });
+                                          }
+                                        });
+                                      }
+                                    });
+                                    const limited = matches.slice(0, 8);
+                                    if (limited.length === 0) {
+                                      suggestions.style.display = 'none';
+                                      return;
+                                    }
+                                    suggestions.innerHTML = limited.map(p => `<div class="suggestion-item" style="padding:6px 10px;cursor:pointer" data-value="${p.barcode}">${p.label} <span style='color:#888;font-size:0.85em'>(${p.barcode})</span></div>`).join('');
+                                    suggestions.style.display = 'block';
+                                    Array.from(suggestions.children).forEach(item => {
+                                      item.addEventListener('mousedown', function(e) {
+                                        e.preventDefault();
+                                        const valActual = input.value;
+                                        const arr = valActual.split(',').map(c => c.trim());
+                                        arr[arr.length - 1] = item.getAttribute('data-value');
+                                        input.value = arr.join(', ') + ', ';
+                                        suggestions.style.display = 'none';
+                                      });
+                                    });
+                                  });
+                                  input.addEventListener('blur', function() {
+                                    setTimeout(() => { suggestions.style.display = 'none'; }, 150);
+                                  });
+                                }
+                              });
+                        // Modal para transferir productos de bodega a tienda
+                        document.addEventListener('DOMContentLoaded', function() {
+                          const openBtn = document.getElementById('open-transfer-modal');
+                          const modal = document.getElementById('transfer-modal');
+                          const closeBtn = document.getElementById('close-transfer-modal');
+                          const usuarioInput = document.getElementById('transfer-usuario');
+                          
+                          if (openBtn && modal) {
+                            openBtn.addEventListener('click', () => {
+                              // Llenar el campo con el usuario logueado
+                              const loggedUser = sessionStorage.getItem('adminUsername') || sessionStorage.getItem('poasUsername') || localStorage.getItem('loggedInUser') || sessionStorage.getItem('loggedInUser') || '';
+                              if (usuarioInput) {
+                                usuarioInput.value = loggedUser;
+                              }
+                              modal.setAttribute('aria-hidden', 'false');
+                              modal.style.display = 'block';
+                            });
+                          }
+                          if (closeBtn && modal) {
+                            closeBtn.addEventListener('click', () => {
+                              modal.setAttribute('aria-hidden', 'true');
+                              modal.style.display = 'none';
+                            });
+                          }
+                          if (modal) {
+                            modal.addEventListener('click', (e) => {
+                              if (e.target === modal) {
+                                modal.setAttribute('aria-hidden', 'true');
+                                modal.style.display = 'none';
+                              }
+                            });
+                          }
+                        });
+                  // Transferir productos de bodega a tienda por código o nombre (múltiples)
+                  document.addEventListener('DOMContentLoaded', function() {
+                    const formTransfer = document.getElementById('form-transfer-bodega');
+                    if (formTransfer) {
+                      formTransfer.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        if (window.selectedProducts) {
+                          return;
+                        }
+                        if (!productsData || !Array.isArray(productsData)) {
+                          alert('No hay productos cargados.');
+                          return;
+                        }
+                        const usuario = document.getElementById('transfer-usuario').value.trim();
+                        const rawInput = document.getElementById('transfer-input').value.trim();
+                        // const cantidadGlobal = parseInt(document.getElementById('transfer-cantidad').value) || null;
+                        if (!usuario) {
+                          alert('Debes ingresar tu nombre de usuario.');
+                          document.getElementById('transfer-usuario').focus();
+                          return;
+                        }
+                        if (!rawInput) {
+                          alert('Debes ingresar al menos un código o nombre de producto.');
+                          document.getElementById('transfer-input').focus();
+                          return;
+                        }
+                        const claves = rawInput.split(',').map(c => c.trim()).filter(c => c.length > 0);
+                        let transferidos = 0, productosProcesados = [];
+                        claves.forEach(clave => {
+                          let prod = productsData.find(p => (p.barcode && p.barcode.toLowerCase() === clave.toLowerCase()) || (p.title && p.title.toLowerCase() === clave.toLowerCase()));
+                          if (prod && prod.inventory && prod.inventory.bodega > 0) {
+                            let cantidad = cantidadGlobal !== null ? Math.min(cantidadGlobal, prod.inventory.bodega) : prod.inventory.bodega;
+                            prod.inventory[destino] = (prod.inventory[destino] || 0) + cantidad;
+                            prod.inventory.bodega -= cantidad;
+                            transferidos += cantidad;
+                            productosProcesados.push(prod.title + ' (' + cantidad + ')');
+                          }
+                        });
+                        if (typeof saveProductsToStorage !== 'undefined') {
+                          saveProductsToStorage(productsData);
+                        } else {
+                          localStorage.setItem('products_data', JSON.stringify(productsData));
+                        }
+                        renderInventoryStats();
+                        renderInventoryTable();
+                        if (productosProcesados.length > 0) {
+                          alert('Transferidos: ' + productosProcesados.join(', ') + '\nUsuario: ' + usuario);
+                        } else {
+                          alert('No se encontró ningún producto con inventario en bodega para transferir.');
+                        }
+                        // Cerrar modal al finalizar
+                        const modal = document.getElementById('transfer-modal');
+                        if (modal) {
+                          modal.setAttribute('aria-hidden', 'true');
+                          modal.style.display = 'none';
+                        }
+                      });
+                    }
+                  });
+            // Importar inventario desde CSV
+            document.addEventListener('DOMContentLoaded', function() {
+              const importBtn = document.getElementById('import-inventory-btn');
+              const importFile = document.getElementById('import-inventory-file');
+              if(importBtn && importFile) {
+                importBtn.addEventListener('click', () => importFile.click());
+                importFile.addEventListener('change', function(e) {
+                  const file = e.target.files[0];
+                  if(!file) return;
+                  const reader = new FileReader();
+                  reader.onload = function(evt) {
+                    // Procesar el CSV y convertirlo a productos
+                    const csvText = evt.target.result;
+                    let rows = csvText.split(/\r?\n/).filter(r => r.trim().length > 0);
+                    if (rows.length < 2) {
+                      alert('El archivo CSV no contiene datos válidos.');
+                      return;
+                    }
+                    // Detectar separador y columnas
+                    let header, sep;
+                    if (rows[0].includes(';')) {
+                      sep = ';';
+                      header = rows[0].split(';').map(h => h.replace(/\"/g, '').trim());
+                    } else {
+                      sep = ',';
+                      header = rows[0].split(',').map(h => h.replace(/\"/g, '').trim());
+                    }
+                    // Formato alternativo: CODIGO;DESCRIPCION;PRESENTACION;EXISTENCIAS
+                    const idxCodigo = header.findIndex(h => h.toLowerCase().includes('codigo'));
+                    const idxDesc = header.findIndex(h => h.toLowerCase().includes('descripcion'));
+                    const idxPres = header.findIndex(h => h.toLowerCase().includes('presentacion'));
+                    const idxExist = header.findIndex(h => h.toLowerCase().includes('exist'));
+                    // Formato original: Producto, Categoría, Tienda 1, Tienda 2, Tienda 3, Bodega
+                    const idxTitle = header.findIndex(h => h.toLowerCase().includes('producto'));
+                    const idxCategory = header.findIndex(h => h.toLowerCase().includes('categor'));
+                    const idxT1 = header.findIndex(h => h.toLowerCase().includes('tienda 1'));
+                    const idxT2 = header.findIndex(h => h.toLowerCase().includes('tienda 2'));
+                    const idxT3 = header.findIndex(h => h.toLowerCase().includes('tienda 3'));
+                    const idxBodega = header.findIndex(h => h.toLowerCase().includes('bodega'));
+                    let importedCount = 0, updatedCount = 0;
+                    for (let i = 1; i < rows.length; i++) {
+                      const cols = rows[i].split(new RegExp(sep + '(?=(?:[^"]*"[^"]*")*[^"]*$)')).map(c => c.replace(/^\"|\"$/g, '').trim());
+                      // Si es formato alternativo (CODIGO...)
+                      if (idxCodigo !== -1 && idxDesc !== -1 && idxExist !== -1) {
+                        const title = cols[idxDesc] || '';
+                        const category = cols[idxPres] || 'otros';
+                        const inventory = {
+                          tienda1: 0,
+                          tienda2: 0,
+                          tienda3: 0,
+                          bodega: parseInt(cols[idxExist]) || 0
+                        };
+                        if (!title) continue;
+                        let prod = productsData.find(p => p.title === title && p.category === category);
+                        if (prod) {
+                          prod.inventory = { ...inventory };
+                          updatedCount++;
+                        } else {
+                          const newId = Math.max(0, ...productsData.map(p => p.id)) + 1;
+                          prod = {
+                            id: newId,
+                            title,
+                            category,
+                            price: 0,
+                            desc: '',
+                            img: '',
+                            images: [],
+                            gender: 'unisex',
+                            barcode: (cols[idxCodigo] ? String(cols[idxCodigo]) : ('SOPHIE' + String(newId).padStart(6, '0'))),
+                            outOfStock: false,
+                            active: false,
+                            inventory,
+                            sold: 0
+                          };
+                          productsData.push(prod);
+                          importedCount++;
+                        }
+                        continue;
+                      }
+                      // Si es formato original (Producto...)
+                      if (idxTitle !== -1 && idxCategory !== -1 && idxBodega !== -1) {
+                        if (!cols[idxTitle] || !cols[idxCategory]) continue;
+                        const title = cols[idxTitle];
+                        const category = cols[idxCategory];
+                        const inventory = {
+                          tienda1: parseInt(cols[idxT1]) || 0,
+                          tienda2: parseInt(cols[idxT2]) || 0,
+                          tienda3: parseInt(cols[idxT3]) || 0,
+                          bodega: parseInt(cols[idxBodega]) || 0
+                        };
+                        let prod = productsData.find(p => p.title === title && p.category === category);
+                        if (prod) {
+                          prod.inventory = { ...inventory };
+                          updatedCount++;
+                        } else {
+                          const newId = Math.max(0, ...productsData.map(p => p.id)) + 1;
+                          prod = {
+                            id: newId,
+                            title,
+                            category,
+                            price: 0,
+                            desc: '',
+                            img: '',
+                            images: [],
+                            gender: 'unisex',
+                            barcode: 'SOPHIE' + String(newId).padStart(6, '0'),
+                            outOfStock: false,
+                            active: false,
+                            inventory,
+                            sold: 0
+                          };
+                          productsData.push(prod);
+                          importedCount++;
+                        }
+                        continue;
+                      }
+                    }
+                    // Guardar en localStorage
+                    if (typeof saveProductsToStorage !== 'undefined') {
+                      saveProductsToStorage(productsData);
+                    } else {
+                      localStorage.setItem('products_data', JSON.stringify(productsData));
+                    }
+                    renderInventoryStats();
+                    renderInventoryTable();
+                    alert('Importación completada. ' + (importedCount ? ('Nuevos: ' + importedCount + '. ') : '') + (updatedCount ? ('Actualizados: ' + updatedCount + '.') : ''));
+                  };
+                  reader.readAsText(file);
+                });
+              }
+            });
       // Función para abrir el tab de apartados
       function openApartadosTab() {
         window.location.href = 'pos.html';
@@ -529,6 +955,44 @@
         window.location.href = page;
       }
 
+      // Variable global para almacenar la imagen cargada en Base64
+      let inventoryLoadedImage = null;
+
+      function handleInventoryImageUpload(e) {
+        const file = e.target.files[0];
+        const previewContainer = document.getElementById('inv-image-preview');
+        
+        if (!file) {
+          previewContainer.innerHTML = '<span style="color: #999;">📷 No hay imagen seleccionada</span>';
+          previewContainer.classList.remove('has-image');
+          inventoryLoadedImage = null;
+          return;
+        }
+
+        // Validar tamaño (5MB)
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+          alert('La imagen es demasiado grande. Máximo 5MB.');
+          e.target.value = '';
+          previewContainer.innerHTML = '<span style="color: #999;">📷 No hay imagen seleccionada</span>';
+          previewContainer.classList.remove('has-image');
+          inventoryLoadedImage = null;
+          return;
+        }
+
+        // Convertir a Base64
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          inventoryLoadedImage = event.target.result;
+          previewContainer.innerHTML = `
+            <span style="color: #4caf50; font-weight: 600;">✓ Imagen cargada</span>
+            <img src="${inventoryLoadedImage}" alt="Preview">
+          `;
+          previewContainer.classList.add('has-image');
+        };
+        reader.readAsDataURL(file);
+      }
+
       window.addEventListener('DOMContentLoaded', () => {
         if (typeof loadProductsFromStorage !== 'undefined') {
           productsData = loadProductsFromStorage();
@@ -547,11 +1011,17 @@
         const filterStock = document.getElementById('filter-stock');
         const exportBtn = document.getElementById('export-inventory');
         const addProductBtn = document.getElementById('btn-add-product-inventory');
+        const invProductImgInput = document.getElementById('inv-product-img');
 
         if (searchInput) searchInput.addEventListener('input', filterInventory);
         if (filterCategory) filterCategory.addEventListener('change', filterInventory);
         if (filterStock) filterStock.addEventListener('change', filterInventory);
         if (exportBtn) exportBtn.addEventListener('click', exportInventory);
+
+        // Event listener para previsualización de imagen
+        if (invProductImgInput) {
+          invProductImgInput.addEventListener('change', handleInventoryImageUpload);
+        }
 
         // Modal para agregar producto
         const addProductModal = document.getElementById('add-product-modal');
@@ -570,6 +1040,15 @@
             document.getElementById('inv-inventory-tienda2').value = '0';
             document.getElementById('inv-inventory-tienda3').value = '0';
             document.getElementById('inv-inventory-bodega').value = '0';
+            
+            // Limpiar previsualización de imagen
+            inventoryLoadedImage = null;
+            const previewContainer = document.getElementById('inv-image-preview');
+            if (previewContainer) {
+              previewContainer.innerHTML = '<span style="color: #999;">📷 No hay imagen seleccionada</span>';
+              previewContainer.classList.remove('has-image');
+            }
+            
             addProductModal.setAttribute('aria-hidden', 'false');
           });
         }
@@ -681,12 +1160,19 @@
 
         tbody.innerHTML = '';
 
-        if (filteredProducts.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:40px;color:#999">No hay productos para mostrar</td></tr>';
+        // Paginación
+        const totalPages = Math.max(1, Math.ceil(filteredProducts.length / INVENTORY_PRODUCTS_PER_PAGE));
+        if (inventoryCurrentPage > totalPages) inventoryCurrentPage = totalPages;
+        const start = (inventoryCurrentPage - 1) * INVENTORY_PRODUCTS_PER_PAGE;
+        const visible = filteredProducts.slice(start, start + INVENTORY_PRODUCTS_PER_PAGE);
+        renderInventoryPagination(totalPages);
+
+        if (visible.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="12" style="text-align:center;padding:40px;color:#999">No hay productos para mostrar</td></tr>';
           return;
         }
 
-        filteredProducts.forEach(product => {
+        visible.forEach(product => {
           // Calcular inventario total considerando variantes
           let inv = {tienda1:0, tienda2:0, tienda3:0, bodega:0};
           let total = 0;
@@ -713,30 +1199,37 @@
             return 'stock-good';
           }
 
-          // Determinar estado: disponible o agotado
-          const statusBadge = total === 0 
+          // Determinar estado: disponible o agotado (verificar inventario y marca manual)
+          const statusBadge = (total === 0 || product.outOfStock === true)
             ? '<span style="display:inline-block;background:#f44336;color:white;padding:4px 10px;border-radius:16px;font-weight:600;font-size:0.75rem;white-space:nowrap">Agotado</span>'
             : '<span style="display:inline-block;background:#4caf50;color:white;padding:4px 10px;border-radius:16px;font-weight:600;font-size:0.75rem;white-space:nowrap">Disponible</span>';
 
           const tr = document.createElement('tr');
           
-          // Generar código de barras display
+          // Generar código de barras y proveedor display
           let barcodeDisplay = '';
+          let supplierCodeDisplay = '';
           if (product.variants && product.variants.options && product.variants.options.length > 0) {
             barcodeDisplay = '<select style="font-family:monospace;font-size:0.75rem;color:#666;background:#f7f0f6;padding:4px 6px;border:1px solid #e0d0e0;border-radius:4px;width:100%">';
+            supplierCodeDisplay = '<select style="font-family:monospace;font-size:0.75rem;color:#666;background:#f7f0f6;padding:4px 6px;border:1px solid #e0d0e0;border-radius:4px;width:100%">';
             product.variants.options.forEach(option => {
               const barcode = option.barcode || 'N/A';
+              const supplierCode = option.supplier_code || '—';
               barcodeDisplay += `<option>${option.name}: ${barcode}</option>`;
+              supplierCodeDisplay += `<option>${option.name}: ${supplierCode}</option>`;
             });
             barcodeDisplay += '</select>';
+            supplierCodeDisplay += '</select>';
           } else {
             barcodeDisplay = `<div style="font-family:monospace;font-size:0.8rem;color:#666;background:#f7f0f6;padding:4px 8px;border-radius:4px;text-align:center">${product.barcode || 'N/A'}</div>`;
+            supplierCodeDisplay = `<div style="font-family:monospace;font-size:0.8rem;color:#666;background:#f7f0f6;padding:4px 8px;border-radius:4px;text-align:center">${product.supplier_code || '—'}</div>`;
           }
           
           tr.innerHTML = `
             <td><img src="${product.img}" alt="${product.title}" class="product-img-small" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'60\\' height=\\'60\\'%3E%3Crect fill=\\'%23ddd\\' width=\\'60\\' height=\\'60\\'/%3E%3C/svg%3E'"></td>
-            <td><strong style="color:#5a2032">${product.title}</strong></td>
+            <td><strong class="inventory-product-title" style="color:#5a2032;font-family:'CenturyGothic',Playfair Display,serif">${product.title}</strong></td>
             <td>${barcodeDisplay}</td>
+            <td>${supplierCodeDisplay}</td>
             <td style="font-size:0.85rem;color:#666">${product.category}</td>
             <td class="stock-cell ${getStockClass(inv.tienda1 || 0)}">${inv.tienda1 || 0}</td>
             <td class="stock-cell ${getStockClass(inv.tienda2 || 0)}">${inv.tienda2 || 0}</td>
@@ -775,10 +1268,16 @@
             matchesSearch = product.barcode.toLowerCase().includes(searchTerm);
           }
           
-          // Buscar en códigos de barras de variantes
+          // Buscar en código de proveedor
+          if (!matchesSearch && product.supplier_code) {
+            matchesSearch = product.supplier_code.toLowerCase().includes(searchTerm);
+          }
+          
+          // Buscar en códigos de barras o proveedor de variantes
           if (!matchesSearch && product.variants && product.variants.options) {
-            matchesSearch = product.variants.options.some(option => 
-              option.barcode && option.barcode.toLowerCase().includes(searchTerm)
+            matchesSearch = product.variants.options.some(option =>
+              (option.barcode && option.barcode.toLowerCase().includes(searchTerm)) ||
+              (option.supplier_code && option.supplier_code.toLowerCase().includes(searchTerm))
             );
           }
           
@@ -821,7 +1320,7 @@
           <div style="display:flex;align-items:center;gap:12px;padding:12px;background:#f9f9f9;border-radius:8px;margin-bottom:20px">
             <img src="${product.img}" alt="${product.title}" style="width:60px;height:60px;object-fit:cover;border-radius:8px">
             <div>
-              <h3 style="margin:0;color:#5a2032">${product.title}</h3>
+              <h3 style="margin:0;color:#5a2032;font-family:'CenturyGothic',Playfair Display,serif">${product.title}</h3>
               <p style="margin:4px 0 0 0;color:#666">Categoría: ${product.category}</p>
             </div>
           </div>
@@ -832,7 +1331,9 @@
         // Verificar si tiene variantes
         if (product.variants && product.variants.options && product.variants.options.length > 0) {
           // Producto con variantes: crear campos para cada variante
-          fieldsContainer.innerHTML = '<p style="color:#5a2032;font-weight:600;margin-bottom:12px">Ajustar inventario por variante:</p>';
+          fieldsContainer.innerHTML = `
+            <p style="color:#5a2032;font-weight:600;margin-bottom:12px">Ajustar inventario por variante:</p>
+          `;
           
           product.variants.options.forEach((option, index) => {
             const inv = option.inventory || {tienda1:0, tienda2:0, tienda3:0, bodega:0};
@@ -842,6 +1343,10 @@
                 <div style="margin-bottom:12px">
                   <label style="font-size:0.85rem;color:#666;display:block;margin-bottom:4px">Código de Barras</label>
                   <input type="text" class="variant-barcode" data-variant-index="${index}" value="${option.barcode || ''}" placeholder="SOPHIE000000-1" style="width:100%;padding:8px;border:1px solid #e3cfe0;border-radius:6px;font-family:monospace">
+                </div>
+                <div style="margin-bottom:12px">
+                  <label style="font-size:0.85rem;color:#666;display:block;margin-bottom:4px">Código de Proveedor</label>
+                  <input type="text" class="variant-supplier-code" data-variant-index="${index}" value="${option.supplier_code || ''}" placeholder="Código del proveedor" style="width:100%;padding:8px;border:1px solid #e3cfe0;border-radius:6px;font-family:monospace">
                 </div>
                 <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:10px">
                   <div>
@@ -873,6 +1378,10 @@
               <input type="text" id="adjust-barcode" value="${product.barcode || ''}" placeholder="SOPHIE000000" style="font-family:monospace">
             </div>
             <div class="form-group">
+              <label for="adjust-supplier-code">Código de Proveedor</label>
+              <input type="text" id="adjust-supplier-code" value="${product.supplier_code || ''}" placeholder="Código del proveedor" style="font-family:monospace">
+            </div>
+            <div class="form-group">
               <label for="adjust-tienda1">Sophie Store</label>
               <input type="number" id="adjust-tienda1" min="0" value="${inv.tienda1 || 0}">
             </div>
@@ -902,6 +1411,9 @@
         
         if (!product) return;
 
+        const user = sessionStorage.getItem('adminUsername') || localStorage.getItem('loggedInUser') || 'Sin especificar';
+        let cambios = [];
+
         // Verificar si tiene variantes
         if (product.variants && product.variants.options && product.variants.options.length > 0) {
           // Actualizar inventario y código de barras de cada variante
@@ -911,34 +1423,80 @@
             const tienda3Input = document.querySelector(`.variant-tienda3[data-variant-index="${index}"]`);
             const bodegaInput = document.querySelector(`.variant-bodega[data-variant-index="${index}"]`);
             const barcodeInput = document.querySelector(`.variant-barcode[data-variant-index="${index}"]`);
+            const supplierCodeInput = document.querySelector(`.variant-supplier-code[data-variant-index="${index}"]`);
             
             if (tienda1Input && tienda2Input && tienda3Input && bodegaInput) {
+              // Guardar valores antiguos
+              const oldT1 = option.inventory?.tienda1 || 0;
+              const oldT2 = option.inventory?.tienda2 || 0;
+              const oldT3 = option.inventory?.tienda3 || 0;
+              const oldBodega = option.inventory?.bodega || 0;
+              
+              const newT1 = parseInt(tienda1Input.value) || 0;
+              const newT2 = parseInt(tienda2Input.value) || 0;
+              const newT3 = parseInt(tienda3Input.value) || 0;
+              const newBodega = parseInt(bodegaInput.value) || 0;
+              
               option.inventory = {
-                tienda1: parseInt(tienda1Input.value) || 0,
-                tienda2: parseInt(tienda2Input.value) || 0,
-                tienda3: parseInt(tienda3Input.value) || 0,
-                bodega: parseInt(bodegaInput.value) || 0
+                tienda1: newT1,
+                tienda2: newT2,
+                tienda3: newT3,
+                bodega: newBodega
               };
+              
+              // Registrar cambio si hay diferencia
+              if (oldT1 !== newT1 || oldT2 !== newT2 || oldT3 !== newT3 || oldBodega !== newBodega) {
+                cambios.push(`${option.name}: Sophie Store ${oldT1}→${newT1}, Sophie Mall ${oldT2}→${newT2}, Sophie's Ticados ${oldT3}→${newT3}, Bodega ${oldBodega}→${newBodega}`);
+              }
               
               // Actualizar código de barras
               if (barcodeInput) {
                 option.barcode = barcodeInput.value.trim() || ('SOPHIE' + String(product.id).padStart(6, '0') + '-' + String(index + 1));
               }
+              if (supplierCodeInput) {
+                option.supplier_code = supplierCodeInput.value.trim() || '';
+              }
             }
           });
+
+          const supplierCodeInput = document.getElementById('adjust-supplier-code');
+          if (supplierCodeInput) {
+            product.supplier_code = supplierCodeInput.value.trim() || '';
+          }
         } else {
           // Actualizar inventario y código de barras del producto simple
+          const oldT1 = product.inventory?.tienda1 || 0;
+          const oldT2 = product.inventory?.tienda2 || 0;
+          const oldT3 = product.inventory?.tienda3 || 0;
+          const oldBodega = product.inventory?.bodega || 0;
+          
+          const newT1 = parseInt(document.getElementById('adjust-tienda1').value) || 0;
+          const newT2 = parseInt(document.getElementById('adjust-tienda2').value) || 0;
+          const newT3 = parseInt(document.getElementById('adjust-tienda3').value) || 0;
+          const newBodega = parseInt(document.getElementById('adjust-bodega').value) || 0;
+          
           product.inventory = {
-            tienda1: parseInt(document.getElementById('adjust-tienda1').value) || 0,
-            tienda2: parseInt(document.getElementById('adjust-tienda2').value) || 0,
-            tienda3: parseInt(document.getElementById('adjust-tienda3').value) || 0,
-            bodega: parseInt(document.getElementById('adjust-bodega').value) || 0
+            tienda1: newT1,
+            tienda2: newT2,
+            tienda3: newT3,
+            bodega: newBodega
           };
+          
+          // Registrar cambio si hay diferencia
+          if (oldT1 !== newT1 || oldT2 !== newT2 || oldT3 !== newT3 || oldBodega !== newBodega) {
+            cambios.push(`Sophie Store ${oldT1}→${newT1}, Sophie Mall ${oldT2}→${newT2}, Sophie's Ticados ${oldT3}→${newT3}, Bodega ${oldBodega}→${newBodega}`);
+          }
           
           // Actualizar código de barras
           const barcodeInput = document.getElementById('adjust-barcode');
           if (barcodeInput) {
             product.barcode = barcodeInput.value.trim() || ('SOPHIE' + String(product.id).padStart(6, '0'));
+          }
+          
+          // Actualizar código de proveedor
+          const supplierCodeInput = document.getElementById('adjust-supplier-code');
+          if (supplierCodeInput) {
+            product.supplier_code = supplierCodeInput.value.trim() || '';
           }
         }
 
@@ -948,6 +1506,24 @@
         } else {
           // Fallback si no está disponible saveProductsToStorage
           localStorage.setItem('products_data', JSON.stringify(productsData));
+        }
+
+        // Registrar en historial de transferencias si hay cambios
+        if (cambios.length > 0) {
+          const historyEntry = {
+            id: Date.now(),
+            fecha: new Date().toISOString(),
+            usuario: user,
+            productos: cambios.map(cambio => ({
+              titulo: product.title + ' - ' + cambio,
+              codigo: product.barcode || 'N/A',
+              cantidad: '',
+              destino: 'ajuste'
+            }))
+          };
+          const history = JSON.parse(localStorage.getItem('transfer_history') || '[]');
+          history.push(historyEntry);
+          localStorage.setItem('transfer_history', JSON.stringify(history));
         }
 
         document.getElementById('adjust-modal').setAttribute('aria-hidden', 'true');
@@ -1004,6 +1580,12 @@
       function handleAddProductSubmit(e) {
         e.preventDefault();
 
+        // Validar que se haya cargado una imagen
+        if (!inventoryLoadedImage) {
+          alert('Por favor carga una imagen del producto');
+          return;
+        }
+
         const newId = Math.max(0, ...productsData.map(p => p.id)) + 1;
         let barcode = document.getElementById('inv-product-barcode').value.trim();
         
@@ -1018,10 +1600,11 @@
           category: document.getElementById('inv-product-category').value,
           price: parseFloat(document.getElementById('inv-product-price').value),
           desc: document.getElementById('inv-product-desc').value,
-          img: document.getElementById('inv-product-img').value,
-          images: [document.getElementById('inv-product-img').value],
+          img: inventoryLoadedImage,  // Usar la imagen en Base64
+          images: [inventoryLoadedImage],  // Array con la imagen
           gender: 'unisex',
           barcode: barcode,  // ← NUEVO: Código de barras
+          supplier_code: document.getElementById('inv-product-supplier-code').value.trim() || '',  // ← NUEVO: Código de proveedor
           outOfStock: false,
           active: false,  // ← PRODUCTOS AGREGADOS DESDE INVENTARIO SIEMPRE DESACTIVADOS
           inventory: {
@@ -1042,6 +1625,9 @@
           // Fallback si no está disponible saveProductsToStorage
           localStorage.setItem('products_data', JSON.stringify(productsData));
         }
+
+        // Limpiar la imagen cargada
+        inventoryLoadedImage = null;
 
         document.getElementById('add-product-modal').setAttribute('aria-hidden', 'true');
         renderInventoryStats();

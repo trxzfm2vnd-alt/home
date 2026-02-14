@@ -1,87 +1,847 @@
-﻿const defaultProducts = [
-  {id:1,title:'Bulto Rosado de Flores',category:'mochilas',gender:'female',price:38000,desc:'Hermoso bulto escolar rosado con delicado estampado de flores. Cuenta con múltiples compartimentos, tirantes acolchados ajustables para mayor comodidad, bolsillo frontal con cierre y material resistente al agua.',img:'Fotos productos/Bulto rosado de flores/WhatsApp Image 2026-01-14 at 13.19.12.jpeg',images:['Fotos productos/Bulto rosado de flores/WhatsApp Image 2026-01-14 at 13.19.12.jpeg','Fotos productos/Bulto rosado de flores/WhatsApp Image 2026-01-14 at 13.19.12 (1).jpeg','Fotos productos/Bulto rosado de flores/WhatsApp Image 2026-01-14 at 13.19.12 (2).jpeg','Fotos productos/Bulto rosado de flores/WhatsApp Image 2026-01-14 at 13.19.13.jpeg','Fotos productos/Bulto rosado de flores/WhatsApp Image 2026-01-14 at 13.19.13 (1).jpeg'],sold:120,active:true,inventory:{tienda1:24,tienda2:18,tienda3:31,bodega:42}},
-  {id:2,title:'Peluche Vaca',category:'peluches',gender:'unisex',price:11500,desc:'Adorable peluche de vaca fabricado con material ultra suave y seguro para niños. Con detalles bordados en ojos y manchas características de vaca.',img:'Fotos productos/Vaca/WhatsApp Image 2026-01-14 at 13.13.45.jpeg',images:['Fotos productos/Vaca/WhatsApp Image 2026-01-14 at 13.13.45.jpeg'],sold:92,active:true,inventory:{tienda1:0,tienda2:0,tienda3:0,bodega:0},variants:{type:'tamaño',options:[{name:'33cm',price:11500,inventory:{tienda1:14,tienda2:10,tienda3:11,bodega:18}},{name:'45cm',price:18000,inventory:{tienda1:14,tienda2:9,tienda3:11,bodega:17}}]}},
-  {id:3,title:'Vaso Temático Disney',category:'vasos',gender:'female',price:14500,desc:'Hermoso vaso con pajilla reutilizable inspirado en tus películas Disney favoritas. Fabricado en material plástico durable y resistente a caídas.',img:'Fotos productos/Vaso tematico Disney/WhatsApp Image 2026-01-14 at 14.40.03.jpeg',images:['Fotos productos/Vaso tematico Disney/WhatsApp Image 2026-01-14 at 14.40.03.jpeg','Fotos productos/Vaso tematico Disney/WhatsApp Image 2026-01-14 at 14.40.04.jpeg','Fotos productos/Vaso tematico Disney/WhatsApp Image 2026-01-14 at 14.40.04 (1).jpeg','Fotos productos/Vaso tematico Disney/WhatsApp Image 2026-01-14 at 14.40.04 (2).jpeg'],sold:78,active:true,inventory:{tienda1:0,tienda2:0,tienda3:0,bodega:0},variants:{type:'personaje',options:[{name:'Minnie',price:14500,inventory:{tienda1:4,tienda2:6,tienda3:2,bodega:10}},{name:'Moana',price:14500,inventory:{tienda1:4,tienda2:5,tienda3:2,bodega:9}},{name:'Cars',price:14500,inventory:{tienda1:4,tienda2:6,tienda3:3,bodega:10}},{name:'Elsa',price:14500,inventory:{tienda1:3,tienda2:5,tienda3:2,bodega:9}}]}},
-  {id:4,title:'Agenda Harry Potter',category:'papeleria',gender:'unisex',price:9500,desc:'Hermosa agenda inspirada en el universo mágico de Harry Potter. Perfecta para organizar tu vida cotidiana con estilo. Disponible en cuatro casas de Hogwarts.',img:'Fotos productos/Agenda Harry Potter/WhatsApp Image 2026-01-14 at 14.42.16.jpeg',images:['Fotos productos/Agenda Harry Potter/WhatsApp Image 2026-01-14 at 14.42.16.jpeg','Fotos productos/Agenda Harry Potter/WhatsApp Image 2026-01-14 at 14.42.16 (1).jpeg','Fotos productos/Agenda Harry Potter/WhatsApp Image 2026-01-14 at 14.42.16 (2).jpeg','Fotos productos/Agenda Harry Potter/WhatsApp Image 2026-01-14 at 14.42.17.jpeg'],sold:110,active:true,inventory:{tienda1:0,tienda2:0,tienda3:0,bodega:0},variants:{type:'casa',options:[{name:'Gryffindor',price:9500,inventory:{tienda1:3,tienda2:7,tienda3:5,bodega:11}},{name:'Slytherin',price:9500,inventory:{tienda1:3,tienda2:6,tienda3:5,bodega:10}},{name:'Hufflepuff',price:9500,inventory:{tienda1:3,tienda2:6,tienda3:5,bodega:11}},{name:'Ravenclaw',price:9500,inventory:{tienda1:3,tienda2:7,tienda3:4,bodega:11}}]}},
-  {id:5,title:'Pluma Lapicero Harry Potter',category:'papeleria',gender:'unisex',price:2500,desc:'Elegante pluma temática de Harry Potter disponible en múltiples colores. Inspirada en el universo mágico de Hogwarts.',img:'Fotos productos/Pluma Lapicero H.P/WhatsApp Image 2026-01-14 at 14.42.44.jpeg',images:['Fotos productos/Pluma Lapicero H.P/WhatsApp Image 2026-01-14 at 14.42.44.jpeg'],sold:145,active:true,inventory:{tienda1:0,tienda2:0,tienda3:0,bodega:0},variants:{type:'color',options:[{name:'Azul Oscuro',price:2500,inventory:{tienda1:8,tienda2:4,tienda3:8,bodega:12}},{name:'Rojo',price:2500,inventory:{tienda1:8,tienda2:4,tienda3:7,bodega:12}},{name:'Negro',price:2500,inventory:{tienda1:9,tienda2:3,tienda3:7,bodega:12}},{name:'Cian',price:2500,inventory:{tienda1:8,tienda2:3,tienda3:7,bodega:12}}]}},
-  {id:6,title:'Varita Lapicero Harry Potter',category:'papeleria',gender:'unisex',price:2500,desc:'Elegante varita lapicero temática de Harry Potter. Forma ergonómica cómoda para escribir con tinta fluida de calidad.',img:'Fotos productos/Lapicero Varita H.P/WhatsApp Image 2026-01-14 at 14.42.45.jpeg',images:['Fotos productos/Lapicero Varita H.P/WhatsApp Image 2026-01-14 at 14.42.45.jpeg'],sold:98,active:true,inventory:{tienda1:0,tienda2:0,tienda3:0,bodega:0},variants:{type:'color',options:[{name:'Café',price:2500,inventory:{tienda1:4,tienda2:8,tienda3:5,bodega:11}},{name:'Hueso',price:2500,inventory:{tienda1:4,tienda2:9,tienda3:6,bodega:12}},{name:'Café Muy Oscuro',price:2500,inventory:{tienda1:3,tienda2:8,tienda3:5,bodega:11}}]}},
-  {id:7,title:'Taza Winnie The Pooh',category:'tazas',gender:'unisex',price:12000,desc:'Encantadora taza temática de Winnie The Pooh, perfecta para disfrutar tus bebidas favoritas. Fabricada en cerámica de alta calidad.',img:'Fotos productos/Tasa de Winnie Pooh/WhatsApp Image 2026-01-14 at 14.44.10.jpeg',images:['Fotos productos/Tasa de Winnie Pooh/WhatsApp Image 2026-01-14 at 14.44.10.jpeg'],sold:85,active:true,inventory:{tienda1:18,tienda2:12,tienda3:24,bodega:27}},
-  {id:8,title:'Taza Stitch',category:'tazas',gender:'unisex',price:12000,desc:'Adorable taza temática de Stitch, el personaje más querido de Lilo & Stitch. Diseño vibrante con los colores e iconos de Stitch.',img:'Fotos productos/Tasa Stitch/WhatsApp Image 2026-01-14 at 14.44.11.jpeg',images:['Fotos productos/Tasa Stitch/WhatsApp Image 2026-01-14 at 14.44.11.jpeg'],sold:78,active:true,inventory:{tienda1:0,tienda2:0,tienda3:0,bodega:0},outOfStock:true},
-  {id:9,title:'Peluche Kuromi',category:'peluches',gender:'female',price:13500,desc:'Adorable peluche de Kuromi, el personaje icónico de Sanrio con su característico corazón en la frente. Fabricado con material ultra suave.',img:'Fotos productos/Peluche de Kuromi/WhatsApp Image 2026-01-14 at 14.45.40.jpeg',images:['Fotos productos/Peluche de Kuromi/WhatsApp Image 2026-01-14 at 14.45.40.jpeg'],sold:67,active:true,inventory:{tienda1:23,tienda2:16,tienda3:20,bodega:38}},
-  {id:10,title:'Lámpara de Lava Batman',category:'decoracion',gender:'unisex',price:45000,desc:'Lámpara de lava temática de Batman con acabado oscuro y emblema icónico. Ideal para ambientar espacios con un toque de cómic retro.',img:'Fotos productos/Lampara de Lava B.M/WhatsApp Image 2026-01-14 at 14.49.30.jpeg',images:['Fotos productos/Lampara de Lava B.M/WhatsApp Image 2026-01-14 at 14.49.30.jpeg'],sold:42,active:true,inventory:{tienda1:6,tienda2:8,tienda3:5,bodega:14}},
-  {id:11,title:'Lámpara de Lava Hello Kitty',category:'decoracion',gender:'unisex',price:45000,desc:'Lámpara de lava temática de Hello Kitty con tonos suaves y diseño tierno. Perfecta para decorar habitaciones juveniles con luz relajante.',img:'Fotos productos/Lampara de lava H.K/WhatsApp Image 2026-01-14 at 14.49.30 (1).jpeg',images:['Fotos productos/Lampara de lava H.K/WhatsApp Image 2026-01-14 at 14.49.30 (1).jpeg'],sold:30,active:true,inventory:{tienda1:9,tienda2:11,tienda3:7,bodega:18}},
-  {id:12,title:'Botella de STARWARS',category:'botellas',gender:'unisex',price:45000,desc:'Botella temática de STARWARS con tapa hermética, capacidad 750 ml y material libre de BPA. Ideal para mantener bebidas frías o calientes.',img:'Fotos productos/Botella STARWARS/WhatsApp Image 2026-01-14 at 14.58.20.jpeg',images:['Fotos productos/Botella STARWARS/WhatsApp Image 2026-01-14 at 14.58.20.jpeg'],sold:10,active:true,inventory:{tienda1:13,tienda2:10,tienda3:19,bodega:26}},
-  {id:13,title:'Mochila Hello Kitty',category:'mochilas',gender:'female',price:35000,desc:'Hermosa mochila de Hello Kitty con diseño adorable y funcional. Perfecta para uso escolar o diario, con compartimentos espaciosos y material resistente.',img:'Fotos productos/Mochila Hello Kity/WhatsApp Image 2026-01-14 at 14.55.02.jpeg',images:['Fotos productos/Mochila Hello Kity/WhatsApp Image 2026-01-14 at 14.55.02.jpeg'],sold:5,active:true,inventory:{tienda1:16,tienda2:13,tienda3:11,bodega:23}},
-  {id:14,title:'Pintura para el Cabello',category:'belleza',gender:'unisex',price:3750,desc:'Pintura temporal para el cabello en colores vibrantes. Perfecta para eventos, fiestas o cambiar tu look de forma temporal. Fácil de aplicar y lavar.',img:'Fotos productos/Pintura para el cabello/WhatsApp Image 2026-01-14 at 15.08.58.jpeg',images:['Fotos productos/Pintura para el cabello/WhatsApp Image 2026-01-14 at 15.08.58.jpeg'],sold:0,active:true,inventory:{tienda1:0,tienda2:0,tienda3:0,bodega:0},variants:{type:'color',options:[{name:'Negro',price:3750,inventory:{tienda1:4,tienda2:3,tienda3:5,bodega:6}},{name:'Verde',price:3750,inventory:{tienda1:4,tienda2:3,tienda3:4,bodega:7}},{name:'Blanco',price:3750,inventory:{tienda1:4,tienda2:3,tienda3:5,bodega:6}},{name:'Rosado',price:3750,inventory:{tienda1:3,tienda2:3,tienda3:4,bodega:6}},{name:'Naranja',price:3750,inventory:{tienda1:4,tienda2:3,tienda3:4,bodega:6}},{name:'Azul',price:3750,inventory:{tienda1:4,tienda2:2,tienda3:5,bodega:6}},{name:'Café',price:3750,inventory:{tienda1:3,tienda2:3,tienda3:5,bodega:6}}]}},
-  {id:15,title:'Taza Satoru Gojo',category:'tazas',gender:'unisex',price:18000,desc:'Taza temática de Satoru Gojo de Jujutsu Kaisen. Perfecta para los fans del anime, con diseño de alta calidad. Fabricada en cerámica resistente, ideal para disfrutar tus bebidas favoritas.',img:'Fotos productos/Tasa Saroru Gojo/WhatsApp Image 2026-01-15 at 15.18.40.jpeg',images:['Fotos productos/Tasa Saroru Gojo/WhatsApp Image 2026-01-15 at 15.18.40.jpeg'],sold:15,active:true,inventory:{tienda1:14,tienda2:9,tienda3:17,bodega:29}},
-  {id:16,title:'Taza Geto Suguru',category:'tazas',gender:'unisex',price:18000,desc:'Taza temática de Geto Suguru de Jujutsu Kaisen. Diseño exclusivo para fans del anime, con impresión de alta calidad. Fabricada en cerámica duradera y resistente.',img:'Fotos productos/Tasa Geto suguru/WhatsApp Image 2026-01-15 at 15.18.40.jpeg',images:['Fotos productos/Tasa Geto suguru/WhatsApp Image 2026-01-15 at 15.18.40.jpeg'],sold:12,active:true,inventory:{tienda1:11,tienda2:15,tienda3:8,bodega:21}},
-  {id:17,title:'Snoopy Biplano',category:'bloques',gender:'unisex',price:13500,desc:'Set de bloques de construcción tipo LEGO de Snoopy en su biplano. Diseño divertido y coleccionable, perfecto para fans de Peanuts. Incluye figura de Snoopy y avión detallado.',img:'Fotos productos/Snoopy Biplane/86905-1.avif',images:['Fotos productos/Snoopy Biplane/86905-1.avif','Fotos productos/Snoopy Biplane/Pantasy 86905 - 02.jpg'],sold:8,active:true,inventory:{tienda1:9,tienda2:7,tienda3:12,bodega:16}},
-  {id:18,title:'Snoopy Roadster',category:'bloques',gender:'unisex',price:13500,desc:'Set de bloques de construcción tipo LEGO de Snoopy en su auto deportivo. Modelo coleccionable con detalles encantadores. Perfecto para construir y exhibir.',img:'Fotos productos/Snoopy Roadster/PANT-86908_3540493780743145141_hu_12da1379a2799433.jpg',images:['Fotos productos/Snoopy Roadster/PANT-86908_3540493780743145141_hu_12da1379a2799433.jpg','Fotos productos/Snoopy Roadster/2_1956f2f3-a9a5-4a91-9d79-22361ff30261.webp'],sold:6,active:true,inventory:{tienda1:7,tienda2:10,tienda3:6,bodega:15}},
-  {id:19,title:'Snoopy Bus Escolar',category:'bloques',gender:'unisex',price:13500,desc:'Set de bloques de construcción tipo LEGO del bus escolar de Snoopy. Diseño nostálgico de Peanuts con colores vibrantes. Ideal para coleccionistas y fans.',img:'Fotos productos/Snoopy Scool Bus/86906-SNOOPY-BUS-BIGFUNLEBANON.jpg-.jpg',images:['Fotos productos/Snoopy Scool Bus/86906-SNOOPY-BUS-BIGFUNLEBANON.jpg-.jpg','Fotos productos/Snoopy Scool Bus/PeanutsSchoolBusfeaturedbox.webp'],sold:7,active:true,inventory:{tienda1:12,tienda2:8,tienda3:14,bodega:22}},
-  {id:20,title:'Snoopy Barco de Vapor',category:'bloques',gender:'unisex',price:13500,desc:'Set de bloques de construcción tipo LEGO del barco de vapor de Snoopy. Modelo clásico con detalles encantadores. Perfecto para construir y coleccionar.',img:'Fotos productos/Snoopy Steam Boat/1_63339c5c-baed-4d4f-ae3a-30a8d3ffd322.webp',images:['Fotos productos/Snoopy Steam Boat/1_63339c5c-baed-4d4f-ae3a-30a8d3ffd322.webp','Fotos productos/Snoopy Steam Boat/2_d3b405ad-136a-4a5e-9ad9-806a2bb0ed52.webp'],sold:5,active:true,inventory:{tienda1:10,tienda2:6,tienda3:11,bodega:19}},
-  {id:21,title:'Snoopy en su Casita',category:'bloques',gender:'unisex',price:13500,desc:'Set de bloques de construcción de la icónica casita de Snoopy con figura incluida. Modelo compacto y adorable con detalles encantadores. Perfecto para comenzar tu colección Peanuts.',img:'Fotos productos/Peanuts Snoopy 5002/hsanhecaco-s002-ngoi-nha-mau-do-snoopy-canh.jpg',images:['Fotos productos/Peanuts Snoopy 5002/hsanhecaco-s002-ngoi-nha-mau-do-snoopy-canh.jpg','Fotos productos/Peanuts Snoopy 5002/88266ca5-1d62-4ed8-90f3-2cfe4cd9a034.fce03bb67b054b475fc31e3e2f98ddf7.webp'],sold:4,active:true,inventory:{tienda1:13,tienda2:11,tienda3:9,bodega:20}},
-  {id:22,title:'Snoopy Ruta Escolar',category:'bloques',gender:'unisex',price:13500,desc:'Set de bloques de construcción de Snoopy en su jardín con casa y árbol. Diseño encantador con detalles de naturaleza y figuras. Ideal para fans de Peanuts y coleccionistas.',img:'Fotos productos/Peanuts Snoopy 5008/DSC03114_1024x1024@2x.webp',images:['Fotos productos/Peanuts Snoopy 5008/DSC03114_1024x1024@2x.webp','Fotos productos/Peanuts Snoopy 5008/562c1f0863f147e79c8ce17a5e499b4f.webp','Fotos productos/Peanuts Snoopy 5008/8ae18d8a-8ae4-4eef-a625-37e4860469a5.cbeb72933edc1ccd8d76442ad96fc5ab.webp'],sold:3,active:true,inventory:{tienda1:8,tienda2:12,tienda3:7,bodega:18}},
-  {id:23,title:'Snoopy Vuelo Tropical',category:'bloques',gender:'unisex',price:13500,desc:'Set de bloques de construcción de Snoopy y sus amigos en concierto. Incluye escenario, figuras con instrumentos musicales y accesorios. Perfecto para recrear momentos musicales de Peanuts.',img:'Fotos productos/Peanuts Snoopy 5009/S2ffbf1b83ba145438941eb0f95f10200d.webp',images:['Fotos productos/Peanuts Snoopy 5009/S2ffbf1b83ba145438941eb0f95f10200d.webp','Fotos productos/Peanuts Snoopy 5009/Captura de pantalla 2026-01-16 003254.png','Fotos productos/Peanuts Snoopy 5009/Captura de pantalla 2026-01-16 003349.png'],sold:2,active:true,inventory:{tienda1:15,tienda2:10,tienda3:13,bodega:24}}
-
-];
-
-// Sistema de gestión de productos con localStorage
-function loadProductsFromStorage() {
-  const stored = localStorage.getItem('products_data');
-  if (stored) {
+﻿  // Cargar productos desde localStorage
+  function loadProductsFromStorage() {
     try {
-      const parsed = JSON.parse(stored);
-      // Verificar si hay datos válidos con inventario
-      if (parsed && Array.isArray(parsed) && parsed.length > 0 && parsed[0].inventory) {
-        console.log('Productos cargados desde localStorage');
-        // Asegurar que todos los productos tengan código de barras
-        return ensureBarcodesExist(parsed);
+      const data = localStorage.getItem('products_data');
+      if (data) {
+        const products = JSON.parse(data);
+        syncBodegaFromPoasToSophie(products);
+        return products;
+      }
+      return [];
+    } catch (e) {
+      console.error('Error cargando productos desde localStorage:', e);
+      return [];
+    }
+  }
+
+  // Sincronizar bodega de Poás hacia Sophie al cargar
+  function syncBodegaFromPoasToSophie(sophieProducts) {
+    try {
+      const poasProducts = JSON.parse(localStorage.getItem('poas_products_data') || '[]');
+      let updated = false;
+      
+      sophieProducts.forEach(sophieProduct => {
+        const poasProduct = poasProducts.find(pp => String(pp.id) === String(sophieProduct.id));
+        if (poasProduct && poasProduct.inventory && typeof poasProduct.inventory.bodega === 'number') {
+          if (!sophieProduct.inventory) sophieProduct.inventory = {};
+          if (sophieProduct.inventory.bodega !== poasProduct.inventory.bodega) {
+            sophieProduct.inventory.bodega = poasProduct.inventory.bodega;
+            updated = true;
+          }
+        }
+      });
+      
+      if (updated) {
+        localStorage.setItem('products_data', JSON.stringify(sophieProducts));
       }
     } catch (e) {
-      console.error('Error al cargar productos:', e);
+      console.error('Error en syncBodegaFromPoasToSophie:', e);
     }
+  }
+  // Guardar productos en localStorage
+  function saveProductsToStorage(productsArray) {
+    try {
+      localStorage.setItem('products_data', JSON.stringify(productsArray || []));
+      syncBodegaToPoasFromSophie(productsArray);
+    } catch (e) {
+      console.error('Error guardando productos en localStorage:', e);
+    }
+  }
+
+  // Sincronizar bodega de Sophie hacia Poás
+  function syncBodegaToPoasFromSophie(sophieProducts) {
+    try {
+      const poasProducts = JSON.parse(localStorage.getItem('poas_products_data') || '[]');
+      let updated = false;
+      
+      sophieProducts.forEach(sophieProduct => {
+        const poasProduct = poasProducts.find(pp => String(pp.id) === String(sophieProduct.id));
+        if (poasProduct && sophieProduct.inventory && typeof sophieProduct.inventory.bodega === 'number') {
+          if (!poasProduct.inventory) poasProduct.inventory = {};
+          if (poasProduct.inventory.bodega !== sophieProduct.inventory.bodega) {
+            poasProduct.inventory.bodega = sophieProduct.inventory.bodega;
+            updated = true;
+          }
+        }
+      });
+      
+      if (updated) {
+        localStorage.setItem('poas_products_data', JSON.stringify(poasProducts));
+      }
+    } catch (e) {
+      console.error('Error en syncBodegaToPoasFromSophie:', e);
+    }
+  }
+  // Asegura que todos los productos tengan un campo barcode
+  function ensureBarcodesExist(arr) {
+    return arr.map((p, idx) => {
+      if (!p.barcode) {
+        // Generar barcode si no existe
+        p.barcode = p.id ? `SOPHIE${String(p.id).padStart(6, '0')}` : `SOPHIE${String(idx+1).padStart(6, '0')}`;
+      }
+      return p;
+    });
+  }
+  let products = loadProductsFromStorage();
+  if (!Array.isArray(products)) {
+    products = [];
+  }
+  // ...existing code...
+// ===============================
+// LÓGICA DE MODAL CHECKOUT DE TRANSFERENCIA
+// ===============================
+document.addEventListener('DOMContentLoaded', function() {
+  const transferInput = document.getElementById('transfer-input');
+  const transferSuggestions = document.getElementById('transfer-suggestions');
+  const transferList = document.getElementById('transfer-list');
+  if (!transferInput || !transferSuggestions || !transferList) return;
+
+  const getTransferProducts = () => {
+    let list = [];
+    if (typeof loadProductsFromStorage === 'function') {
+      list = loadProductsFromStorage() || [];
+    } else if (Array.isArray(products)) {
+      list = products;
+    }
+    if (!Array.isArray(list)) list = [];
+    return list;
+  };
+
+  const getVariantsBodegaTotal = (product) => {
+    if (!product || !product.variants || !Array.isArray(product.variants.options)) return 0;
+    return product.variants.options.reduce((sum, opt) => {
+      const inv = opt && opt.inventory ? opt.inventory : {tienda1:0, tienda2:0, tienda3:0, bodega:0};
+      return sum + (inv.bodega || 0);
+    }, 0);
+  };
+
+  const findTransferEntry = (value, listOverride = null) => {
+    const list = Array.isArray(listOverride) ? listOverride : getTransferProducts();
+    const search = (value || '').trim().toLowerCase();
+    if (!search) return null;
+    for (const p of list) {
+      if (p.barcode && p.barcode.toLowerCase() === search) {
+        const totalVariants = getVariantsBodegaTotal(p);
+        const hasVariants = totalVariants > 0;
+        const productBodega = p.inventory && typeof p.inventory.bodega === 'number' ? p.inventory.bodega : 0;
+        return { product: p, variant: null, variantIndex: null, usesVariants: hasVariants && productBodega === 0 };
+      }
+      if (p.title && p.title.toLowerCase() === search) {
+        const totalVariants = getVariantsBodegaTotal(p);
+        const hasVariants = totalVariants > 0;
+        const productBodega = p.inventory && typeof p.inventory.bodega === 'number' ? p.inventory.bodega : 0;
+        return { product: p, variant: null, variantIndex: null, usesVariants: hasVariants && productBodega === 0 };
+      }
+      if (p.variants && Array.isArray(p.variants.options)) {
+        for (let i = 0; i < p.variants.options.length; i += 1) {
+          const opt = p.variants.options[i];
+          if (opt && opt.barcode && opt.barcode.toLowerCase() === search) {
+            return { product: p, variant: opt, variantIndex: i, usesVariants: false };
+          }
+        }
+      }
+    }
+    return null;
+  };
+
+  const getEntryBodegaQty = (entry) => {
+    if (!entry) return 0;
+    if (entry.variant) {
+      return (entry.variant.inventory && typeof entry.variant.inventory.bodega === 'number') ? entry.variant.inventory.bodega : 0;
+    }
+    if (entry.usesVariants) {
+      return getVariantsBodegaTotal(entry.product);
+    }
+    return (entry.product && entry.product.inventory && typeof entry.product.inventory.bodega === 'number') ? entry.product.inventory.bodega : 0;
+  };
+
+  const getEntryBarcode = (entry) => {
+    if (!entry) return '';
+    return entry.variant ? entry.variant.barcode : entry.product.barcode;
+  };
+
+  const getEntryTitle = (entry) => {
+    if (!entry) return '';
+    if (entry.variant && entry.variant.name) {
+      return `${entry.product.title} (${entry.variant.name})`;
+    }
+    return entry.product.title || '';
+  };
+
+  // Permitir agregar productos manualmente por código/nombre al presionar Enter o Coma
+  transferInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ',') {
+      const value = transferInput.value.trim();
+      if (value) {
+        // Permitir agregar solo un producto por vez
+        let entry = findTransferEntry(value);
+        if (!entry && value.includes(',')) {
+          // Si el usuario pone varios códigos separados por coma, tomar solo el primero
+          const first = value.split(',')[0].trim();
+          entry = findTransferEntry(first);
+        }
+        if (entry && entry.product) {
+          if (getEntryBodegaQty(entry) > 0) {
+            if (!window.selectedProducts) window.selectedProducts = [];
+            const entryBarcode = getEntryBarcode(entry);
+            
+            // Obtener tiendas seleccionadas
+            const tiendas = [];
+            if (document.getElementById('transfer-tienda1')?.checked) tiendas.push('tienda1');
+            if (document.getElementById('transfer-tienda2')?.checked) tiendas.push('tienda2');
+            if (document.getElementById('transfer-tienda3')?.checked) tiendas.push('tienda3');
+            
+            if (tiendas.length === 0) {
+              alert('Selecciona al menos una tienda destino');
+              return;
+            }
+            
+            // Agregar producto una vez por cada tienda seleccionada
+            tiendas.forEach(destino => {
+              window.selectedProducts.push({
+                id: entry.product.id,
+                title: getEntryTitle(entry),
+                img: entry.product.img,
+                barcode: entryBarcode,
+                variantIndex: entry.variantIndex,
+                usesVariants: entry.usesVariants === true,
+                destino: destino,
+                qty: 1
+              });
+            });
+            if (typeof renderTransferList === 'function') renderTransferList();
+          } else {
+            alert('No se encontró ningún producto con inventario en bodega para transferir.');
+          }
+        } else {
+          transferInput.value = '';
+          transferSuggestions.style.display = 'none';
+          transferSuggestions.innerHTML = '';
+          alert('Producto no encontrado. Usa el autocompletado o verifica el código/nombre.');
+        }
+        transferInput.value = '';
+        transferSuggestions.style.display = 'none';
+        transferSuggestions.innerHTML = '';
+        e.preventDefault();
+      }
+    }
+  });
+  // ...existing code...
+
+  window.selectedProducts = window.selectedProducts || [];
+
+  const getTiendaLabel = (tiendaKey) => {
+    const map = { tienda1: 'Sophie Store', tienda2: 'Sophie Mall', tienda3: 'Sophie\'s Ticados' };
+    return map[tiendaKey] || tiendaKey;
+  };
+
+  const getTiendaColor = (tiendaKey) => {
+    const map = { tienda1: '#ff6b9d', tienda2: '#5a8dee', tienda3: '#ffc107' };
+    return map[tiendaKey] || '#999';
+  };
+
+  function renderTransferList() {
+    if (!transferList) return;
+    if (window.selectedProducts.length === 0) {
+      transferList.innerHTML = '<div style="color:#888;text-align:center;padding:18px 0">No hay productos seleccionados.</div>';
+      return;
+    }
+    let totalQty = window.selectedProducts.reduce((sum, item) => sum + item.qty, 0);
+    let html = window.selectedProducts.map((item, idx) => {
+      const colorDestino = getTiendaColor(item.destino);
+      const tiendaDestino = getTiendaLabel(item.destino);
+      return `
+        <div class=\"transfer-list-item\" style=\"display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid #f3e6f7\">\n          <img src=\"${item.img.startsWith('/') ? item.img : './' + item.img}\" alt=\"${item.title}\" style=\"width:50px;height:50px;border-radius:8px;object-fit:cover;border:1.5px solid #e3cfe0;background:#faf7fc\" />\n          <div style=\"flex:1;min-width:0\">\n            <div style=\"font-weight:600;font-size:1.05rem;color:#6b2840;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\">${item.title}</div>\n            <div style=\"font-size:0.92rem;color:#888;margin-bottom:4px\">${item.barcode}</div>\n            <span style=\"display:inline-block;background:${colorDestino};color:white;padding:3px 8px;border-radius:4px;font-size:0.8rem;font-weight:600\">→ ${tiendaDestino}</span>\n          </div>\n          <input type=\"number\" min=\"1\" value=\"${item.qty}\" data-idx=\"${idx}\" class=\"transfer-qty\" style=\"width:60px;padding:6px;border-radius:6px;border:1px solid #e3cfe0;text-align:center;font-size:1rem\" />\n          <button type=\"button\" class=\"transfer-remove\" data-idx=\"${idx}\" style=\"background:none;border:none;color:#b04b70;font-size:1.2rem;cursor:pointer;padding:0 8px\">✕</button>\n        </div>\n      `;
+    }).join('');
+    html += `<div style=\"margin-top:18px;padding:14px 0;border-top:2px solid #e3cfe0;font-size:1.08rem;color:#5a2032;font-weight:600;display:flex;justify-content:space-between\">\n      <span>Total productos: ${window.selectedProducts.length}</span>\n      <span>Cantidad total: ${totalQty}</span>\n    </div>`;
+    transferList.innerHTML = html;
+  }
+
+  // Agregar producto por sugerencia o código/nombre
+  function addProductToTransfer(prod) {
+    if (!prod || !prod.product) return;
+    const entryBarcode = getEntryBarcode(prod);
+    
+    // Obtener tiendas seleccionadas
+    const tiendas = [];
+    if (document.getElementById('transfer-tienda1')?.checked) tiendas.push('tienda1');
+    if (document.getElementById('transfer-tienda2')?.checked) tiendas.push('tienda2');
+    if (document.getElementById('transfer-tienda3')?.checked) tiendas.push('tienda3');
+    
+    // Si no hay tiendas seleccionadas, no agregar
+    if (tiendas.length === 0) {
+      alert('Selecciona al menos una tienda destino');
+      return;
+    }
+    
+    // Agregar producto una vez por cada tienda seleccionada
+    tiendas.forEach(destino => {
+      window.selectedProducts.push({
+        id: prod.product.id,
+        title: getEntryTitle(prod),
+        img: prod.product.img,
+        barcode: entryBarcode,
+        variantIndex: prod.variantIndex,
+        usesVariants: prod.usesVariants === true,
+        destino: destino,
+        qty: 1
+      });
+    });
+    
+    renderTransferList();
+  }
+
+  transferSuggestions.addEventListener('mousedown', function(e) {
+    const item = e.target.closest('.transfer-suggestion-item');
+    if (item) {
+      const entry = findTransferEntry(item.dataset.barcode || item.dataset.title);
+      if (entry && entry.product) {
+        const entryBarcode = getEntryBarcode(entry);
+        
+        // Obtener tiendas seleccionadas
+        const tiendas = [];
+        if (document.getElementById('transfer-tienda1')?.checked) tiendas.push('tienda1');
+        if (document.getElementById('transfer-tienda2')?.checked) tiendas.push('tienda2');
+        if (document.getElementById('transfer-tienda3')?.checked) tiendas.push('tienda3');
+        
+        if (tiendas.length === 0) {
+          alert('Selecciona al menos una tienda destino');
+          return;
+        }
+        
+        tiendas.forEach(destino => {
+          window.selectedProducts.push({
+            id: entry.product.id,
+            title: getEntryTitle(entry),
+            img: entry.product.img,
+            barcode: entryBarcode,
+            variantIndex: entry.variantIndex,
+            usesVariants: entry.usesVariants === true,
+            destino: destino,
+            qty: 1
+          });
+        });
+        
+        renderTransferList();
+      }
+      transferInput.value = '';
+      transferSuggestions.style.display = 'none';
+      transferSuggestions.innerHTML = '';
+    }
+  });
+
+  transferInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ',') {
+      const value = transferInput.value.trim();
+      if (value) {
+        // Permitir agregar solo un producto por vez
+        let entry = findTransferEntry(value);
+        if (!entry && value.includes(',')) {
+          // Si el usuario pone varios códigos separados por coma, tomar solo el primero
+          const first = value.split(',')[0].trim();
+          entry = findTransferEntry(first);
+        }
+        if (entry && entry.product) {
+          const entryBarcode = getEntryBarcode(entry);
+          
+          // Obtener tiendas seleccionadas
+          const tiendas = [];
+          if (document.getElementById('transfer-tienda1')?.checked) tiendas.push('tienda1');
+          if (document.getElementById('transfer-tienda2')?.checked) tiendas.push('tienda2');
+          if (document.getElementById('transfer-tienda3')?.checked) tiendas.push('tienda3');
+          
+          if (tiendas.length === 0) {
+            alert('Selecciona al menos una tienda destino');
+          } else {
+            tiendas.forEach(destino => {
+              window.selectedProducts.push({
+                id: entry.product.id,
+                title: getEntryTitle(entry),
+                img: entry.product.img,
+                barcode: entryBarcode,
+                variantIndex: entry.variantIndex,
+                usesVariants: entry.usesVariants === true,
+                destino: destino,
+                qty: 1
+              });
+            });
+            renderTransferList();
+          }
+        } else {
+          transferInput.value = '';
+          transferSuggestions.style.display = 'none';
+          transferSuggestions.innerHTML = '';
+          alert('Producto no encontrado. Usa el autocompletado o verifica el código/nombre.');
+        }
+        transferInput.value = '';
+        transferSuggestions.style.display = 'none';
+        transferSuggestions.innerHTML = '';
+        e.preventDefault();
+      }
+    }
+  });
+
+  transferList.addEventListener('input', function(e) {
+    if (e.target.classList.contains('transfer-qty')) {
+      const idx = parseInt(e.target.dataset.idx);
+      let val = parseInt(e.target.value);
+      if (isNaN(val) || val < 1) val = 1;
+      window.selectedProducts[idx].qty = val;
+      renderTransferList();
+    }
+  });
+
+  transferList.addEventListener('click', function(e) {
+	if (e.target.classList.contains('transfer-remove')) {
+		const idx = parseInt(e.target.dataset.idx);
+		window.selectedProducts.splice(idx, 1);
+		renderTransferList();
+	}
+});
+
+  transferSuggestions.addEventListener('mousedown', function(e) {
+    const item = e.target.closest('.transfer-suggestion-item');
+    if (item) {
+      const entry = findTransferEntry(item.dataset.barcode || item.dataset.title);
+      if (entry && entry.product && getEntryBodegaQty(entry) > 0) {
+        addProductToTransfer(entry);
+      } else {
+        alert('No se encontró ningún producto con inventario en bodega para transferir.');
+      }
+      transferInput.value = '';
+      transferSuggestions.style.display = 'none';
+      transferSuggestions.innerHTML = '';
+    }
+  });
+
+  // Ocultar sugerencias si se pierde el foco
+  transferInput.addEventListener('blur', function() {
+    setTimeout(() => {
+      transferSuggestions.style.display = 'none';
+    }, 120);
+  });
+
+  // Event listeners para checkboxes de tiendas
+  ['transfer-tienda1', 'transfer-tienda2', 'transfer-tienda3'].forEach(id => {
+    const checkbox = document.getElementById(id);
+    if (checkbox) {
+      checkbox.addEventListener('change', function() {
+        // Aquí podrías agregar lógica adicional si es necesaria
+        // Por ejemplo, validar que al menos una tienda esté seleccionada
+      });
+    }
+  });
+
+  transferList.addEventListener('input', function(e) {
+    if (e.target.classList.contains('transfer-qty')) {
+      const idx = parseInt(e.target.dataset.idx);
+      let val = parseInt(e.target.value);
+      if (isNaN(val) || val < 1) val = 1;
+      window.selectedProducts[idx].qty = val;
+      renderTransferList();
+    }
+  });
+
+  transferList.addEventListener('click', function(e) {
+    if (e.target.classList.contains('transfer-remove')) {
+      const idx = parseInt(e.target.dataset.idx);
+      window.selectedProducts.splice(idx, 1);
+      renderTransferList();
+    }
+  });
+
+  // Al enviar el formulario, actualizar inventario y limpiar selección
+  const formTransfer = document.getElementById('form-transfer-bodega');
+  if (formTransfer) {
+    formTransfer.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (!window.selectedProducts || window.selectedProducts.length === 0) {
+        alert('Agrega al menos un producto para transferir.');
+        return;
+      }
+      let updated = false;
+      const transferProducts = getTransferProducts();
+      window.selectedProducts.forEach(sel => {
+        const entry = findTransferEntry(sel.barcode, transferProducts);
+        if (!entry || !entry.product) return;
+        
+        // Usar el destino específico de este producto
+        const destino = sel.destino;
+        
+        if (entry.variant) {
+          entry.variant.inventory = entry.variant.inventory || {tienda1:0, tienda2:0, tienda3:0, bodega:0};
+          if (typeof entry.variant.inventory[destino] === 'number') {
+            entry.variant.inventory.bodega = Math.max(0, entry.variant.inventory.bodega - sel.qty);
+            entry.variant.inventory[destino] += sel.qty;
+            updated = true;
+          }
+        } else if (entry.usesVariants && entry.product && entry.product.variants && Array.isArray(entry.product.variants.options)) {
+          let remaining = sel.qty;
+          entry.product.variants.options.forEach(opt => {
+            if (remaining <= 0) return;
+            opt.inventory = opt.inventory || {tienda1:0, tienda2:0, tienda3:0, bodega:0};
+            const available = opt.inventory.bodega || 0;
+            if (available > 0 && typeof opt.inventory[destino] === 'number') {
+              const take = Math.min(available, remaining);
+              opt.inventory.bodega -= take;
+              opt.inventory[destino] += take;
+              remaining -= take;
+              updated = true;
+            }
+          });
+        } else if (entry.product.inventory) {
+          if (typeof entry.product.inventory[destino] === 'number') {
+            entry.product.inventory.bodega = Math.max(0, entry.product.inventory.bodega - sel.qty);
+            entry.product.inventory[destino] += sel.qty;
+            updated = true;
+          }
+        }
+      });
+      if (updated) {
+        products = transferProducts;
+        localStorage.setItem('products_data', JSON.stringify(transferProducts));
+        syncBodegaToPoasFromSophie(transferProducts);
+        
+        // Guardar en historial de transferencias
+        const usuario = document.getElementById('transfer-usuario').value;
+        const historyEntry = {
+          id: Date.now(),
+          fecha: new Date().toISOString(),
+          usuario: usuario,
+          productos: window.selectedProducts.map(p => ({
+            titulo: p.title,
+            codigo: p.barcode,
+            cantidad: p.qty,
+            destino: p.destino
+          }))
+        };
+        const history = JSON.parse(localStorage.getItem('transfer_history') || '[]');
+        history.push(historyEntry);
+        localStorage.setItem('transfer_history', JSON.stringify(history));
+        
+        transferList.innerHTML = `<div style=\"background:#e8f5e9;color:#2e7d32;padding:24px 18px;border-radius:10px;text-align:center;font-size:1.15rem;font-weight:700;margin-top:24px\">✅ Transferencia realizada y inventario actualizado.</div>`;
+        setTimeout(() => {
+          window.selectedProducts = [];
+          renderTransferList();
+          document.getElementById('transfer-modal').setAttribute('aria-hidden','true');
+          document.getElementById('transfer-modal').style.display = 'none';
+        }, 1200);
+      }
+    });
+  }
+
+  // Render inicial
+  renderTransferList();
+
+  // ========== HISTORIAL DE TRANSFERENCIAS ==========
+  function formatFecha(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  function formatFechaHora(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function getTiendaNombreFromKey(key) {
+    const map = { tienda1: 'Sophie Store', tienda2: 'Sophie Mall', tienda3: 'Sophie\'s Ticados', ajuste: '⚙️ Ajuste Inventario' };
+    return map[key] || key;
+  }
+
+  function renderHistoryModal() {
+    const container = document.getElementById('history-container');
+    if (!container) return;
+
+    const history = JSON.parse(localStorage.getItem('transfer_history') || '[]');
+    
+    if (history.length === 0) {
+      container.innerHTML = '<div style="text-align:center;color:#888;padding:24px">No hay transferencias registradas aún.</div>';
+      return;
+    }
+
+    // Agrupar por mes y día
+    const grouped = {};
+    history.forEach(entry => {
+      const date = new Date(entry.fecha);
+      const mesAno = date.toLocaleDateString('es-ES', { year: 'numeric', month: 'long' });
+      const dia = date.toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' });
+      
+      if (!grouped[mesAno]) grouped[mesAno] = {};
+      if (!grouped[mesAno][dia]) grouped[mesAno][dia] = [];
+      grouped[mesAno][dia].push(entry);
+    });
+
+    let html = '';
+    Object.keys(grouped).sort((a, b) => new Date(b.split(' ')[2]) - new Date(a.split(' ')[2])).forEach(mes => {
+      html += `<div style="margin-bottom:24px">`;
+      html += `<h3 style="margin:0 0 12px 0;color:#5a2032;font-size:1.1rem;border-bottom:2px solid #e3cfe0;padding-bottom:8px;font-weight:700">${mes}</h3>`;
+      
+      Object.keys(grouped[mes]).sort((a, b) => new Date(b) - new Date(a)).forEach(dia => {
+        const dayEntries = grouped[mes][dia];
+        html += `<div style="margin-bottom:16px;padding:12px;background:white;border-radius:6px;border-left:4px solid #ff9800">`;
+        html += `<div style="font-weight:600;color:#5a2032;margin-bottom:8px;font-size:0.95rem">📅 ${dia}</div>`;
+        
+        dayEntries.forEach((entry, idx) => {
+          html += `<div style="background:#f8f5fa;padding:10px;border-radius:4px;margin-bottom:8px;font-size:0.9rem">`;
+          html += `<div style="color:#333;font-weight:500;margin-bottom:4px">${formatFechaHora(entry.fecha)} - Usuario: <strong>${entry.usuario}</strong></div>`;
+          html += `<div style="margin-left:0;padding-top:4px;border-top:1px solid #e3cfe0">`;
+          
+          entry.productos.forEach(prod => {
+            const tienda = getTiendaNombreFromKey(prod.destino);
+            html += `<div style="padding:4px 0;font-size:0.85rem;color:#555">
+              • ${prod.titulo} (${prod.codigo}) × ${prod.cantidad} → <strong style="color:#ff6b9d">${tienda}</strong>
+            </div>`;
+          });
+          
+          html += `</div></div>`;
+        });
+        
+        html += `</div>`;
+      });
+      
+      html += `</div>`;
+    });
+
+    container.innerHTML = html;
+  }
+
+  // Event listeners para modal de historial
+  const historyOpenBtn = document.getElementById('open-history-modal');
+  const historyModal = document.getElementById('history-modal');
+  const historyCloseBtn = document.getElementById('close-history-modal');
+
+  if (historyOpenBtn && historyModal) {
+    historyOpenBtn.addEventListener('click', () => {
+      renderHistoryModal();
+      historyModal.setAttribute('aria-hidden', 'false');
+      historyModal.style.display = 'block';
+    });
+  }
+
+  if (historyCloseBtn && historyModal) {
+    historyCloseBtn.addEventListener('click', () => {
+      historyModal.setAttribute('aria-hidden', 'true');
+      historyModal.style.display = 'none';
+    });
+  }
+
+  if (historyModal) {
+    historyModal.addEventListener('click', (e) => {
+      if (e.target === historyModal) {
+        historyModal.setAttribute('aria-hidden', 'true');
+        historyModal.style.display = 'none';
+      }
+    });
+  }
+
+  // Exportar historial como PDF
+  function exportToExcel() {
+    const history = JSON.parse(localStorage.getItem('transfer_history') || '[]');
+    
+    if (history.length === 0) {
+      alert('No hay transferencias para exportar.');
+      return;
+    }
+
+    // Generar HTML del PDF
+    let html = `
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Historial de Transferencias</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 20px;
+          color: #333;
+        }
+        .header {
+          text-align: center;
+          margin-bottom: 30px;
+          border-bottom: 3px solid #FF9800;
+          padding-bottom: 15px;
+        }
+        .header h1 {
+          margin: 0;
+          color: #5a2032;
+          font-size: 28px;
+        }
+        .header p {
+          margin: 5px 0 0 0;
+          color: #666;
+          font-size: 14px;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 20px;
+        }
+        th {
+          background-color: #FF9800;
+          color: white;
+          padding: 12px;
+          text-align: left;
+          font-weight: bold;
+          border: 1px solid #ddd;
+        }
+        td {
+          padding: 10px 12px;
+          border: 1px solid #ddd;
+        }
+        tr:nth-child(even) {
+          background-color: #f9f9f9;
+        }
+        tr:hover {
+          background-color: #f0f0f0;
+        }
+        .tienda-badge {
+          display: inline-block;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-weight: 600;
+          font-size: 12px;
+        }
+        .tienda1 { background-color: #ff6b9d; color: white; }
+        .tienda2 { background-color: #5a8dee; color: white; }
+        .tienda3 { background-color: #ffc107; color: white; }
+        .footer {
+          text-align: center;
+          margin-top: 40px;
+          padding-top: 20px;
+          border-top: 1px solid #ddd;
+          color: #999;
+          font-size: 12px;
+        }
+        @media print {
+          body { margin: 0; }
+          .no-print { display: none; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <h1>📋 Historial de Transferencias</h1>
+        <p>Generado el ${new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Usuario</th>
+            <th>Producto</th>
+            <th>Código</th>
+            <th>Cantidad</th>
+            <th>Tienda Destino</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    // Agregar filas de datos
+    history.forEach(entry => {
+      const date = new Date(entry.fecha);
+      const fechaStr = date.toLocaleDateString('es-ES');
+      const horaStr = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+      
+      entry.productos.forEach(prod => {
+        const tienda = getTiendaNombreFromKey(prod.destino);
+        const tiendaClass = prod.destino;
+        html += `
+          <tr>
+            <td>${fechaStr}</td>
+            <td>${horaStr}</td>
+            <td>${entry.usuario}</td>
+            <td>${prod.titulo}</td>
+            <td>${prod.codigo}</td>
+            <td>${prod.cantidad}</td>
+            <td><span class="tienda-badge ${tiendaClass}">${tienda}</span></td>
+          </tr>
+        `;
+      });
+    });
+
+    html += `
+        </tbody>
+      </table>
+
+      <div class="footer">
+        <p>Total de transferencias: ${history.length}</p>
+        <p>Documento generado automáticamente por Sophie - Sistema de Inventario</p>
+      </div>
+
+      <div class="no-print" style="text-align: center; margin-top: 30px; padding: 20px; background: #f0f0f0; border-radius: 8px;">
+        <button onclick="window.print()" style="background: #FF9800; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; margin-right: 10px;">
+          🖨️ Guardar como PDF
+        </button>
+        <button onclick="window.close()" style="background: #999; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold;">
+          ✕ Cerrar
+        </button>
+      </div>
+    </body>
+    </html>
+    `;
+
+    // Abrir en nueva ventana
+    const printWindow = window.open('', '', 'height=600,width=800');
+    printWindow.document.write(html);
+    printWindow.document.close();
+  }
+
+  function exportToCsv() {
+    const history = JSON.parse(localStorage.getItem('transfer_history') || '[]');
+    
+    if (history.length === 0) {
+      alert('No hay transferencias para exportar.');
+      return;
+    }
+
+    let csv = 'Fecha;Hora;Usuario;Producto;Código;Cantidad;Tienda Destino\n';
+    
+    history.forEach(entry => {
+      const date = new Date(entry.fecha);
+      const fechaStr = date.toLocaleDateString('es-ES');
+      const horaStr = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+      
+      entry.productos.forEach(prod => {
+        const tienda = getTiendaNombreFromKey(prod.destino);
+        csv += `"${fechaStr}";"${horaStr}";"${entry.usuario}";"${prod.titulo}";"${prod.codigo}";${prod.cantidad};"${tienda}"\n`;
+      });
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `historial-transferencias-${new Date().toISOString().split('T')[0]}.csv`);
+    link.click();
+  }
+
+  // Event listeners para descargas
+  const exportExcelBtn = document.getElementById('export-history-excel');
+  const exportCsvBtn = document.getElementById('export-history-csv');
+
+  if (exportExcelBtn) {
+    exportExcelBtn.addEventListener('click', exportToExcel);
+  }
+
+  if (exportCsvBtn) {
+    exportCsvBtn.addEventListener('click', exportToCsv);
+  }
+});
+
+// Función para calcular si un producto está agotado basado en su stock total o marca manual
+function isProductOutOfStock(product) {
+  // Primero verificar si está marcado manualmente como agotado
+  if (product.outOfStock === true) {
+    return true;
   }
   
-  // Si no hay datos válidos, usar defaultProducts y guardar en localStorage
-  console.log('Guardando defaultProducts en localStorage');
-  var productsToSave = ensureBarcodesExist([...defaultProducts]);
-  saveProductsToStorage(productsToSave);
-  return productsToSave;
-}
-
-// Función para sincronizar inventario desde defaultProducts
-function syncInventoryFromDefaults() {
-  const stored = localStorage.getItem('products_data');
-  if (stored) {
-    try {
-      const storedProducts = JSON.parse(stored);
-      // NO sobrescribir inventarios existentes - solo sincronizar estructura
-      // Mantener todos los datos del localStorage (inventario incluido)
-      return storedProducts;
-    } catch (e) {
-      console.error('Error al cargar productos:', e);
-      return defaultProducts;
-    }
-  }
-  // Si no hay nada en localStorage, usar defaultProducts
-  return defaultProducts;
-}
-
-function saveProductsToStorage(productsArray) {
-  try {
-    localStorage.setItem('products_data', JSON.stringify(productsArray));
-    return true;
-  } catch (e) {
-    console.error('Error al guardar productos:', e);
-    return false;
-  }
-}
-
-// Cargar productos (desde localStorage o usar por defecto)
-let products = loadProductsFromStorage();
-
-// Función para calcular si un producto está agotado basado en su stock total
-function isProductOutOfStock(product) {
+  const OUT_OF_STOCK_THRESHOLD = 3;
   // Si tiene variantes, sumar el stock de todas las opciones
   if (product.variants && product.variants.options && product.variants.options.length > 0) {
     let totalStock = 0;
@@ -89,13 +849,13 @@ function isProductOutOfStock(product) {
       const inventory = option.inventory || {tienda1:0, tienda2:0, tienda3:0, bodega:0};
       totalStock += (inventory.tienda1 || 0) + (inventory.tienda2 || 0) + (inventory.tienda3 || 0) + (inventory.bodega || 0);
     });
-    return totalStock === 0;
+    return totalStock <= OUT_OF_STOCK_THRESHOLD;
   }
   
   // Si no tiene variantes, usar el inventario general
   const inventory = product.inventory || {tienda1:0, tienda2:0, tienda3:0, bodega:0};
   const totalStock = (inventory.tienda1 || 0) + (inventory.tienda2 || 0) + (inventory.tienda3 || 0) + (inventory.bodega || 0);
-  return totalStock === 0;
+  return totalStock <= OUT_OF_STOCK_THRESHOLD;
 }
 
 // Función para asegurar que todos los productos tengan código de barras
@@ -224,18 +984,37 @@ function renderCartCount(cart){
 }
 
 function addToCart(product, qty=1){
+  // No permitir agregar productos agotados
+  if(product.outOfStock){
+    alert('Este producto está agotado y no se puede agregar al carrito.');
+    return;
+  }
   const cart = loadCart();
 
-  const cartKey = `${product.id}|${product.title}`;
-  const found = cart.find(i=>`${i.id}|${i.title}`===cartKey);
-  if(found){ found.qty += qty; }
-  else{ cart.push({id:product.id,title:product.title,price:product.price,img:product.img,qty:qty}); }
+  // Usar id y barcode para identificar el producto/variante en el carrito
+  let barcode = product.selectedVariantBarcode || product.barcode;
+  const cartKey = `${product.id}|${barcode}`;
+
+  const found = cart.find(i => i.id === product.id && i.barcode === barcode);
+  if(found){
+    found.qty += qty;
+  } else {
+    cart.push({
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      img: product.img,
+      qty: qty,
+      barcode: barcode
+    });
+  }
   saveCart(cart);
 }
 
 function setItemQty(id, qty){
   const cart = loadCart();
-  const idx = cart.findIndex(i=>i.id===id);
+  // Buscar por id y barcode
+  const idx = cart.findIndex(i => i.id === id.id && i.barcode === id.barcode);
   if(idx!==-1){
     if(qty<=0) cart.splice(idx,1);
     else cart[idx].qty = qty;
@@ -266,13 +1045,13 @@ function renderCartDrawer(){
       <div style="flex:1">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <strong>${item.title}</strong>
-          <button class="remove-item" data-id="${item.id}" style="border:none;background:transparent;color:#b04b70;cursor:pointer">Eliminar</button>
+          <button class="remove-item" data-id="${item.id}" data-barcode="${item.barcode}" style="border:none;background:transparent;color:#b04b70;cursor:pointer">Eliminar</button>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
-          <div class="qty-controls" data-id="${item.id}">
-            <button class="qty-decrease" data-id="${item.id}">-</button>
-            <span class="qty" data-id="${item.id}">${item.qty}</span>
-            <button class="qty-increase" data-id="${item.id}">+</button>
+          <div class="qty-controls" data-id="${item.id}" data-barcode="${item.barcode}">
+            <button class="qty-decrease" data-id="${item.id}" data-barcode="${item.barcode}">-</button>
+            <span class="qty" data-id="${item.id}" data-barcode="${item.barcode}">${item.qty}</span>
+            <button class="qty-increase" data-id="${item.id}" data-barcode="${item.barcode}">+</button>
           </div>
           <div class="item-price">${formatPrice(item.price * item.qty)}</div>
         </div>
@@ -419,10 +1198,16 @@ if(carousel && slides.length){
 
 
 function showModal(product){
+  const latestProducts = loadProductsFromStorage();
+  const freshProduct = Array.isArray(latestProducts)
+    ? latestProducts.find(p => p.id === product.id)
+    : null;
+  if (freshProduct) product = freshProduct;
   let currentImgIndex = 0;
   const images = product.images || [product.img];
   let selectedVariant = product.variants ? product.variants.options[0] : null;
   let currentPrice = selectedVariant ? selectedVariant.price : product.price;
+  const isOutOfStock = isProductOutOfStock(product);
   const isHP = /harry potter/i.test(product.title || '');
   const isSnoopy = /snoopy|peanuts/i.test(product.title || '');
   const modalContent = document.querySelector('.modal-content');
@@ -462,11 +1247,11 @@ function showModal(product){
 
   modalBody.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:18px;position:relative;min-height:300px">
-      ${product.outOfStock ? '<div style="background:rgba(220,53,69,0.95);color:#fff;font-weight:700;padding:12px 20px;border-radius:8px;text-align:center;font-size:1.1rem;box-shadow:0 4px 12px rgba(220,53,69,0.3);margin-bottom:8px">⚠️ Producto Agotado</div>' : ''}
+      <div id="modal-out-banner" style="background:rgba(220,53,69,0.95);color:#fff;font-weight:700;padding:12px 20px;border-radius:8px;text-align:center;font-size:1.1rem;box-shadow:0 4px 12px rgba(220,53,69,0.3);margin-bottom:8px;display:${isOutOfStock ? 'block' : 'none'}">⚠️ Producto Agotado</div>
       <div style="display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap${isHP ? ';animation:hpContentAppear 1.2s ease-out' : ''}">
         <div style="position:relative;width:240px${isHP ? ';animation:hpImageAppear 0.8s ease-out' : ''}">
-          ${product.outOfStock ? '<div style="position:absolute;top:8px;left:8px;background:rgba(220,53,69,0.95);color:#fff;font-weight:700;font-size:0.85rem;padding:4px 10px;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,0.15);z-index:3">Agotado</div>' : ''}
-          <img id="modal-img" src="${images[0]}" alt="${product.title}" style="width:240px;height:240px;border-radius:8px;object-fit:cover${product.outOfStock ? ';opacity:0.6;filter:grayscale(30%)' : ''}" />
+          <div id="modal-out-overlay" style="position:absolute;top:8px;left:8px;background:rgba(220,53,69,0.95);color:#fff;font-weight:700;font-size:0.85rem;padding:4px 10px;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,0.15);z-index:3;display:${isOutOfStock ? 'block' : 'none'}">Agotado</div>
+          <img id="modal-img" src="${images[0]}" alt="${product.title}" style="width:240px;height:240px;border-radius:8px;object-fit:cover${isOutOfStock ? ';opacity:0.6;filter:grayscale(30%)' : ''}" />
           ${images.length > 1 ? `
             <button class="modal-prev" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.9);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.15)">‹</button>
             <button class="modal-next" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.9);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.15)">›</button>
@@ -477,7 +1262,7 @@ function showModal(product){
         </div>
         <div style="flex:1${isHP ? ';animation:hpTextAppear 1s ease-out 0.3s both' : ''}">
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-            <h3 style="margin:0">${product.title}</h3>
+            <h3 style="margin:0;font-family:'CenturyGothic',Playfair Display,serif">${product.title}</h3>
             ${isHP ? '<span class="hp-badge">Wizarding Edition</span>' : ''}
             ${isSnoopy ? '<span class="snoopy-badge">Snoopy Collection</span>' : ''}
           </div>
@@ -509,7 +1294,8 @@ function showModal(product){
         </div>
       </div>
       <div style="display:flex;justify-content:flex-end;margin-top:auto">
-        <button id="modal-add" class="add ${isHP ? 'hp-btn' : ''} ${isSnoopy ? 'snoopy-btn' : ''}" ${product.outOfStock ? 'disabled style="background:#ddd;color:#777;cursor:not-allowed;box-shadow:none"' : ''}>${product.outOfStock ? 'Agotado' : 'Agregar'}</button>
+        <div id="modal-out-badge" class="badge-out" style="margin-right:12px;background:#f44336;color:white;padding:6px 16px;border-radius:8px;font-weight:700;display:${isOutOfStock ? 'inline-block' : 'none'}">Agotado</div>
+        <button id="modal-add" class="add ${isHP ? 'hp-btn' : ''} ${isSnoopy ? 'snoopy-btn' : ''}" ${isOutOfStock ? 'disabled' : ''} style="${isOutOfStock ? 'background:#ddd;color:#777;cursor:not-allowed;box-shadow:none' : ''}">${isOutOfStock ? 'Agotado' : 'Agregar'}</button>
       </div>
     </div>
   `;
@@ -519,7 +1305,33 @@ function showModal(product){
     if (invDiv) invDiv.outerHTML = getInventoryHTML(inv);
   }
 
+  function updateModalOutOfStock() {
+    const out = isProductOutOfStock(product);
+    const banner = document.getElementById('modal-out-banner');
+    const overlay = document.getElementById('modal-out-overlay');
+    const badge = document.getElementById('modal-out-badge');
+    const addBtn = document.getElementById('modal-add');
+    const img = document.getElementById('modal-img');
+
+    if (banner) banner.style.display = out ? 'block' : 'none';
+    if (overlay) overlay.style.display = out ? 'block' : 'none';
+    if (badge) badge.style.display = out ? 'inline-block' : 'none';
+    if (img) {
+      img.style.opacity = out ? '0.6' : '1';
+      img.style.filter = out ? 'grayscale(30%)' : 'none';
+    }
+    if (addBtn) {
+      addBtn.disabled = out;
+      addBtn.textContent = out ? 'Agotado' : 'Agregar';
+      addBtn.style.background = out ? '#ddd' : '';
+      addBtn.style.color = out ? '#777' : '';
+      addBtn.style.cursor = out ? 'not-allowed' : '';
+      addBtn.style.boxShadow = out ? 'none' : '';
+    }
+  }
+
   modal.setAttribute('aria-hidden','false');
+  updateModalOutOfStock();
 
 
   if (product.variants) {
@@ -617,11 +1429,22 @@ function showModal(product){
   }
 
   document.getElementById('modal-add').addEventListener('click',()=>{ 
-    if(product.outOfStock) return;
+    if (isProductOutOfStock(product)) {
+      updateModalOutOfStock();
+      return;
+    }
     const qty = parseInt(document.getElementById('modal-qty').value) || 1;
-    const productToAdd = product.variants && selectedVariant ? 
-      {...product, price: selectedVariant.price, title: `${product.title} (${selectedVariant.name})`} : 
-      product;
+    let productToAdd;
+    if(product.variants && selectedVariant){
+      productToAdd = {
+        ...product,
+        price: selectedVariant.price,
+        title: `${product.title} (${selectedVariant.name})`,
+        selectedVariantBarcode: selectedVariant.barcode
+      };
+    } else {
+      productToAdd = {...product, selectedVariantBarcode: product.barcode};
+    }
     addToCart(productToAdd, qty);
     closeModal();
     openCart();
@@ -676,8 +1499,8 @@ function renderProducts(filter='all',search='',page=null){
       <button class="card-nav next" aria-label="Imagen siguiente">›</button>
     ` : '';
 
-    // Verificar si el producto está agotado basándose en su stock total
-    const outOfStock = isProductOutOfStock(p);
+    // Verificar si el producto está agotado por inventario o por bandera manual
+    const outOfStock = p.outOfStock === true || isProductOutOfStock(p);
 
     card.innerHTML = `
       <div class="card-img-container">
@@ -686,9 +1509,7 @@ function renderProducts(filter='all',search='',page=null){
         ${navHTML}
         ${dotsHTML}
       </div>
-      <h3>${p.title}</h3>
-      <div class="price">${getPriceDisplay(p)}</div>
-      <button class="add" data-id="${p.id}" ${outOfStock ? 'disabled aria-disabled="true"' : ''}>${outOfStock ? 'Agotado' : 'Agregar'}</button>
+      <h3 style="font-family:'CenturyGothic',Playfair Display,serif">${p.title}</h3>
     `;
     grid.appendChild(card);
 
@@ -805,9 +1626,7 @@ function renderBestSellers(count=6){
         ${navHTML}
         ${dotsHTML}
       </div>
-      <h3>${p.title}</h3>
-      <div class="price">${getPriceDisplay(p)}</div>
-      <button class="add" data-id="${p.id}" ${isOutOfStock ? 'disabled aria-disabled="true"' : ''}>${isOutOfStock ? 'Agotado' : 'Agregar'}</button>
+      <h3 style="font-family:'CenturyGothic',Playfair Display,serif">${p.title}</h3>
     `;
     container.appendChild(card);
 
@@ -963,9 +1782,15 @@ if(cartItemsNode){
   cartItemsNode.addEventListener('click',(e)=>{
     try{
       const id = e.target && e.target.dataset ? parseInt(e.target.dataset.id) : null;
-      if(e.target.matches('.qty-increase') && id){ const cart = loadCart(); const item = cart.find(i=>i.id===id); if(item){ setItemQty(id,item.qty+1); renderCartDrawer(); } }
-      if(e.target.matches('.qty-decrease') && id){ const cart = loadCart(); const item = cart.find(i=>i.id===id); if(item){ setItemQty(id,item.qty-1); renderCartDrawer(); } }
-      if(e.target.matches('.remove-item') && id){ setItemQty(id,0); renderCartDrawer(); }
+      const barcode = e.target && e.target.dataset ? e.target.dataset.barcode : null;
+      if(id && barcode){
+        const key = {id, barcode};
+        const cart = loadCart();
+        const item = cart.find(i=>i.id===id && i.barcode===barcode);
+        if(e.target.matches('.qty-increase')){ if(item){ setItemQty(key, item.qty+1); renderCartDrawer(); } }
+        if(e.target.matches('.qty-decrease')){ if(item){ setItemQty(key, item.qty-1); renderCartDrawer(); } }
+        if(e.target.matches('.remove-item')){ setItemQty(key, 0); renderCartDrawer(); }
+      }
     }catch(err){ /* defensive */ }
   });
 }
@@ -1473,6 +2298,4 @@ function getLocalISODateTime() {
   var second = String(now.getSeconds()).padStart(2, '0');
   return year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':' + second;
 }
-
-
 

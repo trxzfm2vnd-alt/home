@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="es">
   <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Iniciar Sesión - Sophie Admin</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Iniciar Sesión - Poás POS</title>
     <link rel="stylesheet" href="styles.css" />
     <style>
       @font-face {
@@ -17,14 +17,14 @@
         align-items: center;
         justify-content: center;
         min-height: 100vh;
-        background: linear-gradient(135deg, #f3e5f5 0%, #fce4ec 100%);
+        background: linear-gradient(135deg, #ffffff 0%, #e6fcff 100%);
         padding: 20px;
       }
       .login-box {
         background: white;
         padding: 40px;
         border-radius: 20px;
-        box-shadow: 0 10px 40px rgba(82, 44, 60, 0.15);
+        box-shadow: 0 10px 40px rgba(9, 72, 151, 0.15);
         max-width: 400px;
         width: 100%;
       }
@@ -32,21 +32,29 @@
         text-align: center;
         margin-bottom: 30px;
       }
-      .login-logo svg {
-        width: 64px;
-        height: 64px;
-        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+      .login-logo img {
+        width: 220px;
+        height: auto;
+        object-fit: contain;
+        margin-bottom: 16px;
+        filter: drop-shadow(0 4px 12px rgba(9, 72, 151, 0.2));
       }
       .login-logo h1 {
         font-family: 'Daily', Playfair Display, serif;
-        color: #2c4a8c;
-        margin: 16px 0 8px;
-        font-size: 3rem;
+        color: #094897;
+        margin: 12px 0 8px;
+        font-size: 2rem;
       }
       .login-logo p {
-        color: var(--muted);
+        color: #888;
         margin: 0;
         font-size: 0.95rem;
+      }
+      .login-logo .subtitle {
+        font-size: 0.85rem;
+        color: #B411AF;
+        font-weight: 600;
+        margin-top: 4px;
       }
       .form-group {
         margin-bottom: 20px;
@@ -55,26 +63,28 @@
         display: block;
         margin-bottom: 8px;
         font-weight: 600;
-        color: #5a2032;
+        color: #094897;
         font-size: 0.95rem;
       }
       .form-group input {
         width: 100%;
         padding: 12px 16px;
-        border: 2px solid #e3cfe0;
+        border: 2px solid #e0e0e0;
         border-radius: 10px;
         font-family: Montserrat, sans-serif;
         font-size: 1rem;
         transition: border-color 0.3s;
+        box-sizing: border-box;
       }
       .form-group input:focus {
         outline: none;
-        border-color: var(--accent);
+        border-color: #094897;
+        box-shadow: 0 0 0 3px rgba(9, 72, 151, 0.1);
       }
       .btn-login {
         width: 100%;
         padding: 14px;
-        background: linear-gradient(135deg, #5a8dee, #3a70d6);
+        background: linear-gradient(135deg, #094897, #280498);
         color: white;
         border: none;
         border-radius: 10px;
@@ -85,14 +95,17 @@
         margin-top: 10px;
       }
       .btn-login:hover {
-        box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+        box-shadow: 0 6px 20px rgba(9, 72, 151, 0.4);
         transform: translateY(-2px);
+      }
+      .btn-login:active {
+        transform: translateY(0);
       }
       .btn-back {
         display: block;
         text-align: center;
         margin-top: 20px;
-        color: #6b2840;
+        color: #094897;
         text-decoration: none;
         font-weight: 600;
       }
@@ -100,27 +113,27 @@
         text-decoration: underline;
       }
       .error-message {
-        background: #ffebee;
-        color: #c62828;
+        background: rgba(255, 84, 3, 0.12);
+        color: #FF5403;
         padding: 12px;
         border-radius: 8px;
         margin-bottom: 20px;
         display: none;
         font-size: 0.9rem;
-        border: 1px solid #ef9a9a;
+        border: 1px solid rgba(255, 84, 3, 0.35);
       }
       .error-message.show {
         display: block;
       }
       .success-message {
-        background: #e8f5e9;
-        color: #2e7d32;
+        background: rgba(61, 173, 242, 0.12);
+        color: #094897;
         padding: 12px;
         border-radius: 8px;
         margin-bottom: 20px;
         display: none;
         font-size: 0.9rem;
-        border: 1px solid #a5d6a7;
+        border: 1px solid rgba(61, 173, 242, 0.4);
       }
       .success-message.show {
         display: block;
@@ -132,7 +145,7 @@
         gap: 6px;
         border: none;
         background: transparent;
-        color: #5a2032;
+        color: #094897;
         font-weight: 600;
         cursor: pointer;
         text-decoration: underline;
@@ -173,20 +186,37 @@
       }
       .modal-card h3 {
         margin-top: 0;
-        color: #2c4a8c;
+        color: #094897;
       }
-      .credentials-hint {
-        background: #e3f2fd;
+      .poas-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #094897, #B411AF);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        margin-top: 12px;
+      }
+      .user-roles {
+        background: #f5f5f5;
         padding: 12px;
         border-radius: 8px;
         margin-bottom: 20px;
         font-size: 0.85rem;
-        color: #1565c0;
-        border: 1px solid #90caf9;
+        color: #666;
+        border-left: 3px solid #094897;
       }
-      .credentials-hint strong {
+      .user-roles strong {
+        color: #094897;
         display: block;
-        margin-bottom: 4px;
+        margin-bottom: 6px;
+      }
+      .role-item {
+        padding: 4px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
       }
     </style>
   </head>
@@ -194,10 +224,14 @@
     <div class="login-container">
       <div class="login-box">
         <div class="login-logo">
-          <h1>Sophie Admin</h1>
-          <p>Panel de Administración</p>
+          <img src="Logo%20Po%C3%A1s/Logos-Poas-color-1.png" alt="Logo Poás" />
+          <p>Punto de Ventas</p>
+          <div class="poas-badge">🏪 POS SYSTEM</div>
         </div>
 
+        <div id="success-message" class="success-message">
+          ✅ Sesión iniciada. Redirigiendo...
+        </div>
 
         <div id="error-message" class="error-message">
           Usuario o contraseña incorrectos
@@ -206,12 +240,12 @@
         <form id="login-form">
           <div class="form-group">
             <label for="username">Usuario</label>
-            <input type="text" id="username" name="username" required autocomplete="username">
+            <input type="text" id="username" name="username" placeholder="Ingresa tu usuario" required autocomplete="username">
           </div>
 
           <div class="form-group">
             <label for="password">Contraseña</label>
-            <input type="password" id="password" name="password" required autocomplete="current-password">
+            <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" required autocomplete="current-password">
           </div>
 
           <button type="submit" class="btn-login">Iniciar Sesión</button>
@@ -252,22 +286,22 @@
     </div>
 
     <script>
-      // Credenciales de usuarios (encargados, administradores y vendedores)
+      // Credenciales de usuarios para Poás POS
       const VALID_USERS = {
         // Encargados
-        'Darlyn': 'Sophie2026',
-        'Rebeca': 'Sophie2026',
-        'Elizabeth': 'Sophie2026',
+        'Darlyn': 'Poas2026',
+        'Rebeca': 'Poas2026',
+        'Elizabeth': 'Poas2026',
         // Administradores
-        'Moni': 'Sophie2026',
-        'Hernan': 'Sophie2026',
-        'David': 'Sophie2026',
-        'Esteban': 'Sophie2026',
+        'Moni': 'Poas2026',
+        'Hernan': 'Poas2026',
+        'David': 'Poas2026',
+        'Esteban': 'Poas2026',
         // Vendedores
-        'PVSophie': 'Sophie2026'
+        'PVPoas': 'Poas2026'
       };
 
-      const PASSWORD_STORAGE_KEY = 'sophie_passwords';
+      const PASSWORD_STORAGE_KEY = 'poas_passwords';
       const getStoredPasswords = () => {
         try {
           return JSON.parse(localStorage.getItem(PASSWORD_STORAGE_KEY) || '{}');
@@ -281,6 +315,7 @@
 
       const form = document.getElementById('login-form');
       const errorMessage = document.getElementById('error-message');
+      const successMessage = document.getElementById('success-message');
       const usernameInput = document.getElementById('username');
       const passwordInput = document.getElementById('password');
       const openChangeBtn = document.getElementById('open-change-password');
@@ -295,8 +330,8 @@
       const changeSuccess = document.getElementById('change-password-success');
 
       // Verificar si ya hay sesión activa
-      if (sessionStorage.getItem('adminLoggedIn') === 'true') {
-        window.location.href = 'admin.html';
+      if (sessionStorage.getItem('poasLoggedIn') === 'true') {
+        window.location.href = 'pos-poas.html';
       }
 
       form.addEventListener('submit', (e) => {
@@ -310,8 +345,11 @@
 
         if (expectedPassword && expectedPassword === password) {
           // Login exitoso
-          sessionStorage.setItem('adminLoggedIn', 'true');
-          sessionStorage.setItem('adminUsername', username);
+          errorMessage.classList.remove('show');
+          successMessage.classList.add('show');
+          
+          sessionStorage.setItem('poasLoggedIn', 'true');
+          sessionStorage.setItem('poasUsername', username);
           
           // Determinar tipo de usuario
           let userType = 'vendedor'; // por defecto
@@ -321,10 +359,18 @@
             userType = 'admin';
           }
           
-          sessionStorage.setItem('userType', userType);
-          window.location.href = 'admin.html';
+          sessionStorage.setItem('poasUserType', userType);
+          
+          // Guardar hora de login
+          sessionStorage.setItem('poasLoginTime', new Date().toISOString());
+          
+          // Redirigir después de 800ms
+          setTimeout(() => {
+            window.location.href = 'pos-poas.html';
+          }, 800);
         } else {
           // Login fallido
+          successMessage.classList.remove('show');
           errorMessage.classList.add('show');
           passwordInput.value = '';
           passwordInput.focus();
@@ -344,6 +390,9 @@
       passwordInput.addEventListener('input', () => {
         errorMessage.classList.remove('show');
       });
+
+      // Auto-focus al usuario
+      usernameInput.focus();
 
       const openChangeModal = () => {
         if (!changeModal) return;
