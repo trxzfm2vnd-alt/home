@@ -584,8 +584,8 @@
           overflow:visible !important;
           color:#000 !important;
           font-family: Arial, Helvetica, sans-serif !important;
-          font-size:16px !important;
-          line-height:1.3 !important;
+          font-size:12px !important;
+          line-height:1.28 !important;
           box-sizing:border-box !important;
           padding:0 !important;
         }
@@ -596,9 +596,10 @@
         #abono-invoice-modal > div {
           box-shadow:none !important;
           border-radius:0 !important;
-          width:72mm !important;
-          max-width:72mm !important;
-          padding:1.5mm !important;
+          /* content area slightly smaller than paper to avoid non-printable edges */
+          width:66mm !important;
+          max-width:66mm !important;
+          padding:1mm !important;
           margin:0 !important;
           border:none !important;
           page-break-after:avoid !important;
@@ -616,40 +617,58 @@
         /* Ensure buttons are hidden */
         button { display:none !important; }
 
-        /* Images: print in high contrast; set explicit width in mm for receipt printers */
+        /* Logo sizing for impact printers: smaller so it doesn't push content */
         #invoice-modal img,
         #apartado-invoice-modal img,
         #completion-invoice-modal img,
         #abono-invoice-modal img {
           -webkit-print-color-adjust:exact !important;
           print-color-adjust:exact !important;
-          color-adjust:exact !important;
-          max-width:100% !important;
+          max-width:40mm !important;
           width:auto !important;
           height:auto !important;
           display:block !important;
-          margin:0 auto 6px !important;
-          image-rendering:optimizeQuality;
+          margin:0 auto 4px !important;
           opacity:1 !important;
         }
 
-        table { width:100% !important; color:#000 !important; font-size:12px !important; table-layout:fixed !important; border-collapse:collapse !important; }
-        tr { page-break-inside:avoid !important; }
-        td, th { border:none !important; padding:0.5mm 0.6mm !important; color:#000 !important; font-size:12px !important; font-weight:700 !important; word-wrap:break-word; overflow-wrap:break-word; }
+        /* Force darker, fully opaque text for printed invoices */
+        #invoice-modal, #invoice-modal *,
+        #apartado-invoice-modal, #apartado-invoice-modal *,
+        #completion-invoice-modal, #completion-invoice-modal *,
+        #abono-invoice-modal, #abono-invoice-modal * {
+          color: #000 !important;
+          opacity: 1 !important;
+          filter: none !important;
+          -webkit-filter: none !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          -webkit-font-smoothing: antialiased !important;
+          font-weight: 600 !important;
+        }
 
-        /* inner content should respect the page margins: use padding inside modal content */
+        table { width:100% !important; color:#000 !important; font-size:11px !important; table-layout:fixed !important; border-collapse:collapse !important; }
+        tr { page-break-inside:avoid !important; }
+        td, th { border:none !important; padding:0.35mm 0.6mm !important; color:#000 !important; font-size:11px !important; font-weight:600 !important; word-wrap:break-word; overflow-wrap:break-word; }
+
+        /* inner content should respect the page margins: more left padding to avoid left cut */
         #invoice-modal > div > div,
         #apartado-invoice-modal > div > div,
         #completion-invoice-modal > div > div,
         #abono-invoice-modal > div > div {
           width:100% !important;
-          padding:0 3mm !important;
+          /* shift content to the right to avoid left-side cut on TM-U220A */
+          padding-left:5mm !important;
+          padding-right:3mm !important;
           box-sizing:border-box !important;
         }
 
-        /* Larger headings and totals */
-        #invoice-modal .invoice-title, #invoice-modal h1 { font-size:20px !important; font-weight:900 !important; }
-        #invoice-modal tfoot td { font-size:20px !important; }
+        /* Larger headings and totals — make store title very prominent and consistent */
+        #invoice-modal .invoice-title, #invoice-modal h1 { font-size:20px !important; font-weight:800 !important; letter-spacing:0.2px !important; text-rendering:geometricPrecision !important; }
+        #invoice-modal tfoot td { font-size:18px !important; font-weight:800 !important; }
+
+        /* Ensure crisp rendering on impact/thermal printers */
+        #invoice-modal, #invoice-modal * { -webkit-font-smoothing:antialiased !important; text-rendering:optimizeLegibility !important; font-synthesis:none !important; }
 
         /* Ensure Arial overall */
         body, table, td, th, div, span { font-family: Arial, Helvetica, sans-serif !important; color:#000 !important; }
@@ -667,10 +686,10 @@
       const displayTitle = item.variant ? `${item.title} - ${item.variant}` : item.title;
       return `
         <tr>
-          <td style="word-wrap:break-word;max-width:40px">${displayTitle}</td>
-          <td style="text-align:center;padding:0 4px">x${item.qty}</td>
-          <td style="text-align:right;padding:0 4px">${formatCRC(item.price)}</td>
-          <td style="text-align:right;padding:0 4px">${formatCRC(item.price * item.qty)}</td>
+          <td class="invoice-desc" style="word-wrap:break-word;max-width:40mm;padding:2px 0">${displayTitle}</td>
+          <td class="invoice-qty" style="text-align:center;padding:0 4px">x${item.qty}</td>
+          <td class="invoice-price" style="text-align:right;padding:0 4px"><span class="invoice-amount">${formatCRC(item.price)}</span></td>
+          <td class="invoice-line-total" style="text-align:right;padding:0 4px"><span class="invoice-amount">${formatCRC(item.price * item.qty)}</span></td>
         </tr>
       `;
     }).join('');
@@ -687,8 +706,8 @@
     const html = `
       <div style="font-family:Arial, Helvetica, sans-serif;width:72mm;margin:0;padding:0;background:#fff;font-size:14px;color:#000;line-height:1.25;-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box">
         <div style="text-align:center;margin-bottom:6px;border-bottom:2px dashed #000;padding-bottom:6px">
-          <img src="Logo%20Po%C3%A1s/Logos-Poas-negro.png" alt="Logo Poás" style="max-width:100%;width:auto;height:auto;display:block;margin:0 auto 6px;filter:contrast(120%);opacity:1;" />
-            <div style="margin:4px 0;font-size:18px;font-weight:900;color:#000" class="invoice-title">FACTURA DE VENTA</div>
+          <img src="Logo%20Po%C3%A1s/Logos-Poas-negro.png" alt="Logo Poás" style="max-width:30mm;width:auto;height:auto;display:block;margin:0 auto 6px;filter:contrast(120%);opacity:1;" />
+            <div style="margin:4px 0;font-size:20px;font-weight:800;color:#000" class="invoice-title">FACTURA DE VENTA</div>
           </div>
         
         <div style="border-bottom:2px dashed #000;padding:6px 0;margin-bottom:8px;font-size:12px;line-height:1.3">
@@ -710,13 +729,19 @@
           </div>
         </div>
 
-        <table style="width:100%;font-size:13px;margin-bottom:8px;border-collapse:collapse;line-height:1.4">
+        <table style="width:100%;font-size:13px;margin-bottom:8px;border-collapse:collapse;line-height:1.4;table-layout:fixed">
+          <colgroup>
+            <col style="width:40%" />
+            <col style="width:10%" />
+            <col style="width:22%" />
+            <col style="width:28%" />
+          </colgroup>
           <thead>
             <tr style="border-bottom:1px dashed #000">
-              <th style="text-align:left;padding:4px 0;font-weight:900;font-size:13px">Descripción</th>
-              <th style="text-align:center;padding:4px 2px;font-weight:900;font-size:13px">Qty</th>
-              <th style="text-align:right;padding:4px 2px;font-weight:900;font-size:13px">Precio</th>
-              <th style="text-align:right;padding:4px 2px;font-weight:900;font-size:13px">Total</th>
+              <th class="invoice-desc" style="text-align:left;padding:4px 0;font-weight:900;font-size:13px">Descripción</th>
+              <th class="invoice-qty" style="text-align:center;padding:4px 2px;font-weight:900;font-size:13px">Qty</th>
+              <th class="invoice-price" style="text-align:right;padding:4px 2px;font-weight:900;font-size:13px">Precio</th>
+              <th class="invoice-line-total" style="text-align:right;padding:4px 2px;font-weight:900;font-size:13px">Total</th>
             </tr>
           </thead>
           <tbody>
@@ -724,8 +749,8 @@
           </tbody>
           <tfoot>
             <tr style="border-top:1px dashed #000">
-              <td colspan="3" style="text-align:right;padding:6px 2px;font-weight:900;font-size:20px">TOTAL:</td>
-              <td style="text-align:right;padding:6px 2px;font-weight:900;font-size:20px">${formatCRC(total)}</td>
+              <td colspan="3" style="text-align:right;padding:6px 2px;font-weight:900;font-size:18px">TOTAL:</td>
+              <td style="text-align:right;padding:6px 2px;font-weight:900;font-size:18px"><span class="invoice-amount">${formatCRC(total)}</span></td>
             </tr>
           </tfoot>
         </table>
@@ -773,6 +798,24 @@
 
     ensurePoasThermalPrintStyle();
     document.body.appendChild(modal);
+    // Auto-print immediately when a sale is completed. Try direct print first,
+    // then fallback to opening a print window if the dialog is blocked.
+    try {
+      setTimeout(() => {
+        try { window.print(); } catch(e) {}
+        // Fallback: open a minimal window with the invoice HTML and print from there
+        try {
+          const win = window.open('', '_blank');
+          if (win) {
+            const styleNode = document.getElementById('poas-thermal-print-style');
+            const injected = styleNode ? `<style>${styleNode.textContent}</style>` : '';
+            win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Factura</title>${injected}</head><body>${html}</body></html>`);
+            win.document.close();
+            setTimeout(() => { try { win.print(); } catch (e) {} setTimeout(() => { try { win.close(); } catch(e) {} }, 500); }, 300);
+          }
+        } catch (e) {}
+      }, 300);
+    } catch (e) {}
   };
 
   const printApartadoInvoice = ({ apartado }) => {

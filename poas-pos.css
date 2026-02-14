@@ -560,6 +560,41 @@ body {
     color-adjust: exact;
   }
 
+
+/* Additional print overrides for invoice typography consistency */
+@media print {
+  #invoice-modal, #invoice-modal *,
+  #apartado-invoice-modal, #apartado-invoice-modal *,
+  #completion-invoice-modal, #completion-invoice-modal * {
+    font-family: Arial, Helvetica, sans-serif !important;
+    color: #000 !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    line-height: 1.28 !important;
+  }
+
+  #invoice-modal .invoice-title, #invoice-modal h1 {
+    font-size: 20px !important;
+    font-weight: 800 !important;
+  }
+
+  #invoice-modal table, #invoice-modal td, #invoice-modal th {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+  }
+
+  #invoice-modal tfoot td {
+    font-size: 18px !important;
+    font-weight: 800 !important;
+  }
+}
+
+/* Specific invoice helpers */
+@media print {
+  .invoice-amount { font-weight: 800 !important; font-size: 11px !important; text-align: right !important; display: inline-block !important; min-width: 12mm !important; font-variant-numeric: tabular-nums !important; }
+  .invoice-desc { font-size: 11px !important; font-weight: 600 !important; }
+  .invoice-price, .invoice-line-total, .invoice-qty { font-size: 11px !important; }
+}
   /* Facturas: usar Arial, aumentar tipografía y logos x3 */
   /* Invoice print safety: use slightly smaller than full paper width and inner margins */
   #invoice-modal,
@@ -582,7 +617,8 @@ body {
   #apartado-invoice-modal > div > div,
   #completion-invoice-modal > div > div,
   #abono-invoice-modal > div > div {
-    padding: 0 3mm !important;
+    padding-left: 5mm !important;
+    padding-right: 3mm !important;
     box-sizing: border-box !important;
     width: 100% !important;
   }
@@ -591,11 +627,11 @@ body {
   #apartado-invoice-modal img,
   #completion-invoice-modal img,
   #abono-invoice-modal img {
-    max-width: 100% !important;
+    max-width: 40mm !important;
     width: auto !important;
     height: auto !important;
     display: block !important;
-    margin: 0 auto 6px !important;
+    margin: 0 auto 4px !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -603,9 +639,42 @@ body {
   #invoice-modal table,
   #apartado-invoice-modal table,
   #completion-invoice-modal table {
-    font-size: 12px !important;
+    font-size: 10px !important;
     table-layout: fixed !important;
     width: 100% !important;
+  }
+
+  /* Force darker, fully opaque text for printed invoices */
+  #invoice-modal, #invoice-modal *,
+  #apartado-invoice-modal, #apartado-invoice-modal *,
+  #completion-invoice-modal, #completion-invoice-modal *,
+  #abono-invoice-modal, #abono-invoice-modal * {
+    color: #000 !important;
+    opacity: 1 !important;
+    filter: none !important;
+    -webkit-filter: none !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    -webkit-font-smoothing: antialiased !important;
+    text-rendering: optimizeLegibility !important;
+    font-synthesis: none !important;
+    font-weight: 700 !important;
+  }
+
+  /* Make the store name larger and crisper on printed invoices */
+  #invoice-modal .invoice-title,
+  #invoice-modal .store-name,
+  #apartado-invoice-modal .invoice-title,
+  #apartado-invoice-modal .store-name,
+  #completion-invoice-modal .invoice-title,
+  #completion-invoice-modal .store-name {
+    font-family: 'Playfair Display', serif !important;
+    font-size: 22px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.3px !important;
+    text-rendering: geometricPrecision !important;
+    -webkit-font-smoothing: antialiased !important;
+    margin-bottom: 2px !important;
   }
 
 
